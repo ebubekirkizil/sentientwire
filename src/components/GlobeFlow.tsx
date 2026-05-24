@@ -213,6 +213,7 @@ function Ring({ r, tiltX, tiltZ, op }: { r:number; tiltX:number; tiltZ:number; o
 
   return (
     <group ref={ref}>
+      {/* @ts-ignore - React Three Fiber vs SVG line typings conflict in TS */}
       <line geometry={geo}>
         <lineBasicMaterial color="#06b6d4" transparent opacity={op}
           blending={THREE.AdditiveBlending} depthWrite={false} />

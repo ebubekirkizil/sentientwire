@@ -1,8 +1,13 @@
 import Parser from 'rss-parser';
-import { prisma } from './prisma';
+import { createClient } from "@libsql/client";
 import { rewriteArticle } from './ai';
 
 const parser = new Parser();
+
+const db = createClient({
+  url: process.env.DATABASE_URL || "file:dev.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
 
 // RSS Feeds for Global Tech & AI
 const FEEDS = [
@@ -27,11 +32,12 @@ export async function runIngestion() {
         const contentSnippet = item.contentSnippet || item.content || '';
 
         // Check if we already processed this URL
-        const exists = await prisma.article.findFirst({
-          where: { originalUrl: link }
+        const existsResult = await db.execute({
+          sql: "SELECT id FROM Article WHERE originalUrl = ?",
+          args: [link]
         });
 
-        if (exists) {
+        if (existsResult.rows.length > 0) {
           console.log(`Skipping already processed: ${title}`);
           continue;
         }
@@ -58,18 +64,19 @@ export async function runIngestion() {
         const imageUrl = await fetchImage(title);
 
         if (aiResult && aiResult.title && aiResult.slug && aiResult.content) {
-          await prisma.article.create({
-            data: {
-              title: aiResult.title,
-              slug: aiResult.slug,
-              summary: aiResult.summary || '',
-              content: aiResult.content,
-              locale: 'en',
-              originalUrl: link,
-              imageUrl: imageUrl,
-            }
+          await db.execute({
+            sql: `INSERT INTO Article (id, title, slug, summary, content, locale, originalUrl, imageUrl) 
+                  VALUES (hex(randomblob(16)), ?, ?, ?, ?, 'en', ?, ?)`,
+            args: [
+              aiResult.title,
+              aiResult.slug,
+              aiResult.summary || '',
+              aiResult.content,
+              link,
+              imageUrl
+            ]
           });
-          console.log(`Successfully saved: ${aiResult.title}`);
+          console.log(`Successfully ingested and translated: ${aiResult.title}`);
         }
       }
     } catch (e) {

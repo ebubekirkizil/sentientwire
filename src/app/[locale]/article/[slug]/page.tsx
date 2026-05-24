@@ -1,8 +1,13 @@
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@libsql/client";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+
+const db = createClient({
+  url: process.env.DATABASE_URL || "file:dev.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
 
 export default async function ArticlePage({
   params,
@@ -11,9 +16,12 @@ export default async function ArticlePage({
 }) {
   const { slug, locale } = await params;
 
-  const article = await prisma.article.findUnique({
-    where: { slug: slug },
+  const result = await db.execute({
+    sql: "SELECT * FROM Article WHERE slug = ?",
+    args: [slug]
   });
+
+  const article = result.rows[0] as any;
 
   if (!article || article.locale !== locale) {
     notFound();

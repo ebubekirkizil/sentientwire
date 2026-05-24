@@ -67,7 +67,7 @@ const ARCS_DATA = [
 ];
 
 export default function HeroGlobe({ size = 500 }: { size?: number }) {
-  const globeEl = useRef<any>();
+  const globeEl = useRef<any>(null);
   const { theme } = useTheme();
   // Initial active alerts
   const [threats, setThreats] = useState<string[]>(['MOSCOW', 'BEIJING']);
@@ -130,7 +130,6 @@ export default function HeroGlobe({ size = 500 }: { size?: number }) {
         bumpImageUrl="//unpkg.com/three-globe/example/img/earth-topology.png"
         
         // Enhance 3D depth and atmosphere
-        bumpScale={15}
         atmosphereColor={theme === 'light' ? "#0284c7" : "#06b6d4"}
         atmosphereAltitude={0.15}
         

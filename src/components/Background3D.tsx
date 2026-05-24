@@ -6,7 +6,7 @@ import { useState, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 
 function Starfield() {
-  const ref = useRef<any>();
+  const ref = useRef<any>(null);
   
   // Generate random points in a sphere
   const sphere = useMemo(() => {
