@@ -7,7 +7,7 @@ import {routing} from '@/i18n/routing';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { Footer } from '@/components/Footer';
-import { AnalyticsTracker } from '@/components/AnalyticsTracker';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 export const metadata: Metadata = {
   title: "IntelOps — Global Intelligence Feed",
@@ -44,7 +44,7 @@ export default async function RootLayout({
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <NextIntlClientProvider messages={messages}>
-            <AnalyticsTracker />
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX"} />
             <SiteHeader />
             <main className="flex-1 w-full">
               {children}
