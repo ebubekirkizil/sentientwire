@@ -7,6 +7,24 @@ import { translateArticleText } from "@/lib/ai";
 // In-memory cache to store translated fields: key is `${articleId}_${targetLocale}`
 const translationCache = new Map<string, { title: string, summary: string, content: string }>();
 
+function toPlainArticle(row: any) {
+  if (!row) return null;
+  return {
+    id: row.id ? String(row.id) : '',
+    title: row.title ? String(row.title) : '',
+    slug: row.slug ? String(row.slug) : '',
+    summary: row.summary ? String(row.summary) : '',
+    content: row.content ? String(row.content) : '',
+    category: row.category ? String(row.category) : 'GENERAL',
+    categoryColor: row.categoryColor ? String(row.categoryColor) : '#06b6d4',
+    imageUrl: row.imageUrl ? String(row.imageUrl) : null,
+    locale: row.locale ? String(row.locale) : 'en',
+    createdAt: row.createdAt ? String(row.createdAt) : null,
+    updatedAt: row.updatedAt ? String(row.updatedAt) : null,
+  };
+}
+
+
 
 // Initialize libSQL directly for robustness
 const db = createClient({
@@ -93,28 +111,28 @@ export async function getArticlesByLocale(locale: string) {
     const translatedArticles = await Promise.all(
       articles.map(async (art) => {
         const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
-        if (artLocale === targetLang) {
-          return art;
+        
+        let finalArt = art;
+        if (artLocale !== targetLang) {
+          const cacheKey = `${art.id}_${targetLang}`;
+          if (translationCache.has(cacheKey)) {
+            const cached = translationCache.get(cacheKey)!;
+            finalArt = { ...art, title: cached.title, summary: cached.summary, content: cached.content };
+          } else {
+            const translated = await translateArticleText(
+              String(art.title || ''),
+              String(art.summary || ''),
+              String(art.content || ''),
+              targetLang
+            );
+            if (translated) {
+              translationCache.set(cacheKey, translated);
+              finalArt = { ...art, title: translated.title, summary: translated.summary, content: translated.content };
+            }
+          }
         }
 
-        const cacheKey = `${art.id}_${targetLang}`;
-        if (translationCache.has(cacheKey)) {
-          const cached = translationCache.get(cacheKey)!;
-          return { ...art, title: cached.title, summary: cached.summary, content: cached.content };
-        }
-
-        const translated = await translateArticleText(
-          String(art.title || ''),
-          String(art.summary || ''),
-          String(art.content || ''),
-          targetLang
-        );
-        if (translated) {
-          translationCache.set(cacheKey, translated);
-          return { ...art, title: translated.title, summary: translated.summary, content: translated.content };
-        }
-
-        return art;
+        return toPlainArticle(finalArt);
       })
     );
     
@@ -157,27 +175,27 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
 
   const targetLang = locale.substring(0, 2).toLowerCase();
   const artLocale = String(article.locale || 'en').substring(0, 2).toLowerCase();
-  if (artLocale === targetLang) {
-    return article;
+  
+  let finalArt = article;
+  if (artLocale !== targetLang) {
+    const cacheKey = `${article.id}_${targetLang}`;
+    if (translationCache.has(cacheKey)) {
+      const cached = translationCache.get(cacheKey)!;
+      finalArt = { ...article, title: cached.title, summary: cached.summary, content: cached.content };
+    } else {
+      const translated = await translateArticleText(
+        String(article.title || ''),
+        String(article.summary || ''),
+        String(article.content || ''),
+        targetLang
+      );
+      if (translated) {
+        translationCache.set(cacheKey, translated);
+        finalArt = { ...article, title: translated.title, summary: translated.summary, content: translated.content };
+      }
+    }
   }
 
-  const cacheKey = `${article.id}_${targetLang}`;
-  if (translationCache.has(cacheKey)) {
-    const cached = translationCache.get(cacheKey)!;
-    return { ...article, title: cached.title, summary: cached.summary, content: cached.content };
-  }
-
-  const translated = await translateArticleText(
-    String(article.title || ''),
-    String(article.summary || ''),
-    String(article.content || ''),
-    targetLang
-  );
-  if (translated) {
-    translationCache.set(cacheKey, translated);
-    return { ...article, title: translated.title, summary: translated.summary, content: translated.content };
-  }
-
-  return article;
+  return toPlainArticle(finalArt);
 }
 
