@@ -352,7 +352,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: any[] }) {
   // Extract main featured and grid featured from DB, fallback to mock if empty
   const mainArticle = dbArticles.length > 0 ? dbArticles[0] : FEATURED_MAIN;
-  const gridArticles = dbArticles.length > 4 ? dbArticles.slice(1, 5) : FEATURED_GRID;
+  const gridArticles = dbArticles.length > 1 ? dbArticles.slice(1, 5) : (dbArticles.length === 0 ? FEATURED_GRID : []);
 
   return (
     <section
@@ -370,7 +370,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {/* BIG LEFT CARD */}
         <Link
-          href={`/${locale}/news/${FEATURED_MAIN.id}`}
+          href={`/${locale}/news/${mainArticle.slug || mainArticle.id}`}
           style={{
             position: "relative",
             display: "block",
@@ -434,10 +434,10 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
           gridTemplateRows: "1fr 1fr",
           gap: 16,
         }}>
-          {gridArticles.map((article) => (
+          {gridArticles.map((article: any) => (
             <Link
               key={article.id}
-              href={`/${locale}/news/${article.id}`}
+              href={`/${locale}/news/${article.slug || article.id}`}
               style={{
                 textDecoration: "none",
                 color: "inherit",
@@ -504,13 +504,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
 
 /* ─── Latest News section (3 horizontal cards with icon + image) ── */
 function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any[] }) {
-  // Use db articles if available, otherwise fallback to mock data structure for demo purposes
-  const displayArticles = dbArticles.length > 0 ? dbArticles.map(a => ({
-    ...a,
-    icon: a.category === "CYBERSECURITY" ? "🛡️" : a.category === "AI" ? "🧠" : a.category === "QUANTUM" ? "⚛️" : "📡",
-    ago: new Date(a.createdAt).toLocaleDateString(),
-    source: a.originalUrl || "TECHINTEL",
-  })) : LATEST;
+  const latestArticles = dbArticles.length > 5 ? dbArticles.slice(5) : (dbArticles.length > 0 ? [] : LATEST);
 
   return (
     <section style={{ padding: "80px 24px", maxWidth: 1280, margin: "0 auto", position: "relative" }}>
@@ -524,8 +518,8 @@ function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any
         </Link>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
-        {displayArticles.map((article) => (
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+        {latestArticles.map((article: any) => (
           <Link
             key={article.id}
             href={`/${locale}/news/${article.slug || article.id}`}
