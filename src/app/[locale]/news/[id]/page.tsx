@@ -53,14 +53,7 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
-  // Typing animation for terminal
-  const terminalLines = [
-    { text: t('t1'), type: "normal" },
-    { text: t('t2'), type: "success", suffix: t('success') },
-    { text: t('t3'), type: "error" },
-    { text: t('t4'), type: "normal" },
-    { text: t('t5'), type: "warning", suffix: t('timeout') },
-  ];
+
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] font-sans pb-20 relative overflow-hidden text-[var(--text-primary)] transition-colors duration-300">
@@ -146,68 +139,6 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
              className="mb-10 whitespace-pre-wrap text-[var(--text-secondary)] font-normal" 
              dangerouslySetInnerHTML={{ __html: article.content }} 
            />
-
-           {/* Cyber Terminal Mockup with Typing Animation */}
-           <motion.div 
-             className="bg-[var(--bg-card)] border border-[var(--border-glow)] rounded-lg p-6 font-mono text-sm mb-10 shadow-[inset_0_0_20px_var(--cyan-dim)] relative overflow-hidden"
-             initial={{ opacity: 0, scale: 0.95 }}
-             whileInView={{ opacity: 1, scale: 1 }}
-             viewport={{ once: true }}
-             transition={{ duration: 0.5, delay: 0.2 }}
-           >
-             {/* Terminal Header */}
-             <div className="flex gap-2 mb-6 border-b border-[var(--border-subtle)] pb-4">
-               <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
-               <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
-               <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-               <span className="ml-auto text-xs text-[var(--text-muted)]">{t('terminalTitle')}</span>
-             </div>
-             
-             {/* Terminal Output */}
-             <div className="space-y-2 opacity-90 text-[var(--cyan-bright)]">
-               {terminalLines.map((line, i) => (
-                 <motion.div 
-                   key={i}
-                   initial={{ opacity: 0, x: -10 }}
-                   whileInView={{ opacity: 1, x: 0 }}
-                   viewport={{ once: true }}
-                   transition={{ duration: 0.3, delay: 0.4 + (i * 0.4) }}
-                   className={line.type === 'error' ? "text-[var(--accent-red)] font-bold mt-4" : ""}
-                 >
-                   {line.text} 
-                   {line.suffix && (
-                     <span className={line.type === 'success' ? "text-green-500 ml-2" : "text-[var(--accent-amber)] ml-2"}>
-                       {line.suffix}
-                     </span>
-                   )}
-                 </motion.div>
-               ))}
-               <motion.div 
-                 initial={{ opacity: 0 }}
-                 whileInView={{ opacity: 1 }}
-                 viewport={{ once: true }}
-                 transition={{ duration: 0.3, delay: 0.4 + (terminalLines.length * 0.4) }}
-                 className="mt-4 text-[var(--text-muted)] flex items-center gap-2"
-               >
-                 {t('awaitingTelemetry')}
-                 <motion.span 
-                   className="inline-block w-2 h-4 bg-[var(--cyan-bright)]"
-                   animate={{ opacity: [1, 0, 1] }}
-                   transition={{ repeat: Infinity, duration: 1 }}
-                 />
-               </motion.div>
-             </div>
-           </motion.div>
-
-           <h3 className="text-2xl font-bold text-[var(--text-primary)] mt-12 mb-6 tracking-tight">{t('escalationTitle')}</h3>
-           
-           <p className="mb-6">
-             {t('escalationP1')}
-           </p>
-           
-           <p className="mb-10">
-             {t('escalationP2')}
-           </p>
 
            <div className="pt-8 mt-12 border-t border-[var(--border-subtle)] flex items-center justify-between">
              <div className="font-mono text-xs text-[var(--text-muted)]">
