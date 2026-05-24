@@ -21,9 +21,9 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/',
-    '/(tr|en|de|es)/:path*',
-    '/((?!api|_next/static|_next/image|favicon.ico|images|robots.txt|sitemap.xml).*)',
-  ],
+  // Match all pathnames except for:
+  // - api (API routes)
+  // - _next (Next.js internals)
+  // - any path containing a dot (static files like logo.png, favicon.ico, etc.)
+  matcher: ['/((?!api|_next|.*\\..*).*)']
 };

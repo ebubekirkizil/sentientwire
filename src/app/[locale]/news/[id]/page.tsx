@@ -4,7 +4,7 @@ import React, { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { getArticleBySlug } from '@/app/actions/article';
+import { getLocalizedArticle } from '@/app/actions/article';
 
 export default function NewsDetail({ params }: { params: Promise<{ id: string, locale: string }> }) {
   const t = useTranslations('News');
@@ -15,11 +15,11 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
 
   useEffect(() => {
     setMounted(true);
-    getArticleBySlug(resolvedParams.id).then(data => {
+    getLocalizedArticle(resolvedParams.id, resolvedParams.locale).then(data => {
       setArticle(data);
       setLoading(false);
     });
-  }, [resolvedParams.id]);
+  }, [resolvedParams.id, resolvedParams.locale]);
 
   if (!mounted) return null;
 

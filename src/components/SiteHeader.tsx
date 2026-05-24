@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 import { ThemeToggle } from "./ThemeToggle";
 import { LoginModal } from "./LoginModal";
@@ -20,6 +21,7 @@ export function SiteHeader() {
   const params = useParams();
   const locale = (params?.locale as string) || "en";
   const pathname = usePathname();
+  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
@@ -120,7 +122,7 @@ export function SiteHeader() {
         >
           {/* Logo */}
           <Link href={`/${locale}`} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <img src="/icon.png" alt="SentientWire Logo" width={36} height={36} style={{ borderRadius: 8, border: "1.5px solid rgba(6,182,212,0.6)", boxShadow: "0 0 12px rgba(6,182,212,0.3)" }} />
+            <img src="/logo.png" alt="SentientWire Logo" width={36} height={36} style={{ borderRadius: 8, border: "1.5px solid rgba(6,182,212,0.6)", boxShadow: "0 0 12px rgba(6,182,212,0.3)" }} />
             <div>
               <span translate="no" className="notranslate" style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 18, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
                 SENTIENT<span style={{ color: "#06b6d4" }}>WIRE</span>
@@ -168,6 +170,45 @@ export function SiteHeader() {
                 <path d="m21 21-4.3-4.3" />
               </svg>
             </button>
+            
+            {/* Language Selector Dropdown */}
+            <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+              <select
+                value={locale}
+                onChange={(e) => router.replace(pathname, { locale: e.target.value })}
+                style={{
+                  background: "rgba(6, 182, 212, 0.05)",
+                  border: "1px solid rgba(6, 182, 212, 0.25)",
+                  borderRadius: "6px",
+                  color: "var(--text-primary)",
+                  padding: "4px 8px",
+                  fontSize: "12px",
+                  fontFamily: "Space Grotesk, sans-serif",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  outline: "none",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(6, 182, 212, 0.5)";
+                  e.currentTarget.style.boxShadow = "0 0 10px rgba(6, 182, 212, 0.2)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(6, 182, 212, 0.25)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <option value="tr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>TR</option>
+                <option value="en" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>EN</option>
+                <option value="de" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>DE</option>
+                <option value="es" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>ES</option>
+                <option value="fr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>FR</option>
+                <option value="it" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>IT</option>
+                <option value="nl" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>NL</option>
+                <option value="pl" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>PL</option>
+              </select>
+            </div>
+
             <ThemeToggle />
             
             {/* Profile / Login Button */}

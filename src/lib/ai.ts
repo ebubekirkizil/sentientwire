@@ -39,3 +39,64 @@ export async function rewriteArticle(rawText: string, locale: string = 'en') {
     return null;
   }
 }
+
+export async function translateArticleText(
+  title: string,
+  summary: string,
+  content: string,
+  targetLocale: string
+): Promise<{ title: string; summary: string; content: string } | null> {
+  try {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === "REPLACE_WITH_YOUR_GEMINI_API_KEY") {
+      console.warn("GEMINI_API_KEY is not configured or is the default placeholder, skipping translation");
+      return null;
+    }
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            {
+              text: `You are an expert technical translator. Your job is to translate a technology/AI news article into the target language.
+Preserve the tone, the meaning, and all HTML tags (like <p>, <h2>, <b>, <i>, <a>, <code>, <strong>, <ul>, <li>) in the content.
+Do NOT change the HTML structure, tags, or CSS classes. Just translate the text content inside the HTML elements.
+Translate technical terms accurately (e.g., zero-day remains zero-day, or use standard translations in target language).
+
+Target language: ${targetLocale}
+
+Translate the following article:
+Title: ${title}
+Summary: ${summary}
+Content: ${content}
+
+Return the result as a JSON object matching this schema (do NOT include markdown formatting in the JSON output, return a raw JSON string):
+{
+  "title": "Translated Title",
+  "summary": "Translated Summary",
+  "content": "Translated HTML Content"
+}`
+            }
+          ]
+        }
+      ],
+      config: {
+        responseMimeType: "application/json",
+      }
+    });
+
+    const text = response.text || (response as any).response?.text?.();
+    if (!text) return null;
+    const parsed = JSON.parse(text);
+    return {
+      title: parsed.title || title,
+      summary: parsed.summary || summary,
+      content: parsed.content || content,
+    };
+  } catch (error) {
+    console.error("AI Translation Error:", error);
+    return null;
+  }
+}
+
