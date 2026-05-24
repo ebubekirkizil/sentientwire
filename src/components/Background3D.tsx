@@ -2,7 +2,6 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
-import * as random from "mathjs"; // We'll just generate random points manually to avoid missing deps
 import { useState, useRef, useMemo } from "react";
 import { motion } from "framer-motion";
 
