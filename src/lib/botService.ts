@@ -1,3 +1,4 @@
+import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@libsql/client";
 
 const db = createClient({
@@ -5,11 +6,10 @@ const db = createClient({
   authToken: process.env.DATABASE_AUTH_TOKEN,
 });
 
-// Mock implementation of OpenAI and Twitter APIs for when keys are missing.
-// In a production app, you would use `openai` and `twitter-api-v2` npm packages.
-
 export async function generateTweet(title: string, summary: string, persona: string, apiKey: string) {
-  if (!apiKey) {
+  const geminiKey = apiKey || process.env.GEMINI_API_KEY;
+  
+  if (!geminiKey || geminiKey === "REPLACE_WITH_YOUR_GEMINI_API_KEY") {
     // Simulation / Fallback
     console.log(`[BOT-SIMULATION] Using fallback tweet generation. Persona: ${persona}`);
     let prefix = "🚨 BREAKING: ";
@@ -19,38 +19,24 @@ export async function generateTweet(title: string, summary: string, persona: str
     return `${prefix}${title}\n\n${summary.substring(0, 100)}...\n\nWhat are your thoughts on this? Read more below👇`;
   }
 
-  // Real implementation using fetch to OpenAI API
+  // Real implementation using Google Gemini
   try {
+    const ai = new GoogleGenAI({ apiKey: geminiKey });
+    
     let systemPrompt = "You are a professional social media manager.";
     if (persona === "provocative") systemPrompt = "You are a provocative, debate-starting tech commentator.";
     if (persona === "analytical") systemPrompt = "You are a highly analytical, neutral intelligence operative.";
     if (persona === "urgent") systemPrompt = "You are an urgent, alarmist breaking news reporter.";
 
-    const prompt = `Write a short (max 250 chars) tweet for this article.\nTitle: ${title}\nSummary: ${summary}\nInclude a hook at the end to encourage clicks.`;
+    const prompt = `${systemPrompt}\n\nWrite a short (max 250 chars) tweet for this article.\nTitle: ${title}\nSummary: ${summary}\nInclude a hook at the end to encourage clicks. DO NOT use hashtags.`;
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt }
-        ],
-        max_tokens: 100,
-        temperature: 0.7
-      })
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash',
+      contents: [{ role: 'user', parts: [{ text: prompt }] }]
     });
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    return data.choices[0].message.content.trim();
+    const text = response.text || (response as any).response?.text?.();
+    return text ? text.trim() : `🚨 ${title}\n\n${summary.substring(0, 100)}...\n\nRead more below👇`;
   } catch (error) {
     console.error("Error generating tweet:", error);
     return `🚨 ${title}\n\n${summary.substring(0, 100)}...\n\nRead more below👇`;

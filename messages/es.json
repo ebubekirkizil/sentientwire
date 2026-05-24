@@ -4,7 +4,16 @@
     "title1": "El Futuro de la Tecnología",
     "title2": "Se escribe mientras duermes.",
     "subtitle": "Más allá de los principales medios. Descubre las herramientas de IA, avances corporativos e innovaciones.",
-    "cta": "Explorar artículos"
+    "cta": "Explorar artículos",
+    "ctaLatest": "Últimos análisis",
+    "ctaExplore": "Explorar informes",
+    "secFeatured": "Destacado",
+    "secLatest": "Última información",
+    "viewArchive": "Ver archivo",
+    "readMore": "Leer más",
+    "statReports": "Informes",
+    "statNations": "Países rastreados",
+    "statSubscribers": "Suscriptores"
   },
   "Header": {
     "breaking": "ÚLTIMA HORA",
@@ -22,5 +31,45 @@
       "hardware": "HARDWARE"
     },
     "login": "Iniciar sesión"
+  },
+  "Footer": {
+    "description": "Descubriendo tecnologías, contratos de defensa y estrategias corporativas que definen el futuro.",
+    "categories": "Categorías",
+    "cybersecurity": "Ciberseguridad",
+    "ai": "IA",
+    "quantum": "Cuántica",
+    "hardware": "Hardware",
+    "defense": "Defensa",
+    "corporate": "Corporación",
+    "about": "Nosotros",
+    "careers": "Carreras",
+    "contact": "Contacto",
+    "legal": "Legal",
+    "privacy": "Política de privacidad",
+    "terms": "Condiciones de servicio",
+    "cookies": "Política de cookies",
+    "allRightsReserved": "Todos los derechos reservados.",
+    "systemActive": "SISTEMA ACTIVO"
+  },
+  "News": {
+    "decrypting": "DESCIFRANDO BASE DE DATOS...",
+    "notFound": "404 - INFORMACIÓN NO ENCONTRADA",
+    "returnToBase": "VOLVER A LA BASE",
+    "decrypted": "DESCIFRADO",
+    "satelliteImagery": "IMÁGENES POR SATÉLITE: ASEGURADAS",
+    "terminalTitle": "terminal.exe",
+    "awaitingTelemetry": "Esperando más telemetría",
+    "shareIntel": "COMPARTIR INTELIGENCIA",
+    "reportId": "ID DE REPORTE",
+    "t1": "> INICIALIZANDO ANÁLISIS DE AMENAZAS...",
+    "t2": "> DESCIFRANDO FIRMA DE CARGA ÚTIL [0x9F42C]...",
+    "t3": "[CRÍTICO] CERO-DAY DETECTADO EN PROTOCOLO SCADA",
+    "t4": "> MAPEAR ORIGEN DE AMENAZA: UNKNOWN_NODE_492",
+    "t5": "> ESTABLECIENDO CONEXIÓN SEGURA...",
+    "success": "[ÉXITO]",
+    "timeout": "[TIEMPO EXCEDIDO]",
+    "escalationTitle": "La escalada de la guerra ciber-cinética",
+    "escalationP1": "A diferencia de ataques anteriores centrados en la filtración de datos y el espionaje corporativo, este último vector demuestra una clara intención de causar daños físicos y cinéticos. Al manipular los controles de frecuencia de las subestaciones objetivo, los atacantes intentaron inducir fallas de hardware que podrían haber resultado en apagones locales de semanas.",
+    "escalationP2": "Las agencias globales de inteligencia están trabajando junto al sector privado para corregir las vulnerabilidades y rastrear el origen del ataque. Hasta que se implemente un parche completo, los operadores de la red permanecen en alerta máxima. Seguiremos monitoreando la situación y ofreciendo actualizaciones."
   }
 }

@@ -4,7 +4,16 @@
     "title1": "De Toekomst van Technologie",
     "title2": "Wordt geschreven terwijl u slaapt.",
     "subtitle": "Voorbij de reguliere media. Ontdek de AI-tools en innovaties van de toekomst.",
-    "cta": "Ontdek Inzichten"
+    "cta": "Ontdek Inzichten",
+    "ctaLatest": "Nieuwste analyse",
+    "ctaExplore": "Ontdek rapporten",
+    "secFeatured": "Uitgelicht",
+    "secLatest": "Laatste updates",
+    "viewArchive": "Bekijk archief",
+    "readMore": "Lees meer",
+    "statReports": "Rapporten",
+    "statNations": "Landen gevolgd",
+    "statSubscribers": "Abonnees"
   },
   "Header": {
     "breaking": "LAATSTE NIEUWS",
@@ -22,5 +31,45 @@
       "hardware": "HARDWARE"
     },
     "login": "Inloggen"
+  },
+  "Footer": {
+    "description": "Ontdek de technologieën, defensiecontracten en bedrijfsstrategieën die de toekomst bepalen.",
+    "categories": "Categorieën",
+    "cybersecurity": "Cybersecurity",
+    "ai": "AI",
+    "quantum": "Quantum",
+    "hardware": "Hardware",
+    "defense": "Defensie",
+    "corporate": "Zakelijk",
+    "about": "Over ons",
+    "careers": "Vacatures",
+    "contact": "Contact",
+    "legal": "Juridisch",
+    "privacy": "Privacybeleid",
+    "terms": "Gebruiksvoorwaarden",
+    "cookies": "Cookiebeleid",
+    "allRightsReserved": "Alle rechten voorbehouden.",
+    "systemActive": "SYSTEEM ACTIEF"
+  },
+  "News": {
+    "decrypting": "DATABASE DECRYPTEREN...",
+    "notFound": "404 - INTEL NIET GEVONDEN",
+    "returnToBase": "TERUG NAAR BASIS",
+    "decrypted": "GECRYPTEERD",
+    "satelliteImagery": "SATELLIETBEELDEN: BEVEILIGD",
+    "terminalTitle": "terminal.exe",
+    "awaitingTelemetry": "Wachtend op verdere telemetrie",
+    "shareIntel": "DEEL INTEL",
+    "reportId": "RAPOR KODU",
+    "t1": "> INITIALISEREN DREIGINGSANALYSE...",
+    "t2": "> PAYLOAD-HANDTEKENING DECRYPTEREN [0x9F42C]...",
+    "t3": "[KRITIEK] ZERO-DAY GEDETECTEERD IN SCADA-PROTOCOL",
+    "t4": "> DREIGINGSBRON IN KAART BRENGEN: UNKNOWN_NODE_492",
+    "t5": "> BEVEILIGDE HANDSHAKE TOT STAND BRENGEN...",
+    "success": "[SUCCES]",
+    "timeout": "[TIMEOUT]",
+    "escalationTitle": "De escalatie van cyber-kinetische oorlogsvoering",
+    "escalationP1": "In tegenstelling tot eerdere aanvallen die primair gericht waren op data-exfiltratie en bedrijfsspionage, toont deze nieuwste vector een duidelijke intentie om fysieke, kinetische schade aan te richten. Door de frequentieregelaars van de doelstations te manipuleren, probeerden de aanvallers hardwarestoringen te veroorzaken die hadden kunnen leiden tot wekenlange lokale stroomuitval.",
+    "escalationP2": "Wereldwijde inlichtingendiensten werken momenteel samen met de particuliere sector om de kwetsbaarheden te verhelpen en de herkomst van de aanval te traceren. Totdat er een volledige patch is geïmplementeerd, blijven netbeheerders in hoge staat van paraatheid. We blijven de situatie volgen."
   }
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import HeroGlobe from "@/components/HeroGlobe";
 import { useTranslations } from "next-intl";
+import { getArticlesByLocale } from "@/app/actions/article";
 
 /* ─── Types ─────────────────────────────────────────── */
 type Article = {
@@ -125,6 +126,17 @@ const LATEST: Article[] = [
 /* ─── Hero ───────────────────────────────────────────── */
 function Hero() {
   const t = useTranslations('Index');
+  const [globeSize, setGlobeSize] = useState(460);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setGlobeSize(Math.min(500, Math.round(window.innerWidth * 0.38)));
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <section style={{
       position: "relative",
@@ -182,7 +194,7 @@ function Hero() {
             filter: "blur(30px)",
             pointerEvents: "none",
           }}/>
-          <HeroGlobe size={typeof window !== "undefined" ? Math.min(500, Math.round(window.innerWidth * 0.38)) : 460} />
+          <HeroGlobe size={globeSize} />
         </div>
 
         {/* ── RIGHT: Text ── */}
@@ -253,7 +265,7 @@ function Hero() {
                 (e.currentTarget as HTMLElement).style.boxShadow="0 0 24px rgba(6,182,212,0.42)";
                 (e.currentTarget as HTMLElement).style.transform="translateY(0)";
               }}
-            >Latest Analysis</button>
+            >{t('ctaLatest')}</button>
             <button
               style={{
                 padding: "12px 26px", background: "transparent", color: "var(--text-secondary)",
@@ -269,7 +281,7 @@ function Hero() {
                 (e.currentTarget as HTMLElement).style.borderColor="rgba(255,255,255,0.14)";
                 (e.currentTarget as HTMLElement).style.color="#94a3b8";
               }}
-            >Explore Reports</button>
+            >{t('ctaExplore')}</button>
           </div>
 
           {/* Stats */}
@@ -277,7 +289,7 @@ function Hero() {
             display: "flex", gap: 32,
             paddingTop: 24, borderTop: "1px solid rgba(6,182,212,0.1)",
           }}>
-            {[["340+","Intel Reports"],["94","Nations Tracked"],["12K+","Subscribers"]].map(([n,l])=>(
+            {[["340+",t('statReports')],["94",t('statNations')],["12K+",t('statSubscribers')]].map(([n,l])=>(
               <div key={l}>
                 <div style={{ fontFamily:"JetBrains Mono,monospace", fontSize:22, fontWeight:700, color:"#22d3ee", lineHeight:1 }}>{n}</div>
                 <div style={{ fontFamily:"JetBrains Mono,monospace", fontSize:9, color:"#334155", letterSpacing:"0.14em", textTransform:"uppercase", marginTop:4 }}>{l}</div>
@@ -350,6 +362,7 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 /* ─── Featured News section (1 large + grid of 4) ──────── */
 function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: any[] }) {
+  const t = useTranslations('Index');
   // Extract main featured and grid featured from DB, fallback to mock if empty
   const mainArticle = dbArticles.length > 0 ? dbArticles[0] : FEATURED_MAIN;
   const gridArticles = dbArticles.length > 1 ? dbArticles.slice(1, 5) : (dbArticles.length === 0 ? FEATURED_GRID : []);
@@ -365,7 +378,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
         zIndex: 10,
       }}
     >
-      <SectionTitle>Featured</SectionTitle>
+      <SectionTitle>{t('secFeatured')}</SectionTitle>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         {/* BIG LEFT CARD */}
@@ -398,7 +411,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
             style={{
               width: "100%",
               height: 300,
-              backgroundImage: `url(${mainArticle.imageUrl})`,
+              backgroundImage: `url(${mainArticle.imageUrl || 'https://images.unsplash.com/photo-1510915361894-faa8b2d88c4b?auto=format&fit=crop&q=80&w=1200&h=900'})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               position: "relative",
@@ -407,7 +420,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 30%, rgba(8,15,28,0.85) 100%)" }} />
             {/* Corner category badge */}
             <div style={{ position: "absolute", top: 12, left: 12 }}>
-              <CatBadge text={mainArticle.category} color={mainArticle.categoryColor} />
+              <CatBadge text={mainArticle.category || "GENERAL"} color={mainArticle.categoryColor || "#06b6d4"} />
             </div>
           </div>
           {/* Text content */}
@@ -416,13 +429,13 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
               {mainArticle.title}
             </h3>
             <p style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6, margin: "0 0 16px" }}>
-              {mainArticle.excerpt}{" "}
-              <span style={{ color: "#06b6d4", cursor: "pointer" }}>[Read More]</span>
+              {mainArticle.summary || mainArticle.excerpt || ""}{" "}
+              <span style={{ color: "#06b6d4", cursor: "pointer" }}>[{t('readMore')}]</span>
             </p>
             <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, color: "#334155", display: "flex", gap: 6 }}>
-              <span>{mainArticle.source}</span>
+              <span>{mainArticle.source || "SENTIENT WIRE"}</span>
               <span>·</span>
-              <span>{mainArticle.ago}</span>
+              <span>{mainArticle.createdAt ? new Date(mainArticle.createdAt).toLocaleDateString() : mainArticle.ago}</span>
             </div>
           </div>
         </Link>
@@ -465,7 +478,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
               <div
                 style={{
                   height: 120,
-                  backgroundImage: `url(${article.imageUrl})`,
+                  backgroundImage: `url(${article.imageUrl || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=300&h=200'})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                   position: "relative",
@@ -474,7 +487,7 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
               >
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, transparent 20%, rgba(8,15,28,0.7) 100%)" }} />
                 <div style={{ position: "absolute", top: 8, left: 8 }}>
-                  <CatBadge text={article.category} color={article.categoryColor} />
+                  <CatBadge text={article.category || "GENERAL"} color={article.categoryColor || "#06b6d4"} />
                 </div>
               </div>
               {/* Card text */}
@@ -484,12 +497,12 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
                     {article.title}
                   </h4>
                   <p style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, margin: 0 }}>
-                    {article.excerpt.slice(0, 90)}…{" "}
-                    <span style={{ color: "#06b6d4", cursor: "pointer", fontSize: 11 }}>[Read More]</span>
+                    {(article.excerpt || article.summary || "").slice(0, 90)}…{" "}
+                    <span style={{ color: "#06b6d4", cursor: "pointer", fontSize: 11 }}>[{t('readMore')}]</span>
                   </p>
                 </div>
                 <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#334155", marginTop: 10, display: "flex", gap: 4 }}>
-                  <span>{article.source || "TECHINTEL"}</span>
+                  <span>{article.source || "SENTIENT WIRE"}</span>
                   <span>·</span>
                   <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString() : article.ago}</span>
                 </div>
@@ -504,17 +517,28 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
 
 /* ─── Latest News section (3 horizontal cards with icon + image) ── */
 function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any[] }) {
+  const t = useTranslations('Index');
   const latestArticles = dbArticles.length > 5 ? dbArticles.slice(5) : (dbArticles.length > 0 ? [] : LATEST);
+
+  const getCategoryIcon = (category: string) => {
+    const cat = category?.toUpperCase() || "";
+    if (cat.includes("AI") || cat.includes("YAPAY")) return "🤖";
+    if (cat.includes("CYBER") || cat.includes("GÜVENLİK")) return "🔒";
+    if (cat.includes("QUANTUM") || cat.includes("KUANTUM")) return "⚡";
+    if (cat.includes("HARDWARE") || cat.includes("DONANIM")) return "🔲";
+    if (cat.includes("DEFENSE") || cat.includes("SAVUNMA")) return "🛰️";
+    return "📰";
+  };
 
   return (
     <section style={{ padding: "80px 24px", maxWidth: 1280, margin: "0 auto", position: "relative" }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 40 }}>
         <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 24, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 12, margin: 0 }}>
           <div style={{ width: 8, height: 24, background: "var(--cyan)", borderRadius: 4 }} />
-          LATEST INTELLIGENCE
+          {t('secLatest')}
         </h2>
         <Link href={`/${locale}`} style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "#06b6d4", textDecoration: "none", letterSpacing: "0.05em" }}>
-          VIEW ARCHIVE &rarr;
+          {t('viewArchive')} &rarr;
         </Link>
       </div>
 
@@ -566,9 +590,9 @@ function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any
                     fontSize: 18,
                   }}
                 >
-                  {article.icon}
+                  {article.icon || getCategoryIcon(article.category)}
                 </div>
-                <CatBadge text={article.category} color={article.categoryColor || "#06b6d4"} />
+                <CatBadge text={article.category || "GENERAL"} color={article.categoryColor || "#06b6d4"} />
               </div>
               {/* Thumbnail */}
               <div
@@ -592,15 +616,15 @@ function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any
 
             {/* Excerpt */}
             <p style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.55, margin: 0 }}>
-              {article.summary || article.excerpt}{" "}
-              <span style={{ color: "#06b6d4", cursor: "pointer", fontSize: 12 }}>[Read More]</span>
+              {article.summary || article.excerpt || ""}{" "}
+              <span style={{ color: "#06b6d4", cursor: "pointer", fontSize: 12 }}>[{t('readMore')}]</span>
             </p>
 
             {/* Footer */}
             <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "var(--text-muted)", display: "flex", gap: 4, paddingTop: 8, borderTop: "1px solid var(--border-subtle)", marginTop: "auto" }}>
-              <span>{article.source}</span>
+              <span>{article.source || "SENTIENT WIRE"}</span>
               <span>·</span>
-              <span>{article.ago}</span>
+              <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString() : article.ago}</span>
             </div>
           </Link>
         ))}
@@ -617,11 +641,9 @@ export default function Home() {
   const [dbArticles, setDbArticles] = useState<any[]>([]);
 
   useEffect(() => {
-    import('@/app/actions/article').then(({ getArticlesByLocale }) => {
-      getArticlesByLocale(locale).then(data => {
-        if (Array.isArray(data)) setDbArticles(data);
-      }).catch(console.error);
-    });
+    getArticlesByLocale(locale).then(data => {
+      if (Array.isArray(data)) setDbArticles(data);
+    }).catch(console.error);
   }, [locale]);
 
   return (

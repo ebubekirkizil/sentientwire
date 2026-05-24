@@ -45,8 +45,8 @@ export async function createArticle(formData: FormData) {
 export async function getArticleBySlug(slug: string) {
   try {
     const result = await db.execute({
-      sql: `SELECT * FROM Article WHERE slug = ?`,
-      args: [slug]
+      sql: `SELECT * FROM Article WHERE slug = ? OR id = ?`,
+      args: [slug, slug]
     });
     
     if (result.rows.length === 0) return null;
@@ -63,6 +63,26 @@ export async function getArticlesByLocale(locale: string) {
       sql: `SELECT * FROM Article WHERE locale = ? ORDER BY createdAt DESC`,
       args: [locale]
     });
+    
+    // Fallback logic to ensure the page is never empty!
+    // If the selected locale has less than 6 articles, we backfill with default articles from 'tr' or 'en'
+    if (result.rows.length < 6) {
+      const fallbackLocale = locale.startsWith('en') ? 'tr' : 'en';
+      const fallbackResult = await db.execute({
+        sql: `SELECT * FROM Article WHERE locale = ? ORDER BY createdAt DESC LIMIT ?`,
+        args: [fallbackLocale, 10 - result.rows.length]
+      });
+      
+      const combined = [...result.rows];
+      const existingIds = new Set(combined.map(r => r.id));
+      for (const row of fallbackResult.rows) {
+        if (!existingIds.has(row.id)) {
+          combined.push(row);
+        }
+      }
+      return combined;
+    }
+    
     return result.rows;
   } catch (error) {
     console.error("Failed to fetch articles:", error);

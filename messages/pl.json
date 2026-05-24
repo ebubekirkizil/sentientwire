@@ -4,7 +4,16 @@
     "title1": "Przyszłość Technologii",
     "title2": "Pisze się, gdy śpisz.",
     "subtitle": "Poza głównym nurtem. Odkryj narzędzia AI i cyfrowe innowacje kształtujące jutro.",
-    "cta": "Odkryj więcej"
+    "cta": "Odkryj więcej",
+    "ctaLatest": "Najnowsze analizy",
+    "ctaExplore": "Przeglądaj raporty",
+    "secFeatured": "Polecane",
+    "secLatest": "Najnowsze informacje",
+    "viewArchive": "Zobacz archiwum",
+    "readMore": "Więcej",
+    "statReports": "Raporty",
+    "statNations": "Śledzone kraje",
+    "statSubscribers": "Subskrybenci"
   },
   "Header": {
     "breaking": "Z OSTATNIEJ CHWILI",
@@ -22,5 +31,45 @@
       "hardware": "SPRZĘT"
     },
     "login": "Zaloguj"
+  },
+  "Footer": {
+    "description": "Odkrywaj technologie, kontrakty obronne i strategie korporacyjne, które kształtują przyszłość.",
+    "categories": "Kategorie",
+    "cybersecurity": "Cyberbezpieczeństwo",
+    "ai": "AI",
+    "quantum": "Kwanty",
+    "hardware": "Sprzęt",
+    "defense": "Obronność",
+    "corporate": "Firma",
+    "about": "O nas",
+    "careers": "Kariera",
+    "contact": "Kontakt",
+    "legal": "Prawo",
+    "privacy": "Polityka prywatności",
+    "terms": "Regulamin świadczenia usług",
+    "cookies": "Polityka cookies",
+    "allRightsReserved": "Wszelkie prawa zastrzeżone.",
+    "systemActive": "SYSTEM AKTYWNY"
+  },
+  "News": {
+    "decrypting": "DESZYFROWANIE BAZY DANYCH...",
+    "notFound": "404 - NIE ZNALEZIONO DANYCH",
+    "returnToBase": "POWRÓT DO BAZY",
+    "decrypted": "ODSZYFROWANO",
+    "satelliteImagery": "ZDJĘCIA SATELITARNE: ZABEZPIECZONE",
+    "terminalTitle": "terminal.exe",
+    "awaitingTelemetry": "Oczekiwanie na dalszą telemetrię",
+    "shareIntel": "UDOSTĘPNIJ DANE",
+    "reportId": "ID RAPORTU",
+    "t1": "> INICJOWANIE ANALIZY ZAGROŻEŃ...",
+    "t2": "> ODSZYFROWYWANIE SYGNATURY ŁADUNKU [0x9F42C]...",
+    "t3": "[KRYTYCZNY] WYKRYTO BŁĄD ZERO-DAY W PROTOKOLE SCADA",
+    "t4": "> MAPOWANIE ŹRÓDŁA ZAGROŻENIA: UNKNOWN_NODE_492",
+    "t5": "> NAWIĄZYWANIE BEZPIECZNEGO POŁĄCZENIA...",
+    "success": "[SUKCES]",
+    "timeout": "[LIMIT CZASU]",
+    "escalationTitle": "Eskalacja cyber-kinetycznej wojny",
+    "escalationP1": "W przeciwieństwie do wcześniejszych ataków skupiających się głównie na wykradaniu danych i szpiegostwie korporacyjnym, ten ostatni wektor wykazuje wyraźny zamiar wywołania szkód fizycznych i kinetycznych. Manipulując sterowaniem częstotliwością stacji transformatorowych, napastnicy próbowali wywołać awarie sprzętu, co mogło spowodować lokalne przerwy w dostawie prądu trwające tygodnie.",
+    "escalationP2": "Globalne agencje wywiadowcze współpracują z sektorem prywatnym w celu załatania luk i wyśledzenia źródła ataku. Do czasu wdrożenia pełnej łatki operatorzy sieci pozostają w stanie podwyższonej gotowości. Będziemy nadal monitorować sytuację."
   }
 }

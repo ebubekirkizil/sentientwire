@@ -3,9 +3,11 @@
 import React, { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { getArticleBySlug } from '@/app/actions/article';
 
 export default function NewsDetail({ params }: { params: Promise<{ id: string, locale: string }> }) {
+  const t = useTranslations('News');
   const resolvedParams = use(params);
   const [mounted, setMounted] = useState(false);
   const [article, setArticle] = useState<any>(null);
@@ -24,7 +26,7 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
   if (loading) {
     return (
       <div className="min-h-screen bg-[var(--bg-primary)] flex items-center justify-center font-mono text-[var(--cyan-bright)]">
-        DECRYPTING DATABANK...
+        {t('decrypting')}
       </div>
     );
   }
@@ -32,8 +34,8 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
   if (!article) {
     return (
       <div className="min-h-screen bg-[var(--bg-primary)] flex flex-col items-center justify-center font-mono text-red-500 gap-4">
-        <h1 className="text-2xl">404 - INTEL NOT FOUND</h1>
-        <Link href={`/${resolvedParams.locale}`} className="text-[var(--cyan-bright)] hover:underline">RETURN TO BASE</Link>
+        <h1 className="text-2xl">{t('notFound')}</h1>
+        <Link href={`/${resolvedParams.locale}`} className="text-[var(--cyan-bright)] hover:underline">{t('returnToBase')}</Link>
       </div>
     );
   }
@@ -53,11 +55,11 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
 
   // Typing animation for terminal
   const terminalLines = [
-    { text: "> INITIALIZING THREAT ANALYSIS...", type: "normal" },
-    { text: "> DECRYPTING PAYLOAD SIGNATURE [0x9F42C]...", type: "success", suffix: "[SUCCESS]" },
-    { text: "[CRITICAL] ZERO-DAY DETECTED IN SCADA PROTOCOL", type: "error" },
-    { text: "> MAPPING THREAT ORIGIN: UNKNOWN_NODE_492", type: "normal" },
-    { text: "> ESTABLISHING SECURE HANDSHAKE...", type: "warning", suffix: "[TIMEOUT]" },
+    { text: t('t1'), type: "normal" },
+    { text: t('t2'), type: "success", suffix: t('success') },
+    { text: t('t3'), type: "error" },
+    { text: t('t4'), type: "normal" },
+    { text: t('t5'), type: "warning", suffix: t('timeout') },
   ];
 
   return (
@@ -100,15 +102,13 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
         animate="show"
       >
         
-
-        
         {/* Metadata */}
         <motion.div variants={itemVariants} className="flex items-center mb-8 gap-4 flex-wrap">
            <span className="bg-red-500/10 text-[var(--accent-red)] border border-red-500/20 px-3 py-1 rounded text-xs font-mono font-bold tracking-widest uppercase">
-             {article.category} (ID: {article.slug.substring(0,8)})
+             {article.category || "GENERAL"} (ID: {article.slug ? article.slug.substring(0,8) : article.id.substring(0,8)})
            </span>
            <span className="font-mono text-xs text-[var(--text-muted)] tracking-wider">
-             DECRYPTED: {new Date(article.createdAt).toLocaleDateString()}
+             {t('decrypted')}: {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : new Date().toLocaleDateString()}
            </span>
         </motion.div>
 
@@ -132,7 +132,7 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
            />
            <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-transparent to-transparent" />
            <div className="absolute bottom-4 right-6 font-mono text-xs text-[var(--cyan-bright)] tracking-widest opacity-80">
-             SATELLITE IMAGERY: SECURED
+             {t('satelliteImagery')}
            </div>
         </motion.div>
 
@@ -142,9 +142,10 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
              {article.summary}
            </p>
            
-           <div className="mb-10 whitespace-pre-wrap">
-             {article.content}
-           </div>
+           <div 
+             className="mb-10 whitespace-pre-wrap text-[var(--text-secondary)] font-normal" 
+             dangerouslySetInnerHTML={{ __html: article.content }} 
+           />
 
            {/* Cyber Terminal Mockup with Typing Animation */}
            <motion.div 
@@ -159,7 +160,7 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
                <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
                <div className="w-3 h-3 rounded-full bg-amber-500/80"></div>
                <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
-               <span className="ml-auto text-xs text-[var(--text-muted)]">terminal.exe</span>
+               <span className="ml-auto text-xs text-[var(--text-muted)]">{t('terminalTitle')}</span>
              </div>
              
              {/* Terminal Output */}
@@ -188,7 +189,7 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
                  transition={{ duration: 0.3, delay: 0.4 + (terminalLines.length * 0.4) }}
                  className="mt-4 text-[var(--text-muted)] flex items-center gap-2"
                >
-                 Awaiting further telemetry
+                 {t('awaitingTelemetry')}
                  <motion.span 
                    className="inline-block w-2 h-4 bg-[var(--cyan-bright)]"
                    animate={{ opacity: [1, 0, 1] }}
@@ -198,22 +199,22 @@ export default function NewsDetail({ params }: { params: Promise<{ id: string, l
              </div>
            </motion.div>
 
-           <h3 className="text-2xl font-bold text-[var(--text-primary)] mt-12 mb-6 tracking-tight">The Escalation of Cyber-Kinetic Warfare</h3>
+           <h3 className="text-2xl font-bold text-[var(--text-primary)] mt-12 mb-6 tracking-tight">{t('escalationTitle')}</h3>
            
            <p className="mb-6">
-             Unlike previous attacks which focused primarily on data exfiltration and corporate espionage, this latest vector demonstrates a clear intent to cause physical, kinetic damage. By manipulating the frequency controls of the targeted substations, the attackers attempted to induce hardware failures that could have resulted in localized blackouts lasting weeks.
+             {t('escalationP1')}
            </p>
            
            <p className="mb-10">
-             Global intelligence agencies are currently working in tandem with the private sector to patch the vulnerabilities and trace the origin of the attack. Until a comprehensive patch is deployed, grid operators remain on high alert. We will continue to monitor the situation as it develops and provide updates on the live ticker.
+             {t('escalationP2')}
            </p>
 
            <div className="pt-8 mt-12 border-t border-[var(--border-subtle)] flex items-center justify-between">
              <div className="font-mono text-xs text-[var(--text-muted)]">
-               REPORT ID: {resolvedParams.id.toUpperCase()}-X99-2026
+               {t('reportId')}: {(article.slug || article.id).substring(0,8).toUpperCase()}-X99-2026
              </div>
              <button className="px-6 py-2 bg-transparent border border-[var(--border-glow)] text-[var(--cyan-bright)] rounded text-sm font-bold tracking-widest hover:bg-[var(--cyan-dim)] transition-colors">
-               SHARE INTEL
+               {t('shareIntel')}
              </button>
            </div>
         </motion.div>

@@ -15,6 +15,7 @@ export default async function ArticlePage({
   params: Promise<{ slug: string; locale: string }>;
 }) {
   const { slug, locale } = await params;
+  const t = await getTranslations('News');
 
   const result = await db.execute({
     sql: "SELECT * FROM Article WHERE slug = ?",
@@ -23,7 +24,7 @@ export default async function ArticlePage({
 
   const article = result.rows[0] as any;
 
-  if (!article || article.locale !== locale) {
+  if (!article) {
     notFound();
   }
 
@@ -35,7 +36,7 @@ export default async function ArticlePage({
           className="inline-flex items-center gap-2 text-muted hover:text-accent transition-colors mb-12 text-sm font-medium tracking-wider uppercase"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Intelligence
+          {t('returnToBase')}
         </Link>
 
         <header className="mb-16">

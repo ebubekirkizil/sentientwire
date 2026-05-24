@@ -22,15 +22,18 @@ DÖNÜŞ FORMATI (Tamamen JSON olmalı, markdown kullanma):
 export async function rewriteArticle(rawText: string, locale: string = 'en') {
   try {
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: `${SYSTEM_PROMPT}\n\nHEDEF DİL: ${locale}\n\nHAM METİN:\n${rawText}`,
+        model: 'gemini-2.0-flash',
+        contents: [
+          { role: 'user', parts: [{ text: `${SYSTEM_PROMPT}\n\nHEDEF DİL: ${locale}\n\nHAM METİN:\n${rawText}` }] }
+        ],
         config: {
           responseMimeType: "application/json",
         }
     });
     
-    if (!response.text) return null;
-    return JSON.parse(response.text);
+    const text = response.text || (response as any).response?.text?.();
+    if (!text) return null;
+    return JSON.parse(text);
   } catch (error) {
     console.error("AI Error:", error);
     return null;

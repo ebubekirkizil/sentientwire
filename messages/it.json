@@ -4,7 +4,16 @@
     "title1": "Il Futuro della Tecnologia",
     "title2": "Viene scritto mentre dormi.",
     "subtitle": "Oltre i media mainstream. Scopri gli strumenti di IA e le innovazioni digitali.",
-    "cta": "Esplora gli Approfondimenti"
+    "cta": "Esplora gli Approfondimenti",
+    "ctaLatest": "Ultime analisi",
+    "ctaExplore": "Esplora i rapporti",
+    "secFeatured": "In evidenza",
+    "secLatest": "Ultimi aggiornamenti",
+    "viewArchive": "Visualizza archivio",
+    "readMore": "Leggi tutto",
+    "statReports": "Rapporti",
+    "statNations": "Paesi tracciati",
+    "statSubscribers": "Iscritti"
   },
   "Header": {
     "breaking": "ULTIM'ORA",
@@ -22,5 +31,45 @@
       "hardware": "HARDWARE"
     },
     "login": "Accedi"
+  },
+  "Footer": {
+    "description": "Svelare le tecnologie, i contratti di difesa e le strategie aziendali che plasmano il futuro.",
+    "categories": "Categorie",
+    "cybersecurity": "Cybersecurity",
+    "ai": "IA",
+    "quantum": "Quantistica",
+    "hardware": "Hardware",
+    "defense": "Difesa",
+    "corporate": "Società",
+    "about": "Chi siamo",
+    "careers": "Carriere",
+    "contact": "Contatti",
+    "legal": "Legale",
+    "privacy": "Informativa sulla privacy",
+    "terms": "Termini di servizio",
+    "cookies": "Politica sui cookie",
+    "allRightsReserved": "Tutti i diritti riservati.",
+    "systemActive": "SISTEMA ATTIVO"
+  },
+  "News": {
+    "decrypting": "DECRIPTAZIONE BANCA DATI...",
+    "notFound": "404 - INFORMAZIONE NON TROVATA",
+    "returnToBase": "TORNA ALLA BASE",
+    "decrypted": "DECRIPTATO",
+    "satelliteImagery": "IMMAGINI SATELLITARI: SICURE",
+    "terminalTitle": "terminal.exe",
+    "awaitingTelemetry": "In attesa di ulteriore telemetria",
+    "shareIntel": "CONDIVIDI INFORMAZIONE",
+    "reportId": "ID RAPPORTO",
+    "t1": "> INIZIALIZZAZIONE ANALISI DELLE MINACCE...",
+    "t2": "> DECRIPTAZIONE FIRMA DEL CARICO [0x9F42C]...",
+    "t3": "[CRITICO] ZERO-DAY RILEVATO NEL PROTOCOLLO SCADA",
+    "t4": "> MAPPATURA ORIGINE DELLA MINACCIA: UNKNOWN_NODE_492",
+    "t5": "> CONFIGURAZIONE CONNESSIONE SICURA...",
+    "success": "[SUCCESSO]",
+    "timeout": "[TEMPO SCADUTO]",
+    "escalationTitle": "L'escalation della guerra ciber-cinetica",
+    "escalationP1": "A differenza degli attacchi precedenti focalizzati principalmente sull'esfiltrazione di dati e sullo spionaggio industriale, questo ultimo vettore mostra un chiaro intento di causare danni fisici e cinetici. Manipolando i controlli di frequenza delle sottostazioni prese di mira, gli aggressori hanno cercato di indurre guasti hardware che avrebbero potuto causare blackout locali di settimane.",
+    "escalationP2": "Le agenzie di intelligence globali stanno lavorando insieme al settore privato per correggere le vulnerabilità e tracciare l'origine dell'attacco. Fino all'implementazione di una patch completa, gli operatori di rete rimangono in allerta. Monitoreremo la situazione per fornire aggiornamenti."
   }
 }

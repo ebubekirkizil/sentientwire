@@ -4,7 +4,16 @@
     "title1": "Die Zukunft der Technologie",
     "title2": "Wird geschrieben, während Sie schlafen.",
     "subtitle": "Jenseits der Mainstream-Medien. Entdecken Sie KI-Tools, Durchbrüche von Unternehmen und digitale Innovationen.",
-    "cta": "Einblicke erkunden"
+    "cta": "Einblicke erkunden",
+    "ctaLatest": "Neueste Analysen",
+    "ctaExplore": "Berichte erkunden",
+    "secFeatured": "Hervorgehoben",
+    "secLatest": "Neueste Erkenntnisse",
+    "viewArchive": "Archiv anzeigen",
+    "readMore": "Weiterlesen",
+    "statReports": "Berichte",
+    "statNations": "Länder",
+    "statSubscribers": "Abonnenten"
   },
   "Header": {
     "breaking": "EILMELDUNG",
@@ -13,7 +22,7 @@
       "UNERWARTETER DURCHBRUCH BEI QUANTENCHIPS",
       "GEMEINSAME ERKLÄRUNG VON TECH-GIGANTEN",
       "AUTONOME FAHRZEUGE DER NÄCHSTEN GENERATION",
-      "SENTIENT WIRE EXKLUSIV: ARCHITECTEN DER ZUKUNFT"
+      "SENTIENT WIRE EXKLUSIV: ARCHITEKTEN DER ZUKUNFT"
     ],
     "nav": {
       "home": "STARTSEITE",
@@ -22,5 +31,45 @@
       "hardware": "HARDWARE"
     },
     "login": "Konto-Login"
+  },
+  "Footer": {
+    "description": "Entdecken Sie die Technologien, Verteidigungsaufträge und Unternehmensstrategien, die die Zukunft prägen.",
+    "categories": "Kategorien",
+    "cybersecurity": "Cybersicherheit",
+    "ai": "KI",
+    "quantum": "Quanten",
+    "hardware": "Hardware",
+    "defense": "Verteidigung",
+    "corporate": "Unternehmen",
+    "about": "Über uns",
+    "careers": "Karriere",
+    "contact": "Kontakt",
+    "legal": "Rechtliches",
+    "privacy": "Datenschutzerklärung",
+    "terms": "Nutzungsbedingungen",
+    "cookies": "Cookie-Richtlinie",
+    "allRightsReserved": "Alle Rechte vorbehalten.",
+    "systemActive": "SYSTEM AKTIV"
+  },
+  "News": {
+    "decrypting": "DATENBANK WIRD ENTSCHLÜSSELT...",
+    "notFound": "404 - GEHEIMDIENST-INFORMATION NICHT GEFUNDEN",
+    "returnToBase": "ZURÜCK ZUR BASIS",
+    "decrypted": "ENTSCHLÜSSELT",
+    "satelliteImagery": "SATELLITENBILDER: GESICHERT",
+    "terminalTitle": "terminal.exe",
+    "awaitingTelemetry": "Warten auf weitere Telemetrie",
+    "shareIntel": "INTEL TEILEN",
+    "reportId": "BERICHTS-ID",
+    "t1": "> BEDROHUNGSANALYSE WIRD INITIALISIERT...",
+    "t2": "> NUTZLASTSIGNATUR [0x9F42C] WIRD ENTSCHLÜSSELT...",
+    "t3": "[KRITISCH] ZERO-DAY IM SCADA-PROTOKOLL ERKANNT",
+    "t4": "> BEDROHUNGSURSPRUNG WIRD KARTIERT: UNKNOWN_NODE_492",
+    "t5": "> SICHERE VERBINDUNG WIRD HERGESTELLT...",
+    "success": "[ERFOLGREICH]",
+    "timeout": "[ZEITÜBERSCHREITUNG]",
+    "escalationTitle": "Die Eskalation der cyber-kinetischen Kriegsführung",
+    "escalationP1": "Im Gegensatz zu früheren Angriffen, die sich hauptsächlich auf Datenexfiltration und Unternehmensspionage konzentrierten, zeigt dieser jüngste Vektor die klare Absicht, physischen, kinetischen Schaden anzurichten. Durch die Manipulation der Frequenzregler der betroffenen Umspannwerke versuchten die Angreifer, Hardwareausfälle auszulösen, die zu wochenlangen lokalen Stromausfällen hätten führen können.",
+    "escalationP2": "Globale Geheimdienste arbeiten derzeit mit dem Privatsektor zusammen, um die Schwachstellen zu beheben und den Ursprung des Angriffs zurückzuverfolgen. Bis ein umfassender Patch bereitgestellt wird, bleiben die Netzbetreiber in höchster Alarmbereitschaft. Wir werden die Situation weiter beobachten und über den Live-Ticker Updates bereitstellen."
   }
 }

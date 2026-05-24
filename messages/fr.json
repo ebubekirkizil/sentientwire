@@ -4,7 +4,16 @@
     "title1": "L'Avenir de la Technologie",
     "title2": "S'écrit pendant que vous dormez.",
     "subtitle": "Au-delà des médias traditionnels. Découvrez les outils d'IA et les innovations qui façonnent demain.",
-    "cta": "Explorer les Insights"
+    "cta": "Explorer les Insights",
+    "ctaLatest": "Dernières analyses",
+    "ctaExplore": "Explorer les rapports",
+    "secFeatured": "À la une",
+    "secLatest": "Dernières analyses",
+    "viewArchive": "Voir les archives",
+    "readMore": "Lire la suite",
+    "statReports": "Rapports",
+    "statNations": "Pays suivis",
+    "statSubscribers": "Abonnés"
   },
   "Header": {
     "breaking": "DERNIÈRE HEURE",
@@ -22,5 +31,45 @@
       "hardware": "MATÉRIEL"
     },
     "login": "Connexion"
+  },
+  "Footer": {
+    "description": "Révéler les technologies, les contrats de défense et les stratégies d'entreprise qui façonnent l'avenir.",
+    "categories": "Catégories",
+    "cybersecurity": "Cybersécurité",
+    "ai": "IA",
+    "quantum": "Quantique",
+    "hardware": "Matériel",
+    "defense": "Défense",
+    "corporate": "Entreprise",
+    "about": "À propos",
+    "careers": "Carrières",
+    "contact": "Contact",
+    "legal": "Mentions légales",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Politique de cookies",
+    "allRightsReserved": "Tous droits réservés.",
+    "systemActive": "SYSTÈME ACTIF"
+  },
+  "News": {
+    "decrypting": "DECRYPTAGE DE LA BANQUE DE DONNÉES...",
+    "notFound": "404 - INFOS NON TROUVÉES",
+    "returnToBase": "RETOUR À LA BASE",
+    "decrypted": "DÉCRYPTÉ",
+    "satelliteImagery": "IMAGERIE SATELLITE : SÉCURISÉE",
+    "terminalTitle": "terminal.exe",
+    "awaitingTelemetry": "En attente de télémétrie",
+    "shareIntel": "PARTAGER LES INFOS",
+    "reportId": "ID DU RAPPORT",
+    "t1": "> INITIALISATION DE L'ANALYSE DES MENACES...",
+    "t2": "> DÉCRYPTAGE DE LA SIGNATURE DE CHARGE UTILE [0x9F42C]...",
+    "t3": "[CRITIQUE] ZERO-DAY DÉTECTÉ DANS LE PROTOCOLE SCADA",
+    "t4": "> LOCALISATION DE L'ORIGINE DE LA MENACE : UNKNOWN_NODE_492",
+    "t5": "> ÉTABLISSEMENT D'UNE CONNEXION SÉCURISÉE...",
+    "success": "[SUCÈS]",
+    "timeout": "[EXPIRATION]",
+    "escalationTitle": "L'escalade de la guerre cyber-cinétique",
+    "escalationP1": "Contrairement aux attaques précédentes axées sur l'exfiltration de données et l'espionnage d'entreprise, ce dernier vecteur démontre une intention claire de causer des dommages physiques et cinétiques. En manipulant les commandes de fréquence des sous-stations ciblées, les attaquants ont tenté de provoquer des pannes matérielles qui auraient pu entraîner des pannes d'électricité locales de plusieurs semaines.",
+    "escalationP2": "Les agences de renseignement mondiales travaillent en tandem avec le secteur privé pour corriger les vulnérabilités et retracer l'origine de l'attaque. En attendant le déploiement d'un correctif complet, les gestionnaires de réseau restent en alerte maximale. Nous continuerons à suivre la situation."
   }
 }
