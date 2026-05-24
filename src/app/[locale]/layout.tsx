@@ -40,11 +40,23 @@ export default async function RootLayout({
         />
         <link rel="preload" href="//unpkg.com/three-globe/example/img/earth-dark.jpg" as="image" />
         <link rel="preload" href="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg" as="image" />
+        
+        {/* Google tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PSG6Q7S8L"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-1PSG6Q7S8L');
+            `,
+          }}
+        />
       </head>
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <NextIntlClientProvider messages={messages}>
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-1PSG6Q7S8L"} />
             <SiteHeader />
             <main className="flex-1 w-full">
               {children}
