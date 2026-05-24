@@ -7,10 +7,12 @@ import {routing} from '@/i18n/routing';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { Footer } from '@/components/Footer';
-import { GoogleAnalytics } from '@next/third-parties/google';
+import Script from 'next/script';
+
+const GA_ID = "G-1PSG6Q7S8L";
 
 export const metadata: Metadata = {
-  title: "IntelOps — Global Intelligence Feed",
+  title: "SentientWire — Global Intelligence Feed",
   description: "Uncovering the technologies, defense contracts, and corporate strategies that shape the future before they reach the mainstream.",
 };
 
@@ -40,21 +42,21 @@ export default async function RootLayout({
         />
         <link rel="preload" href="//unpkg.com/three-globe/example/img/earth-dark.jpg" as="image" />
         <link rel="preload" href="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg" as="image" />
-        
-        {/* Google tag (gtag.js) */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-1PSG6Q7S8L"></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-1PSG6Q7S8L');
-            `,
-          }}
-        />
       </head>
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        {/* Google Analytics */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <NextIntlClientProvider messages={messages}>
             <SiteHeader />
