@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@libsql/client";
 import crypto from "crypto";
+
+const db = createClient({
+  url: process.env.DATABASE_URL || "file:dev.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
 
 export async function POST(req: Request) {
   try {
@@ -18,13 +23,10 @@ export async function POST(req: Request) {
     const dateSalt = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
     const ipHash = crypto.createHash("sha256").update(`${ip}-${dateSalt}`).digest("hex");
 
-    await prisma.pageVisit.create({
-      data: {
-        url: url || "/",
-        referrer: referrer || null,
-        country,
-        ipHash,
-      },
+    await db.execute({
+      sql: `INSERT INTO PageVisit (id, url, referrer, country, ipHash, createdAt) 
+            VALUES (hex(randomblob(16)), ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      args: [url || "/", referrer || null, country, ipHash]
     });
 
     // If it's a news article, increment the views counter
@@ -33,9 +35,9 @@ export async function POST(req: Request) {
       if (slugMatch && slugMatch[1]) {
         const slug = slugMatch[1];
         // We do a fire-and-forget update to the article's view count
-        prisma.article.update({
-          where: { slug },
-          data: { views: { increment: 1 } }
+        db.execute({
+          sql: `UPDATE Article SET views = views + 1 WHERE slug = ?`,
+          args: [slug]
         }).catch(() => { /* ignore if article not found */ });
       }
     }

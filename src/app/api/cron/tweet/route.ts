@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@libsql/client";
 import { getBotSettings, generateTweet, postToX } from "@/lib/botService";
 
 // Prevent caching of this cron endpoint
 export const dynamic = "force-dynamic";
+
+const db = createClient({
+  url: process.env.DATABASE_URL || "file:dev.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
 
 export async function GET(request: Request) {
   try {
@@ -17,38 +22,37 @@ export async function GET(request: Request) {
     // }
 
     // 2. Find the oldest published article that hasn't been posted to X yet
-    const articleToPost = await prisma.article.findFirst({
-      where: {
-        isPublished: true,
-        xPosted: false,
-      },
-      orderBy: {
-        createdAt: 'asc' // Post older articles first
-      }
-    });
+    const rs = await db.execute(`
+      SELECT * FROM Article 
+      WHERE isPublished = 1 AND xPosted = 0 
+      ORDER BY createdAt ASC 
+      LIMIT 1
+    `);
 
-    if (!articleToPost) {
+    if (rs.rows.length === 0) {
       return NextResponse.json({ message: "No unposted articles found in the databank." });
     }
+
+    const articleToPost = rs.rows[0];
 
     console.log(`[CRON] Found article to post: ${articleToPost.title}`);
 
     // 3. Generate Tweet via AI
     const tweetText = await generateTweet(
-      articleToPost.title, 
-      articleToPost.summary, 
+      articleToPost.title as string, 
+      (articleToPost.summary || articleToPost.excerpt) as string, 
       settings.persona, 
       settings.openaiKey
     );
 
     // 4. Post to X
-    const success = await postToX(tweetText, articleToPost.slug, settings.xKey);
+    const success = await postToX(tweetText, articleToPost.slug as string, settings.xKey);
 
     if (success) {
       // 5. Update Database
-      await prisma.article.update({
-        where: { id: articleToPost.id },
-        data: { xPosted: true }
+      await db.execute({
+        sql: `UPDATE Article SET xPosted = 1 WHERE id = ?`,
+        args: [articleToPost.id]
       });
 
       return NextResponse.json({ 

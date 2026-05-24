@@ -1,4 +1,9 @@
-import { prisma } from "./prisma";
+import { createClient } from "@libsql/client";
+
+const db = createClient({
+  url: process.env.DATABASE_URL || "file:dev.db",
+  authToken: process.env.DATABASE_AUTH_TOKEN,
+});
 
 // Mock implementation of OpenAI and Twitter APIs for when keys are missing.
 // In a production app, you would use `openai` and `twitter-api-v2` npm packages.
@@ -53,7 +58,7 @@ export async function generateTweet(title: string, summary: string, persona: str
 }
 
 export async function postToX(tweetContent: string, articleSlug: string, apiKey: string) {
-  const finalTweet = `${tweetContent}\n\n🔗 http://localhost:3000/en/news/${articleSlug}`;
+  const finalTweet = `${tweetContent}\n\n🔗 https://sentientwire.com/en/news/${articleSlug}`;
 
   if (!apiKey) {
     // Simulation
@@ -90,16 +95,28 @@ export async function postToX(tweetContent: string, articleSlug: string, apiKey:
 }
 
 export async function getBotSettings() {
-  const settings = await prisma.siteSettings.findMany();
-  const config = settings.reduce((acc, curr) => {
-    acc[curr.key] = curr.value;
-    return acc;
-  }, {} as Record<string, string>);
+  try {
+    const rs = await db.execute("SELECT * FROM SiteSettings");
+    const config: Record<string, string> = {};
+    rs.rows.forEach((row) => {
+      if (row.key && typeof row.value === 'string') {
+        config[row.key as string] = row.value;
+      }
+    });
 
-  return {
-    openaiKey: config.openai_api_key || "",
-    xKey: config.x_api_key || "",
-    persona: config.bot_persona || "analytical",
-    frequencyHours: parseInt(config.bot_frequency_hours || "1", 10)
-  };
+    return {
+      openaiKey: config.openai_api_key || "",
+      xKey: config.x_api_key || "",
+      persona: config.bot_persona || "analytical",
+      frequencyHours: parseInt(config.bot_frequency_hours || "1", 10)
+    };
+  } catch (error) {
+    console.error("Failed to fetch bot settings:", error);
+    return {
+      openaiKey: "",
+      xKey: "",
+      persona: "analytical",
+      frequencyHours: 1
+    };
+  }
 }
