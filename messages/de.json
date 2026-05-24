@@ -1,9 +1,26 @@
 {
   "Index": {
-    "category": "Globale Technologie- & KI-Intelligenz",
+    "category": "Globale Technologie & KI Intelligenz",
     "title1": "Die Zukunft der Technologie",
-    "title2": "Wird Geschrieben, Während Sie Schlafen.",
-    "subtitle": "Jenseits der Mainstream-Medien. Entdecken Sie die KI-Tools der nächsten Generation, unternehmerische Durchbrüche und digitale Innovationen, die das Ökosystem von morgen prägen.",
-    "cta": "Einblicke Entdecken"
+    "title2": "Wird geschrieben, während Sie schlafen.",
+    "subtitle": "Jenseits der Mainstream-Medien. Entdecken Sie KI-Tools, Durchbrüche von Unternehmen und digitale Innovationen.",
+    "cta": "Einblicke erkunden"
+  },
+  "Header": {
+    "breaking": "EILMELDUNG",
+    "ticker": [
+      "NEUE ÄRA DER KI-REGULIERUNGEN BEGINNT",
+      "UNERWARTETER DURCHBRUCH BEI QUANTENCHIPS",
+      "GEMEINSAME ERKLÄRUNG VON TECH-GIGANTEN",
+      "AUTONOME FAHRZEUGE DER NÄCHSTEN GENERATION",
+      "SENTIENT WIRE EXKLUSIV: ARCHITECTEN DER ZUKUNFT"
+    ],
+    "nav": {
+      "home": "STARTSEITE",
+      "cybersecurity": "CYBERSICHERHEIT",
+      "ai": "KI",
+      "hardware": "HARDWARE"
+    },
+    "login": "Konto-Login"
   }
 }

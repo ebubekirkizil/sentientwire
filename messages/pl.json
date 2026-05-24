@@ -1,0 +1,26 @@
+{
+  "Index": {
+    "category": "Globalna Technologia i Sztuczna Inteligencja",
+    "title1": "Przyszłość Technologii",
+    "title2": "Pisze się, gdy śpisz.",
+    "subtitle": "Poza głównym nurtem. Odkryj narzędzia AI i cyfrowe innowacje kształtujące jutro.",
+    "cta": "Odkryj więcej"
+  },
+  "Header": {
+    "breaking": "Z OSTATNIEJ CHWILI",
+    "ticker": [
+      "POCZĄTEK NOWEJ ERY REGULACJI AI",
+      "NIESPODZIEWANY PRZEŁOM W CHIPACH KWANTOWYCH",
+      "WSPÓLNE OŚWIADCZENIE GIGANTÓW TECHNOLOGICZNYCH",
+      "TESTY AUTONOMICZNYCH POJAZDÓW W MIASTACH",
+      "TYLKO U NAS: ARCHITEKCI PRZYSZŁOŚCI"
+    ],
+    "nav": {
+      "home": "GŁÓWNA",
+      "cybersecurity": "CYBERBEZPIECZEŃSTWO",
+      "ai": "AI",
+      "hardware": "SPRZĘT"
+    },
+    "login": "Zaloguj"
+  }
+}

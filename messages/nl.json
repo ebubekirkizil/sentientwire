@@ -1,0 +1,26 @@
+{
+  "Index": {
+    "category": "Wereldwijde Technologie & AI",
+    "title1": "De Toekomst van Technologie",
+    "title2": "Wordt geschreven terwijl u slaapt.",
+    "subtitle": "Voorbij de reguliere media. Ontdek de AI-tools en innovaties van de toekomst.",
+    "cta": "Ontdek Inzichten"
+  },
+  "Header": {
+    "breaking": "LAATSTE NIEUWS",
+    "ticker": [
+      "NIEUW TIJDPERK IN AI-REGELGEVING BEGINT",
+      "ONVERWACHTE DOORBRAAK IN QUANTUM CHIPS",
+      "GEZAMENLIJKE VERKLARING VAN TECHREUZEN",
+      "AUTONOME VOERTUIGEN OP STRAAT GETEST",
+      "SENTIENT WIRE EXCLUSIEF: ARCHITECTEN VAN DE TOEKOMST"
+    ],
+    "nav": {
+      "home": "HOME",
+      "cybersecurity": "CYBERSECURITY",
+      "ai": "AI",
+      "hardware": "HARDWARE"
+    },
+    "login": "Inloggen"
+  }
+}

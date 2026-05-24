@@ -1,0 +1,26 @@
+{
+  "Index": {
+    "category": "Technologie Mondiale & Intelligence IA",
+    "title1": "L'Avenir de la Technologie",
+    "title2": "S'écrit pendant que vous dormez.",
+    "subtitle": "Au-delà des médias traditionnels. Découvrez les outils d'IA et les innovations qui façonnent demain.",
+    "cta": "Explorer les Insights"
+  },
+  "Header": {
+    "breaking": "DERNIÈRE HEURE",
+    "ticker": [
+      "NOUVELLE ÈRE DE RÉGLEMENTATION DE L'IA",
+      "PERCÉE INATTENDUE DANS LES PUCES QUANTIQUES",
+      "DÉCLARATION CONJOINTE DES GÉANTS DE LA TECH",
+      "VÉHICULES AUTONOMES EN TEST DANS LES RUES",
+      "EXCLUSIVITÉ SENTIENT WIRE : ARCHITECTES DU FUTUR"
+    ],
+    "nav": {
+      "home": "ACCUEIL",
+      "cybersecurity": "CYBERSÉCURITÉ",
+      "ai": "IA",
+      "hardware": "MATÉRIEL"
+    },
+    "login": "Connexion"
+  }
+}

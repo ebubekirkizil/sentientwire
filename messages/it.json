@@ -1,0 +1,26 @@
+{
+  "Index": {
+    "category": "Tecnologia Globale & Intelligenza IA",
+    "title1": "Il Futuro della Tecnologia",
+    "title2": "Viene scritto mentre dormi.",
+    "subtitle": "Oltre i media mainstream. Scopri gli strumenti di IA e le innovazioni digitali.",
+    "cta": "Esplora gli Approfondimenti"
+  },
+  "Header": {
+    "breaking": "ULTIM'ORA",
+    "ticker": [
+      "INIZIA UNA NUOVA ERA NELLE REGOLE SULL'IA",
+      "SVOLTA INASPETTATA NEI CHIP QUANTISTICI",
+      "DICHIARAZIONE CONGIUNTA DEI GIGANTI DELLA TECH",
+      "VEICOLI AUTONOMI TESTATI IN CITTÀ",
+      "ESCLUSIVA SENTIENT WIRE: ARCHITETTI DEL FUTURO"
+    ],
+    "nav": {
+      "home": "HOME",
+      "cybersecurity": "CYBERSECURITY",
+      "ai": "IA",
+      "hardware": "HARDWARE"
+    },
+    "login": "Accedi"
+  }
+}

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ThemeToggle } from "./ThemeToggle";
 import { LoginModal } from "./LoginModal";
 
@@ -15,6 +16,7 @@ const TICKER_ITEMS = [
 ];
 
 export function SiteHeader() {
+  const t = useTranslations("Header");
   const params = useParams();
   const locale = (params?.locale as string) || "en";
   const pathname = usePathname();
@@ -64,7 +66,7 @@ export function SiteHeader() {
           onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = "paused")}
           onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = "running")}
         >
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
+          {[0, 1, 2, 3, 4, 0, 1, 2, 3, 4].map((itemIdx, i) => (
             <Link
               key={i}
               href={`/${locale}/news/t1`}
@@ -81,8 +83,8 @@ export function SiteHeader() {
                 letterSpacing: "0.05em",
               }}
             >
-              <span style={{ color: "#ef4444", fontWeight: 800, animation: "pulse 1.5s infinite" }}>SON DAKİKA_</span>
-              {item.text}
+              <span style={{ color: "#ef4444", fontWeight: 800, animation: "pulse 1.5s infinite" }}>{t('breaking')}_</span>
+              {t(`ticker.${itemIdx}`)}
             </Link>
           ))}
         </div>
@@ -118,23 +120,7 @@ export function SiteHeader() {
         >
           {/* Logo */}
           <Link href={`/${locale}`} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <div
-              style={{
-                width: 36,
-                height: 36,
-                background: "linear-gradient(135deg, rgba(6,182,212,0.2), rgba(129,140,248,0.2))",
-                border: "1.5px solid rgba(6,182,212,0.6)",
-                borderRadius: 8,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                boxShadow: "0 0 12px rgba(6,182,212,0.3)",
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" strokeWidth="2">
-                <path d="M2 12h4l3-9 5 18 3-9h5" />
-              </svg>
-            </div>
+            <img src="/icon.png" alt="SentientWire Logo" width={36} height={36} style={{ borderRadius: 8, border: "1.5px solid rgba(6,182,212,0.6)", boxShadow: "0 0 12px rgba(6,182,212,0.3)" }} />
             <div>
               <span translate="no" className="notranslate" style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 18, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
                 SENTIENT<span style={{ color: "#06b6d4" }}>WIRE</span>
@@ -145,10 +131,10 @@ export function SiteHeader() {
           {/* Nav links */}
           <div className="hidden md:flex items-center gap-7">
             {[
-              { label: "ANA SAYFA", href: `/${locale}` },
-              { label: "SİBER GÜVENLİK", href: `/${locale}/category/cybersecurity` },
-              { label: "YAPAY ZEKA", href: `/${locale}/category/ai` },
-              { label: "DONANIM", href: `/${locale}/category/hardware` }
+              { label: t('nav.home'), href: `/${locale}` },
+              { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
+              { label: t('nav.ai'), href: `/${locale}/category/ai` },
+              { label: t('nav.hardware'), href: `/${locale}/category/hardware` }
             ].map((link, i) => (
               <Link
                 key={link.label}
@@ -196,7 +182,7 @@ export function SiteHeader() {
                 <circle cx="12" cy="7" r="4" />
               </svg>
               <span className="hidden sm:inline" style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 13, fontWeight: 500 }}>
-                Hesap Girişi
+                {t('login')}
               </span>
             </button>
           </div>
