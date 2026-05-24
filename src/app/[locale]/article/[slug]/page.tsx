@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
+import { getLocalizedArticle } from "@/app/actions/article";
 
 export default async function ArticlePage({
   params,
@@ -17,12 +13,7 @@ export default async function ArticlePage({
   const { slug, locale } = await params;
   const t = await getTranslations('News');
 
-  const result = await db.execute({
-    sql: "SELECT * FROM Article WHERE slug = ?",
-    args: [slug]
-  });
-
-  const article = result.rows[0] as any;
+  const article = await getLocalizedArticle(slug, locale);
 
   if (!article) {
     notFound();
@@ -50,18 +41,20 @@ export default async function ArticlePage({
             {article.summary}
           </p>
           <div className="mt-8 text-sm text-muted/60 border-t border-muted/20 pt-4 flex items-center gap-4">
-            <span>{new Date(article.createdAt).toLocaleDateString(locale)}</span>
+            <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString(locale) : ''}</span>
             <span>•</span>
             <a href={article.originalUrl || "#"} target="_blank" rel="noreferrer" className="hover:text-accent transition-colors">
               Source Intel
             </a>
+            {article.locale !== locale.substring(0, 2) && (
+              <span className="ml-auto bg-cyan-500/10 text-cyan-500 px-2 py-0.5 rounded text-[10px] font-mono animate-pulse">
+                AI LIVE TRANSLATED
+              </span>
+            )}
           </div>
         </header>
 
-        {/* Article Body. 
-            We use a typography class to style the HTML injected by the AI 
-            (since AI returns rich HTML structure as requested in our prompt)
-        */}
+        {/* Article Body */}
         <div
           className="prose prose-lg dark:prose-invert prose-headings:font-serif prose-p:font-light max-w-none"
           dangerouslySetInnerHTML={{ __html: article.content }}

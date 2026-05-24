@@ -18,13 +18,12 @@ function toPlainArticle(row: any) {
     category: row.category ? String(row.category) : 'GENERAL',
     categoryColor: row.categoryColor ? String(row.categoryColor) : '#06b6d4',
     imageUrl: row.imageUrl ? String(row.imageUrl) : null,
+    originalUrl: row.originalUrl ? String(row.originalUrl) : null,
     locale: row.locale ? String(row.locale) : 'en',
     createdAt: row.createdAt ? String(row.createdAt) : null,
     updatedAt: row.updatedAt ? String(row.updatedAt) : null,
   };
 }
-
-
 
 // Initialize libSQL directly for robustness
 const db = createClient({
@@ -82,31 +81,18 @@ export async function getArticleBySlug(slug: string) {
 
 export async function getArticlesByLocale(locale: string) {
   try {
+    // Fetch all articles regardless of locale
     const result = await db.execute({
-      sql: `SELECT * FROM Article WHERE locale = ? ORDER BY createdAt DESC`,
-      args: [locale]
+      sql: `SELECT * FROM Article ORDER BY createdAt DESC`,
+      args: []
     });
     
     const articles = [...result.rows] as any[];
     
-    // Fallback logic to ensure the page is never empty!
-    // If the selected locale has less than 6 articles, we backfill with default articles from 'tr' or 'en'
-    if (articles.length < 6) {
-      const fallbackLocale = locale.startsWith('en') ? 'tr' : 'en';
-      const fallbackResult = await db.execute({
-        sql: `SELECT * FROM Article WHERE locale = ? ORDER BY createdAt DESC LIMIT ?`,
-        args: [fallbackLocale, 10 - articles.length]
-      });
-      
-      const existingIds = new Set(articles.map(r => r.id));
-      for (const row of fallbackResult.rows) {
-        if (!existingIds.has(row.id)) {
-          articles.push(row);
-        }
-      }
-    }
+    // Fallback if no articles found at all
+    if (articles.length === 0) return [];
 
-    // Translate any articles whose locale doesn't match the target language
+    // Translate articles whose locale doesn't match the target language
     const targetLang = locale.substring(0, 2).toLowerCase();
     const translatedArticles = await Promise.all(
       articles.map(async (art) => {
@@ -198,4 +184,3 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
 
   return toPlainArticle(finalArt);
 }
-
