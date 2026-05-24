@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
 
 // Requires GEMINI_API_KEY in .env
-const ai = new GoogleGenAI({});
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "dummy_key_for_build" });
 
 const SYSTEM_PROMPT = `
 Sen David Ogilvy ve Joe Sugarman ekolünden gelen, "Curiosity Gap" ve "Slippery Slide" tekniklerini kullanan elit bir teknoloji editörüsün.
