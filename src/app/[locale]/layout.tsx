@@ -44,7 +44,7 @@ export default async function RootLayout({
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <NextIntlClientProvider messages={messages}>
-            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-1PS66Q758L"} />
+            <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-1PSG6Q7S8L"} />
             <SiteHeader />
             <main className="flex-1 w-full">
               {children}
