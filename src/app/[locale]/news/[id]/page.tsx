@@ -8,10 +8,7 @@ interface PageProps {
   params: Promise<{ id: string; locale: string }>;
 }
 
-const getBaseUrl = () => {
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return 'http://localhost:3000';
-};
+const PRODUCTION_DOMAIN = 'https://sentientwire.com';
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
@@ -23,8 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const baseUrl = getBaseUrl();
-  const articleUrl = `${baseUrl}/${resolvedParams.locale}/news/${article.slug || article.id}`;
+  const articleUrl = `${PRODUCTION_DOMAIN}/${resolvedParams.locale}/news/${article.slug || article.id}`;
 
   return {
     title: `${article.title} — SentientWire`,
@@ -56,8 +52,6 @@ export default async function NewsDetailPage({ params }: PageProps) {
   if (!article) {
     notFound();
   }
-
-  const baseUrl = getBaseUrl();
   
   // JSON-LD NewsArticle structured data for Google News, Highlights, and Discover compatibility
   const jsonLd = {
@@ -65,14 +59,14 @@ export default async function NewsDetailPage({ params }: PageProps) {
     "@type": "NewsArticle",
     "headline": article.title,
     "description": article.summary || "",
-    "image": article.imageUrl ? [article.imageUrl] : ["https://images.unsplash.com/photo-1510915361894-faa8b2d88c4b?auto=format&fit=crop&q=80&w=1200&h=900"],
+    "image": article.imageUrl ? [article.imageUrl] : [`${PRODUCTION_DOMAIN}/fallback-news.jpg`],
     "datePublished": article.createdAt ? new Date(article.createdAt).toISOString() : new Date().toISOString(),
     "dateModified": article.updatedAt ? new Date(article.updatedAt).toISOString() : (article.createdAt ? new Date(article.createdAt).toISOString() : new Date().toISOString()),
     "author": [
       {
         "@type": "Organization",
         "name": "Sentient Wire",
-        "url": baseUrl
+        "url": PRODUCTION_DOMAIN
       }
     ],
     "publisher": {
@@ -80,10 +74,10 @@ export default async function NewsDetailPage({ params }: PageProps) {
       "name": "Sentient Wire",
       "logo": {
         "@type": "ImageObject",
-        "url": `${baseUrl}/logo.png`
+        "url": `${PRODUCTION_DOMAIN}/logo.png`
       }
     },
-    "mainEntityOfPage": `${baseUrl}/${resolvedParams.locale}/news/${article.slug || article.id}`
+    "mainEntityOfPage": `${PRODUCTION_DOMAIN}/${resolvedParams.locale}/news/${article.slug || article.id}`
   };
 
   return (

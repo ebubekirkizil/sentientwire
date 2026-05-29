@@ -14,7 +14,11 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
       .then(res => res.json())
       .then(data => {
         if(Array.isArray(data)) {
-          const filtered = data.filter(a => a.category.toLowerCase() === title.toLowerCase());
+          const filtered = data.filter(a => {
+            const cat = a.category.toLowerCase();
+            const s = resolvedParams.slug.toLowerCase();
+            return cat === s || cat.includes(s) || s.includes(cat);
+          });
           setDbArticles(filtered);
         }
         setLoading(false);
@@ -23,7 +27,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         console.error(e);
         setLoading(false);
       });
-  }, [title]);
+  }, [resolvedParams.slug]);
 
   // Mock articles for the category (fallback)
   const articles = [

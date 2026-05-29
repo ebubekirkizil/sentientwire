@@ -31,7 +31,10 @@ const languages = {
         home: "HOME",
         cybersecurity: "CYBERSECURITY",
         ai: "AI",
-        hardware: "HARDWARE"
+        hardware: "HARDWARE",
+        defense: "DEFENSE",
+        quantum: "QUANTUM",
+        space: "SPACE"
       },
       login: "Account Login"
     },
@@ -132,7 +135,10 @@ const languages = {
         home: "ANA SAYFA",
         cybersecurity: "SİBER GÜVENLİK",
         ai: "YAPAY ZEKA",
-        hardware: "DONANIM"
+        hardware: "DONANIM",
+        defense: "SAVUNMA",
+        quantum: "KUANTUM",
+        space: "UZAY"
       },
       login: "Hesap Girişi"
     },
@@ -509,7 +515,16 @@ const languages = {
         "AUTONOME VOERTUIGEN OP STRAAT GETEST",
         "SENTIENT WIRE EXCLUSIEF: ARCHITECTEN VAN DE TOEKOMST"
       ],
-      nav: { home: "HOME", cybersecurity: "CYBERSECURITY", ai: "AI", hardware: "HARDWARE" },
+      nav: {
+        home: "HOME",
+        cybersecurity: "CYBERSECURITY",
+        ai: "AI",
+        hardware: "HARDWARE",
+        defense: "DEFENSE",
+        quantum: "QUANTUM",
+        space: "SPACE"
+      },
+
       login: "Inloggen"
     },
     Footer: {

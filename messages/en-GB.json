@@ -8,10 +8,10 @@
     "ctaLatest": "Latest Analysis",
     "ctaExplore": "Explore Reports",
     "secFeatured": "Featured",
-    "secLatest": "Latest Developments",
+    "secLatest": "Latest Intelligence",
     "viewArchive": "View Archive",
     "readMore": "Read More",
-    "statReports": "Special Reports",
+    "statReports": "Intel Reports",
     "statNations": "Nations Tracked",
     "statSubscribers": "Subscribers"
   },
@@ -28,7 +28,10 @@
       "home": "HOME",
       "cybersecurity": "CYBERSECURITY",
       "ai": "AI",
-      "hardware": "HARDWARE"
+      "hardware": "HARDWARE",
+      "defense": "DEFENSE",
+      "quantum": "QUANTUM",
+      "space": "SPACE"
     },
     "login": "Account Login"
   },
@@ -53,13 +56,13 @@
   },
   "News": {
     "decrypting": "DECRYPTING DATABANK...",
-    "notFound": "404 - ARTICLE NOT FOUND",
+    "notFound": "404 - INTEL NOT FOUND",
     "returnToBase": "RETURN TO BASE",
     "decrypted": "DECRYPTED",
     "satelliteImagery": "SATELLITE IMAGERY: SECURED",
     "terminalTitle": "terminal.exe",
     "awaitingTelemetry": "Awaiting further telemetry",
-    "shareIntel": "SHARE ARTICLE",
+    "shareIntel": "SHARE INTEL",
     "reportId": "REPORT ID",
     "t1": "> INITIALIZING THREAT ANALYSIS...",
     "t2": "> DECRYPTING PAYLOAD SIGNATURE [0x9F42C]...",

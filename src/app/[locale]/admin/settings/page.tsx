@@ -81,7 +81,7 @@ export default function SettingsDashboard() {
         <div className="bg-[var(--bg-primary)] border border-[var(--border-subtle)] p-6 rounded-lg">
           <h3 className="font-mono text-xs text-[var(--cyan-bright)] tracking-widest mb-6 border-b border-[var(--border-subtle)] pb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
-            AI X-BOT AUTOMATION SETTINGS (COMING SOON)
+            AI X-BOT AUTOMATION SETTINGS
           </h3>
           
           <div className="flex flex-col gap-4 max-w-xl">

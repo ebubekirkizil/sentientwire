@@ -3,11 +3,13 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { deleteArticle } from "@/app/actions/article";
+import { triggerTweetManual } from "@/app/actions/bot";
 import { useParams } from "next/navigation";
 
 export default function AdminDashboard() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tweetingId, setTweetingId] = useState<string | null>(null);
   const params = useParams();
   const locale = (params?.locale as string) || "en";
 
@@ -33,6 +35,19 @@ export default function AdminDashboard() {
     if (confirm("Are you sure you want to permanently delete this intelligence report?")) {
       await deleteArticle(id);
       fetchArticles();
+    }
+  };
+
+  const handleTweet = async (id: string) => {
+    setTweetingId(id);
+    const res = await triggerTweetManual(id);
+    setTweetingId(null);
+    
+    if (res.success) {
+      alert("SUCCESSFULLY POSTED TO X\n\nTweet: " + res.tweet);
+      fetchArticles();
+    } else {
+      alert("FAILED TO POST TO X: " + res.error);
     }
   };
 
@@ -97,6 +112,15 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {!article.xPosted && (
+                          <button 
+                            onClick={() => handleTweet(article.id)} 
+                            disabled={tweetingId === article.id}
+                            className="font-mono text-[10px] text-blue-400 hover:text-white transition-colors border border-blue-500/20 hover:bg-blue-500/20 px-2 py-1 rounded disabled:opacity-50"
+                          >
+                            {tweetingId === article.id ? "POSTING..." : "TWEET"}
+                          </button>
+                        )}
                         <Link href={`/${locale}/news/${article.slug}`} target="_blank" className="font-mono text-[10px] text-[var(--cyan-bright)] hover:text-white transition-colors border border-[var(--cyan-dim)] px-2 py-1 rounded">
                           VIEW
                         </Link>

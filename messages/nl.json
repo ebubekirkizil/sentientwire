@@ -28,7 +28,10 @@
       "home": "HOME",
       "cybersecurity": "CYBERSECURITY",
       "ai": "AI",
-      "hardware": "HARDWARE"
+      "hardware": "HARDWARE",
+      "defense": "DEFENSE",
+      "quantum": "QUANTUM",
+      "space": "SPACE"
     },
     "login": "Inloggen"
   },
@@ -53,13 +56,13 @@
   },
   "News": {
     "decrypting": "DATABASE DECRYPTEREN...",
-    "notFound": "404 - ARTIKEL NIET GEVONDEN",
+    "notFound": "404 - INTEL NIET GEVONDEN",
     "returnToBase": "TERUG NAAR BASIS",
     "decrypted": "GECRYPTEERD",
     "satelliteImagery": "SATELLIETBEELDEN: BEVEILIGD",
     "terminalTitle": "terminal.exe",
     "awaitingTelemetry": "Wachtend op verdere telemetrie",
-    "shareIntel": "DEEL ARTIKEL",
+    "shareIntel": "DEEL INTEL",
     "reportId": "RAPOR KODU",
     "t1": "> INITIALISEREN DREIGINGSANALYSE...",
     "t2": "> PAYLOAD-HANDTEKENING DECRYPTEREN [0x9F42C]...",

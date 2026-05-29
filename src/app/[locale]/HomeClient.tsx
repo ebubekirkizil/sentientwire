@@ -215,10 +215,12 @@ function Hero() {
       <div style={{
         position:"absolute", bottom:28, left:"50%", transform:"translateX(-50%)",
         opacity:0.25, display:"flex", flexDirection:"column", alignItems:"center", gap:4,
+        zIndex: 20
       }}>
-        <svg width="18" height="28" viewBox="0 0 18 28" fill="none">
-          <rect x="1" y="1" width="16" height="26" rx="8" stroke="#475569" strokeWidth="1.5"/>
-          <circle cx="9" cy="8" r="2" fill="#475569"/>
+        <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 9, color: "#22d3ee", marginBottom: 4, letterSpacing: "0.2em", textTransform: "uppercase" }}>Scroll for Intel</div>
+        <svg width="18" height="28" viewBox="0 0 18 28" fill="none" style={{ animation: "bounce 2s infinite" }}>
+          <rect x="1" y="1" width="16" height="26" rx="8" stroke="#06b6d4" strokeWidth="1.5"/>
+          <circle cx="9" cy="8" r="2" fill="#06b6d4"/>
         </svg>
       </div>
     </section>
@@ -610,6 +612,7 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
 }
 
 export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; locale: string }) {
+  console.log("[HomeClient] Articles received:", dbArticles.length);
   // 1. Featured Section: 1 main large card + 4 grid cards (needs exactly 5 articles)
   const featuredList = [...dbArticles.slice(0, 5)];
   const mainArticle = featuredList[0] || null;
@@ -641,15 +644,30 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
         @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
       `}</style>
       <Hero />
-      <FeaturedSection 
-        locale={locale} 
-        mainArticle={mainArticle} 
-        gridArticles={gridArticles} 
-      />
-      <LatestSection 
-        locale={locale} 
-        latestArticles={latestArticles} 
-      />
+      
+      {dbArticles.length === 0 ? (
+        <div style={{ maxWidth: 1280, margin: "0 auto", padding: "100px 24px", textAlign: "center" }}>
+          <div style={{ display: "inline-block", padding: "40px", border: "1px dashed var(--border-subtle)", borderRadius: 12 }}>
+            <div style={{ fontSize: 40, marginBottom: 20 }}>📡</div>
+            <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 24, color: "var(--text-primary)", marginBottom: 12 }}>DATABASE SCAN COMPLETE: 0 RESULTS</h2>
+            <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "var(--text-muted)", maxWidth: 400, margin: "0 auto" }}>
+              Our sensors are currently scanning for new intelligence. Please check back in a few moments or log into the admin terminal to verify status.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <FeaturedSection 
+            locale={locale} 
+            mainArticle={mainArticle} 
+            gridArticles={gridArticles} 
+          />
+          <LatestSection 
+            locale={locale} 
+            latestArticles={latestArticles} 
+          />
+        </>
+      )}
     </main>
   );
 }
