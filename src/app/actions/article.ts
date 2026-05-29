@@ -89,29 +89,34 @@ export async function getArticleBySlug(slug: string) {
 }
 
 export async function getArticlesByLocale(locale: string) {
+  // Fetch all articles regardless of locale - ALWAYS return articles, never empty on error
+  let articles: any[] = [];
+  
   try {
-    // Fetch all articles regardless of locale
     const result = await db.execute({
       sql: `SELECT * FROM Article ORDER BY createdAt DESC`,
       args: []
     });
-    
-    const articles = [...result.rows] as any[];
-    
-    // Fallback if no articles found at all
-    if (articles.length === 0) return [];
+    articles = [...result.rows] as any[];
+  } catch (error) {
+    console.error("Failed to fetch articles from DB:", error);
+    return []; // Only return empty if DB itself fails
+  }
+  
+  if (articles.length === 0) return [];
 
-    const targetLang = locale.substring(0, 2).toLowerCase();
+  const targetLang = locale.substring(0, 2).toLowerCase();
 
-    // 1. Identify which articles need translation
-    const articlesNeedingTranslation = articles.filter((art) => {
-      const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
-      return artLocale !== targetLang;
-    });
+  // 1. Identify which articles need translation
+  const articlesNeedingTranslation = articles.filter((art) => {
+    const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
+    return artLocale !== targetLang;
+  });
 
-    const translationsMap = new Map<string, { title: string; summary: string; content: string }>();
+  const translationsMap = new Map<string, { title: string; summary: string; content: string }>();
 
-    if (articlesNeedingTranslation.length > 0) {
+  if (articlesNeedingTranslation.length > 0) {
+    try {
       // 2. Fetch existing translations from DB in ONE batch query to avoid N+1 queries
       const ids = articlesNeedingTranslation.map(art => String(art.id));
       const placeholders = ids.map(() => "?").join(",");
@@ -137,61 +142,70 @@ export async function getArticlesByLocale(locale: string) {
 
         if (!translationsMap.has(artId) && !failedTranslations.has(cacheKey)) {
           console.log(`[TRANSLATE] Translating article ${artId} to ${targetLang} via Gemini...`);
-          const translated = await translateArticleText(
-            String(art.title || ''),
-            String(art.summary || ''),
-            String(art.content || ''),
-            targetLang
-          );
-          if (translated) {
-            // Save to DB so we never translate it again
-            try {
-              await db.execute({
-                sql: `INSERT INTO ArticleTranslation (articleId, locale, title, summary, content)
-                      VALUES (?, ?, ?, ?, ?)
-                      ON CONFLICT(articleId, locale) DO UPDATE SET
-                        title = excluded.title,
-                        summary = excluded.summary,
-                        content = excluded.content,
-                        updatedAt = datetime('now')`,
-                args: [artId, targetLang, translated.title, translated.summary, translated.content]
-              });
-              translationsMap.set(artId, translated);
-              console.log(`[TRANSLATE] Saved translation for ${artId} (${targetLang}) to database.`);
-            } catch (dbErr) {
-              console.error(`Failed to save translation for ${artId} (${targetLang}):`, dbErr);
+          try {
+            const translated = await translateArticleText(
+              String(art.title || ''),
+              String(art.summary || ''),
+              String(art.content || ''),
+              targetLang
+            );
+            if (translated) {
+              // Save to DB so we never translate it again
+              try {
+                await db.execute({
+                  sql: `INSERT INTO ArticleTranslation (articleId, locale, title, summary, content)
+                        VALUES (?, ?, ?, ?, ?)
+                        ON CONFLICT(articleId, locale) DO UPDATE SET
+                          title = excluded.title,
+                          summary = excluded.summary,
+                          content = excluded.content,
+                          updatedAt = datetime('now')`,
+                  args: [artId, targetLang, translated.title, translated.summary, translated.content]
+                });
+                translationsMap.set(artId, translated);
+                console.log(`[TRANSLATE] Saved translation for ${artId} (${targetLang}) to database.`);
+              } catch (dbErr) {
+                console.error(`Failed to save translation for ${artId} (${targetLang}):`, dbErr);
+                // Still use in-memory translation even if DB save fails
+                translationsMap.set(artId, translated);
+              }
+            } else {
+              console.warn(`[TRANSLATE] Translation failed for ${artId} to ${targetLang}. Will use original content.`);
+              failedTranslations.add(cacheKey);
             }
-          } else {
-            console.warn(`[TRANSLATE] Translation failed for ${artId} to ${targetLang}. Caching failure.`);
+          } catch (translateErr) {
+            console.warn(`[TRANSLATE] Gemini error for ${artId}, using original content:`, translateErr);
             failedTranslations.add(cacheKey);
+            // Continue - article will render in its original language
           }
         }
       }
+    } catch (transErr) {
+      console.warn("[TRANSLATE] Translation batch failed, serving articles in original language:", transErr);
+      // Continue - all articles will render in original language
     }
-
-    // 4. Map translations to original articles and format
-    const translatedArticles = articles.map((art) => {
-      const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
-      let finalArt = art;
-      if (artLocale !== targetLang) {
-        const trans = translationsMap.get(String(art.id));
-        if (trans) {
-          finalArt = {
-            ...art,
-            title: trans.title,
-            summary: trans.summary,
-            content: trans.content
-          };
-        }
-      }
-      return toPlainArticle(finalArt);
-    });
-
-    return translatedArticles;
-  } catch (error) {
-    console.error("Failed to fetch articles:", error);
-    return [];
   }
+
+  // 4. Map translations to original articles and format - ALWAYS return articles
+  const translatedArticles = articles.map((art) => {
+    const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
+    let finalArt = art;
+    if (artLocale !== targetLang) {
+      const trans = translationsMap.get(String(art.id));
+      if (trans) {
+        finalArt = {
+          ...art,
+          title: trans.title,
+          summary: trans.summary,
+          content: trans.content
+        };
+      }
+      // If no translation available, article renders in its original language
+    }
+    return toPlainArticle(finalArt);
+  });
+
+  return translatedArticles;
 }
 
 export async function deleteArticle(id: string) {

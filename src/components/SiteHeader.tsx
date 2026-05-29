@@ -171,13 +171,16 @@ export function SiteHeader() {
             </div>
           </Link>
 
-          {/* Nav links */}
-          <div className="hidden md:flex items-center gap-7">
+          {/* Nav links - visible on sm+ (tablets and desktops) */}
+          <div className="hidden sm:flex items-center gap-5">
             {[
               { label: t('nav.home'), href: `/${locale}` },
-              { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
               { label: t('nav.ai'), href: `/${locale}/category/ai` },
-              { label: t('nav.hardware'), href: `/${locale}/category/hardware` }
+              { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
+              { label: t('nav.defense'), href: `/${locale}/category/defense` },
+              { label: t('nav.quantum'), href: `/${locale}/category/quantum` },
+              { label: t('nav.hardware'), href: `/${locale}/category/hardware` },
+              { label: t('nav.space'), href: `/${locale}/category/space` },
             ].map((link, i) => (
               <Link
                 key={link.label}
@@ -185,11 +188,12 @@ export function SiteHeader() {
                 style={{
                   fontFamily: "Space Grotesk, sans-serif",
                   fontWeight: 600,
-                  fontSize: 12,
+                  fontSize: 11,
                   letterSpacing: "0.1em",
                   color: "var(--text-secondary)",
                   textDecoration: "none",
                   transition: "color 0.2s",
+                  whiteSpace: "nowrap",
                 }}
                 onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "var(--text-primary)"; }}
                 onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--text-secondary)"; }}
@@ -268,7 +272,7 @@ export function SiteHeader() {
               </span>
             </button>
 
-            {/* Mobile Hamburger Toggle Button */}
+            {/* Mobile Hamburger Toggle Button - PHONES ONLY (< 640px) */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               style={{
@@ -282,7 +286,7 @@ export function SiteHeader() {
                 padding: 4,
                 zIndex: 100,
               }}
-              className="flex md:hidden"
+              className="flex sm:hidden"
             >
               {isMenuOpen ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -320,9 +324,12 @@ export function SiteHeader() {
         >
           {[
             { label: t('nav.home'), href: `/${locale}` },
-            { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
             { label: t('nav.ai'), href: `/${locale}/category/ai` },
-            { label: t('nav.hardware'), href: `/${locale}/category/hardware` }
+            { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
+            { label: t('nav.defense'), href: `/${locale}/category/defense` },
+            { label: t('nav.quantum'), href: `/${locale}/category/quantum` },
+            { label: t('nav.hardware'), href: `/${locale}/category/hardware` },
+            { label: t('nav.space'), href: `/${locale}/category/space` },
           ].map((link) => (
             <Link
               key={link.label}

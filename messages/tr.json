@@ -28,7 +28,10 @@
       "home": "ANA SAYFA",
       "cybersecurity": "SİBER GÜVENLİK",
       "ai": "YAPAY ZEKA",
-      "hardware": "DONANIM"
+      "hardware": "DONANIM",
+      "defense": "SAVUNMA",
+      "quantum": "KUANTUM",
+      "space": "UZAY"
     },
     "login": "Hesap Girişi"
   },
