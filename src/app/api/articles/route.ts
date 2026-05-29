@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@libsql/client";
+import { getArticlesByLocale } from "@/app/actions/article";
 
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
-
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const rs = await db.execute("SELECT * FROM Article ORDER BY createdAt DESC");
-    return NextResponse.json(rs.rows);
+    const { searchParams } = new URL(request.url);
+    const locale = searchParams.get("locale") || "en";
+    
+    const articles = await getArticlesByLocale(locale);
+    return NextResponse.json(articles);
   } catch (error) {
     console.error("Failed to fetch articles:", error);
     return NextResponse.json({ error: "Failed to fetch articles" }, { status: 500 });

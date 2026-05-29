@@ -342,10 +342,8 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: any[] }) {
+function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string; mainArticle: any; gridArticles: any[] }) {
   const t = useTranslations('Index');
-  const mainArticle = dbArticles.length > 0 ? dbArticles[0] : FEATURED_MAIN;
-  const gridArticles = dbArticles.length > 1 ? dbArticles.slice(1, 5) : (dbArticles.length === 0 ? FEATURED_GRID : []);
 
   return (
     <section
@@ -490,9 +488,8 @@ function FeaturedSection({ locale, dbArticles }: { locale: string; dbArticles: a
   );
 }
 
-function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any[] }) {
+function LatestSection({ locale, latestArticles }: { locale: string; latestArticles: any[] }) {
   const t = useTranslations('Index');
-  const latestArticles = dbArticles.length > 5 ? dbArticles.slice(5) : (dbArticles.length > 0 ? [] : LATEST);
 
   const getCategoryIcon = (category: string) => {
     const cat = category?.toUpperCase() || "";
@@ -602,6 +599,26 @@ function LatestSection({ locale, dbArticles }: { locale: string; dbArticles: any
 }
 
 export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; locale: string }) {
+  // Combine dbArticles with static fallbacks to guarantee 9 filled slots
+  const fallbackList = [
+    FEATURED_MAIN,
+    ...FEATURED_GRID,
+    ...LATEST
+  ];
+  
+  const allArticles = [...dbArticles];
+  
+  for (const fallback of fallbackList) {
+    if (allArticles.length >= 9) break;
+    if (!allArticles.some(art => art.id === fallback.id || art.title === fallback.title)) {
+      allArticles.push(fallback);
+    }
+  }
+
+  const mainArticle = allArticles[0] || FEATURED_MAIN;
+  const gridArticles = allArticles.slice(1, 5);
+  const latestArticles = allArticles.slice(5);
+
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-primary)", overflowX: "hidden", transition: "background-color 0.3s ease" }}>
       <style>{`
@@ -609,8 +626,15 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
         @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
       `}</style>
       <Hero />
-      <FeaturedSection locale={locale} dbArticles={dbArticles} />
-      <LatestSection locale={locale} dbArticles={dbArticles} />
+      <FeaturedSection 
+        locale={locale} 
+        mainArticle={mainArticle} 
+        gridArticles={gridArticles} 
+      />
+      <LatestSection 
+        locale={locale} 
+        latestArticles={latestArticles} 
+      />
     </main>
   );
 }

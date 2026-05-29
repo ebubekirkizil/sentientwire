@@ -24,6 +24,18 @@ export function SiteHeader() {
   const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [tickerArticles, setTickerArticles] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/articles?locale=${locale}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setTickerArticles(data.slice(0, 5));
+        }
+      })
+      .catch(err => console.error("Ticker fetch error:", err));
+  }, [locale]);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
@@ -68,27 +80,51 @@ export function SiteHeader() {
           onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = "paused")}
           onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = "running")}
         >
-          {[0, 1, 2, 3, 4, 0, 1, 2, 3, 4].map((itemIdx, i) => (
-            <Link
-              key={i}
-              href={`/${locale}/news/t1`}
-              style={{
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 12,
-                fontWeight: 600,
-                color: "var(--cyan-bright)",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                paddingRight: 40,
-                letterSpacing: "0.05em",
-              }}
-            >
-              <span style={{ color: "#ef4444", fontWeight: 800, animation: "pulse 1.5s infinite" }}>{t('breaking')}_</span>
-              {t(`ticker.${itemIdx}`)}
-            </Link>
-          ))}
+          {tickerArticles.length > 0 ? (
+            [...tickerArticles, ...tickerArticles].map((art, i) => (
+              <Link
+                key={i}
+                href={`/${locale}/news/${art.slug || art.id}`}
+                style={{
+                  fontFamily: "JetBrains Mono, monospace",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "var(--cyan-bright)",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  paddingRight: 40,
+                  letterSpacing: "0.05em",
+                }}
+              >
+                <span style={{ color: "#ef4444", fontWeight: 800, animation: "pulse 1.5s infinite" }}>{t('breaking')}_</span>
+                {art.title.toUpperCase()}
+              </Link>
+            ))
+          ) : (
+            [0, 1, 2, 3, 4, 0, 1, 2, 3, 4].map((itemIdx, i) => (
+              <Link
+                key={i}
+                href={`/${locale}`}
+                style={{
+                  fontFamily: "JetBrains Mono, monospace",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  color: "var(--cyan-bright)",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  paddingRight: 40,
+                  letterSpacing: "0.05em",
+                }}
+              >
+                <span style={{ color: "#ef4444", fontWeight: 800, animation: "pulse 1.5s infinite" }}>{t('breaking')}_</span>
+                {t(`ticker.${itemIdx}`)}
+              </Link>
+            ))
+          )}
         </div>
       </div>
 
