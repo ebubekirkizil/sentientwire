@@ -53,8 +53,16 @@ export function Footer() {
         transition: "background-color 0.3s ease",
       }}
     >
+      <style>{`
+        @media (max-width: 767px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
+          }
+        }
+      `}</style>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 40 }}>
+        <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 40 }}>
           <div>
             <div translate="no" className="notranslate" style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 20, color: "var(--text-primary)", marginBottom: 12 }}>
               SENTIENT<span style={{ color: "#06b6d4" }}>WIRE</span>

@@ -25,6 +25,7 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [tickerArticles, setTickerArticles] = useState<any[]>([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     fetch(`/api/articles?locale=${locale}`)
@@ -52,6 +53,10 @@ export function SiteHeader() {
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
         @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
       `}</style>
 
       {/* ─── Breaking news ticker ───────────────────────────── */}
@@ -262,10 +267,117 @@ export function SiteHeader() {
                 {t('login')}
               </span>
             </button>
+
+            {/* Mobile Hamburger Toggle Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "var(--text-primary)",
+                padding: 4,
+                zIndex: 100,
+              }}
+              className="flex md:hidden"
+            >
+              {isMenuOpen ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 12h16M4 6h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </nav>
       
+      {/* Mobile Navigation Drawer */}
+      {isMenuOpen && (
+        <div
+          style={{
+            position: "fixed",
+            top: 102, /* 38px ticker + 64px navbar height */
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(8, 15, 28, 0.97)",
+            backdropFilter: "blur(20px)",
+            borderBottom: "1px solid rgba(6,182,212,0.2)",
+            zIndex: 45,
+            display: "flex",
+            flexDirection: "column",
+            padding: "24px 24px 40px",
+            gap: 20,
+            animation: "slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+          }}
+        >
+          {[
+            { label: t('nav.home'), href: `/${locale}` },
+            { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
+            { label: t('nav.ai'), href: `/${locale}/category/ai` },
+            { label: t('nav.hardware'), href: `/${locale}/category/hardware` }
+          ].map((link) => (
+            <Link
+              key={link.label}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              style={{
+                fontFamily: "Space Grotesk, sans-serif",
+                fontWeight: 700,
+                fontSize: 16,
+                letterSpacing: "0.05em",
+                color: "var(--text-secondary)",
+                textDecoration: "none",
+                padding: "10px 0",
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => { (e.target as HTMLElement).style.color = "var(--text-primary)"; }}
+              onMouseLeave={(e) => { (e.target as HTMLElement).style.color = "var(--text-secondary)"; }}
+            >
+              {link.label}
+            </Link>
+          ))}
+          
+          <button
+            onClick={() => {
+              setIsMenuOpen(false);
+              setIsLoginOpen(true);
+            }}
+            style={{
+              marginTop: 20,
+              padding: "14px",
+              background: "rgba(6, 182, 212, 0.1)",
+              border: "1px solid rgba(6, 182, 212, 0.3)",
+              borderRadius: 8,
+              color: "#06b6d4",
+              fontFamily: "Space Grotesk, sans-serif",
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: "0.05em",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            {t('login')}
+          </button>
+        </div>
+      )}
+
       <LoginModal isOpen={isLoginOpen} onClose={() => setIsLoginOpen(false)} />
     </>
   );

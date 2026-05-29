@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import HeroGlobe from "@/components/HeroGlobe";
 import { useTranslations } from "next-intl";
@@ -18,106 +18,7 @@ type Article = {
   createdAt?: string | Date;
 };
 
-const FEATURED_MAIN: Article = {
-  id: "f1",
-  title: "Operation Aurora 2.0: Küresel Enerji Ağına Yönelik Büyük Siber Saldırı",
-  excerpt: "Avrupa'daki güç merkezlerinde eşgüdümlü bir sıfır-gün açığı zinciri tespit edildi. Sentient Wire kaynakları, büyük çaplı bir elektrik kesintisi hazırlığı olduğunu doğruluyor.",
-  category: "ÖZEL HABER",
-  categoryColor: "#ef4444",
-  imageUrl: "https://images.unsplash.com/photo-1510915361894-faa8b2d88c4b?auto=format&fit=crop&q=80&w=1200&h=900",
-  source: "SENTIENT WIRE ÖZEL",
-  ago: "2 saat önce",
-};
-
-const FEATURED_GRID: Article[] = [
-  {
-    id: "f2",
-    title: "Kuantum Şifre Kırmada Kritik Eşik Aşıldı",
-    excerpt: "Araştırmacılar, yeni nesil hibrit kuantum algoritmaları kullanarak 2048-bit RSA şifrelemeyi kırmayı başardı.",
-    category: "KUANTUM",
-    categoryColor: "#818cf8",
-    imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=600&h=350",
-    source: "Q-LABS RAPORU",
-    ago: "5 saat önce",
-  },
-  {
-    id: "f3",
-    title: "Otonom Drone Sürüleri Şehir Hatlarına İniyor",
-    excerpt: "GPS olmadan tamamen yapay zeka ile yönünü bulan droneların test görüntüleri basına sızdı.",
-    category: "SAVUNMA & TEKNOLOJİ",
-    categoryColor: "#f59e0b",
-    imageUrl: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&q=80&w=600&h=350",
-    source: "AERO TEK",
-    ago: "8 saat önce",
-  },
-  {
-    id: "f4",
-    title: "Büyük Dil Modellerinde Yeni Güvenlik Açığı",
-    excerpt: "Sektör lideri yapay zeka modellerinin, veriye gizlenmiş yeni bir manipülasyon tekniğine karşı savunmasız olduğu ortaya çıktı.",
-    category: "YAPAY ZEKA",
-    categoryColor: "#06b6d4",
-    imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=600&h=350",
-    source: "AI GÜNDEM",
-    ago: "11 saat önce",
-  },
-  {
-    id: "f5",
-    title: "Pasifik Denizaltı Kablolarında Fiziksel Müdahale",
-    excerpt: "Büyük veri akışının sağlandığı ana okyanus kablolarında tespit edilen sinyal düşüklüğü, fiziksel dinleme cihazı şüphesi uyandırdı.",
-    category: "ALTYAPI",
-    categoryColor: "#10b981",
-    imageUrl: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600&h=350",
-    source: "GLOBAL AĞ",
-    ago: "14 saat önce",
-  },
-];
-
-const LATEST: Article[] = [
-  {
-    id: "l1",
-    title: "Yeni Nesil RISC-V Çipleri Silikon Sınırlarını Zorluyor",
-    excerpt: "Grafen-silikon hibrit mimarisi kullanılarak üretilen yeni işlemciler 8GHz hız barajını aştı.",
-    category: "DONANIM",
-    categoryColor: "#f59e0b",
-    imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=300&h=200",
-    source: "SİLİKON VADİSİ",
-    ago: "1 saat önce",
-    icon: "🔲",
-  },
-  {
-    id: "l2",
-    title: "Biyometrik Veritabanı İhlali 40 Milyon Kişiyi Etkiledi",
-    excerpt: "Merkeziyetsiz kimlik sağlayıcısı büyük bir sızıntı yaşadı, parmak izi verileri karanlık ağda satışa çıktı.",
-    category: "SİBER GÜVENLİK",
-    categoryColor: "#ef4444",
-    imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=300&h=200",
-    source: "DARK WEB İZLEME",
-    ago: "3 saat önce",
-    icon: "👁️",
-  },
-  {
-    id: "l3",
-    title: "Uydular Yer İstasyonu Üzerinden Hacklendi",
-    excerpt: "Alçak dünya yörüngesi uyduları, güvenlik zafiyeti bulunan yer istasyonları kullanılarak geçici olarak ele geçirildi.",
-    category: "UZAY TEK",
-    categoryColor: "#8b5cf6",
-    imageUrl: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=300&h=200",
-    source: "UZAY AJANSI",
-    ago: "4 saat önce",
-    icon: "🛰️",
-  },
-  {
-    id: "l4",
-    title: "Yeni Fidye Yazılımı Nesnelerin İnternetini (IoT) Hedef Alıyor",
-    excerpt: "Endüstriyel sensörleri hedef alan yeni nesil fidye yazılımı, üretim tesislerinde durmalara yol açıyor.",
-    category: "GÜNDEM",
-    categoryColor: "#ef4444",
-    imageUrl: "https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&q=80&w=300&h=200",
-    source: "GÜVENLİK BÜLTENİ",
-    ago: "6 saat önce",
-    icon: "🔒",
-  },
-];
+// Mock fallbacks removed to ensure full integration with real database articles
 
 function Hero() {
   const t = useTranslations('Index');
@@ -142,6 +43,30 @@ function Hero() {
       display: "flex",
       flexDirection: "column",
     }}>
+      <style>{`
+        @media (max-width: 991px) {
+          .hero-inner-container {
+            flex-direction: column-reverse !important;
+            padding: 100px 24px 40px !important;
+            text-align: center;
+            min-height: auto !important;
+          }
+          .hero-globe-wrapper {
+            width: 100% !important;
+            max-width: 320px !important;
+            margin-bottom: 20px;
+          }
+          .hero-text-wrapper {
+            padding-left: 0 !important;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+          .hero-stats-wrapper {
+            justify-content: center !important;
+          }
+        }
+      `}</style>
       {/* Background layers */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
@@ -156,7 +81,7 @@ function Hero() {
         backgroundSize: "65px 65px",
       }}/>
 
-      <div style={{
+      <div className="hero-inner-container" style={{
         flex: 1,
         display: "flex",
         alignItems: "center",
@@ -171,7 +96,7 @@ function Hero() {
       }}>
 
         {/* LEFT: Globe */}
-        <div style={{
+        <div className="hero-globe-wrapper" style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -191,7 +116,7 @@ function Hero() {
         </div>
 
         {/* RIGHT: Text */}
-        <div style={{ flex: 1, paddingLeft: 48 }}>
+        <div className="hero-text-wrapper" style={{ flex: 1, paddingLeft: 48 }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             marginBottom: 26,
@@ -273,7 +198,7 @@ function Hero() {
             >{t('ctaExplore')}</button>
           </div>
 
-          <div style={{
+          <div className="hero-stats-wrapper" style={{
             display: "flex", gap: 32,
             paddingTop: 24, borderTop: "1px solid rgba(6,182,212,0.1)",
           }}>
@@ -345,6 +270,8 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string; mainArticle: any; gridArticles: any[] }) {
   const t = useTranslations('Index');
 
+  if (!mainArticle) return null;
+
   return (
     <section
       id="featured"
@@ -358,7 +285,7 @@ function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string
     >
       <SectionTitle>{t('secFeatured')}</SectionTitle>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* BIG LEFT CARD */}
         <Link
           href={`/${locale}/news/${mainArticle.slug || mainArticle.id}`}
@@ -416,12 +343,7 @@ function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string
         </Link>
 
         {/* Right side: Grid of 4 smaller cards */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gridTemplateRows: "1fr 1fr",
-          gap: 16,
-        }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {gridArticles.map((article: any) => (
             <Link
               key={article.id}
@@ -490,6 +412,53 @@ function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string
 
 function LatestSection({ locale, latestArticles }: { locale: string; latestArticles: any[] }) {
   const t = useTranslations('Index');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isDown, setIsDown] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const hasDragged = useRef(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const container = containerRef.current;
+    if (!container) return;
+    setIsDown(true);
+    hasDragged.current = false;
+    container.style.scrollBehavior = "auto";
+    container.style.cursor = "grabbing";
+    setStartX(e.pageX - container.offsetLeft);
+    setScrollLeft(container.scrollLeft);
+  };
+
+  const handleMouseLeave = () => {
+    const container = containerRef.current;
+    if (container) {
+      container.style.scrollBehavior = "smooth";
+      container.style.cursor = "grab";
+    }
+    setIsDown(false);
+  };
+
+  const handleMouseUp = () => {
+    const container = containerRef.current;
+    if (container) {
+      container.style.scrollBehavior = "smooth";
+      container.style.cursor = "grab";
+    }
+    setIsDown(false);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const container = containerRef.current;
+    if (!container) return;
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - startX) * 1.5; // scroll speed multiplier
+    if (Math.abs(walk) > 5) {
+      hasDragged.current = true;
+    }
+    container.scrollLeft = scrollLeft - walk;
+  };
 
   const getCategoryIcon = (category: string) => {
     const cat = category?.toUpperCase() || "";
@@ -530,20 +499,34 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
       </div>
 
       <div 
+        ref={containerRef}
         className="latest-scroll-container"
+        onMouseDown={handleMouseDown}
+        onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
+        onMouseMove={handleMouseMove}
         style={{ 
           display: "flex", 
           gap: 20, 
           overflowX: "auto", 
-          scrollSnapType: "x mandatory",
+          scrollSnapType: isDown ? "none" : "x mandatory",
           paddingBottom: 20,
-          scrollBehavior: "smooth"
+          scrollBehavior: "smooth",
+          cursor: "grab",
+          userSelect: "none"
         }}
       >
         {latestArticles.map((article: any) => (
           <Link
             key={article.id}
             href={`/${locale}/news/${article.slug || article.id}`}
+            onDragStart={(e) => e.preventDefault()}
+            onClick={(e) => {
+              if (hasDragged.current) {
+                e.preventDefault();
+                e.stopPropagation();
+              }
+            }}
             style={{
               flex: "0 0 310px",
               scrollSnapAlign: "start",
@@ -629,17 +612,10 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
 export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; locale: string }) {
   // 1. Featured Section: 1 main large card + 4 grid cards (needs exactly 5 articles)
   const featuredList = [...dbArticles.slice(0, 5)];
-  const featuredFallbacks = [FEATURED_MAIN, ...FEATURED_GRID];
-  for (const fallback of featuredFallbacks) {
-    if (featuredList.length >= 5) break;
-    if (!featuredList.some(art => art.id === fallback.id || art.title === fallback.title)) {
-      featuredList.push(fallback);
-    }
-  }
-  const mainArticle = featuredList[0];
+  const mainArticle = featuredList[0] || null;
   const gridArticles = featuredList.slice(1, 5);
 
-  // 2. Latest Section: only real DB articles published in the last 3 days, padded by static LATEST
+  // 2. Latest Section: only real DB articles published in the last 3 days, padded by other available DB articles
   const dbLatestRaw = dbArticles.slice(5);
   const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
   const nowTime = new Date().getTime();
@@ -651,12 +627,11 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
   });
 
   const latestArticles = [...dbLatestFiltered];
-  for (const fallback of LATEST) {
-    // We pad up to 8 items to allow horizontal scrolling even if DB is empty
+  const remainingDbArticles = dbLatestRaw.filter(art => !dbLatestFiltered.some(f => f.id === art.id));
+  
+  for (const art of remainingDbArticles) {
     if (latestArticles.length >= 8) break;
-    if (!latestArticles.some(art => art.id === fallback.id || art.title === fallback.title)) {
-      latestArticles.push(fallback);
-    }
+    latestArticles.push(art);
   }
 
   return (
