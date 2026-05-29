@@ -503,6 +503,22 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
 
   return (
     <section style={{ padding: "80px 24px", maxWidth: 1280, margin: "0 auto", position: "relative" }}>
+      <style>{`
+        .latest-scroll-container::-webkit-scrollbar {
+          height: 6px;
+        }
+        .latest-scroll-container::-webkit-scrollbar-track {
+          background: rgba(6, 182, 212, 0.02);
+          border-radius: 4px;
+        }
+        .latest-scroll-container::-webkit-scrollbar-thumb {
+          background: rgba(6, 182, 212, 0.25);
+          border-radius: 4px;
+        }
+        .latest-scroll-container::-webkit-scrollbar-thumb:hover {
+          background: rgba(6, 182, 212, 0.5);
+        }
+      `}</style>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 40 }}>
         <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 24, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 12, margin: 0 }}>
           <div style={{ width: 8, height: 24, background: "var(--cyan)", borderRadius: 4 }} />
@@ -513,12 +529,24 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
         </Link>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+      <div 
+        className="latest-scroll-container"
+        style={{ 
+          display: "flex", 
+          gap: 20, 
+          overflowX: "auto", 
+          scrollSnapType: "x mandatory",
+          paddingBottom: 20,
+          scrollBehavior: "smooth"
+        }}
+      >
         {latestArticles.map((article: any) => (
           <Link
             key={article.id}
             href={`/${locale}/news/${article.slug || article.id}`}
             style={{
+              flex: "0 0 310px",
+              scrollSnapAlign: "start",
               textDecoration: "none",
               color: "inherit",
               borderRadius: 12,
@@ -599,25 +627,37 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
 }
 
 export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; locale: string }) {
-  // Combine dbArticles with static fallbacks to guarantee 9 filled slots
-  const fallbackList = [
-    FEATURED_MAIN,
-    ...FEATURED_GRID,
-    ...LATEST
-  ];
-  
-  const allArticles = [...dbArticles];
-  
-  for (const fallback of fallbackList) {
-    if (allArticles.length >= 9) break;
-    if (!allArticles.some(art => art.id === fallback.id || art.title === fallback.title)) {
-      allArticles.push(fallback);
+  // 1. Featured Section: 1 main large card + 4 grid cards (needs exactly 5 articles)
+  const featuredList = [...dbArticles.slice(0, 5)];
+  const featuredFallbacks = [FEATURED_MAIN, ...FEATURED_GRID];
+  for (const fallback of featuredFallbacks) {
+    if (featuredList.length >= 5) break;
+    if (!featuredList.some(art => art.id === fallback.id || art.title === fallback.title)) {
+      featuredList.push(fallback);
     }
   }
+  const mainArticle = featuredList[0];
+  const gridArticles = featuredList.slice(1, 5);
 
-  const mainArticle = allArticles[0] || FEATURED_MAIN;
-  const gridArticles = allArticles.slice(1, 5);
-  const latestArticles = allArticles.slice(5);
+  // 2. Latest Section: only real DB articles published in the last 3 days, padded by static LATEST
+  const dbLatestRaw = dbArticles.slice(5);
+  const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+  const nowTime = new Date().getTime();
+
+  const dbLatestFiltered = dbLatestRaw.filter(art => {
+    if (!art.createdAt) return true;
+    const artTime = new Date(art.createdAt).getTime();
+    return (nowTime - artTime) < THREE_DAYS_MS;
+  });
+
+  const latestArticles = [...dbLatestFiltered];
+  for (const fallback of LATEST) {
+    // We pad up to 8 items to allow horizontal scrolling even if DB is empty
+    if (latestArticles.length >= 8) break;
+    if (!latestArticles.some(art => art.id === fallback.id || art.title === fallback.title)) {
+      latestArticles.push(fallback);
+    }
+  }
 
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-primary)", overflowX: "hidden", transition: "background-color 0.3s ease" }}>
