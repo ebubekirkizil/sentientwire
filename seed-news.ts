@@ -78,6 +78,18 @@ async function setup() {
       ipHash TEXT NOT NULL,
       createdAt TEXT NOT NULL DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS ArticleTranslation (
+      articleId TEXT NOT NULL,
+      locale TEXT NOT NULL,
+      title TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      content TEXT NOT NULL,
+      createdAt TEXT NOT NULL DEFAULT (datetime('now')),
+      updatedAt TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (articleId, locale),
+      FOREIGN KEY (articleId) REFERENCES Article(id) ON DELETE CASCADE
+    );
   `);
   
   console.log("Tables ready. Inserting articles...");

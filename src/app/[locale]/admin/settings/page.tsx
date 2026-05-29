@@ -64,6 +64,16 @@ export default function SettingsDashboard() {
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm" 
               />
             </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">DYNAMIC RSS FEED SOURCES (COMMA-SEPARATED URLS)</label>
+              <textarea 
+                name="rss_feeds" 
+                rows={3}
+                defaultValue={settings.rss_feeds || "https://news.ycombinator.com/rss, https://techcrunch.com/feed/"}
+                className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-xs leading-relaxed" 
+              />
+            </div>
           </div>
         </div>
 

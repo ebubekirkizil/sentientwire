@@ -10,12 +10,21 @@ Görevin bu haberi LÜKS, PROFESYONEL ve İLGİ ÇEKİCİ bir İngilizce makaley
 Başlıklar okuyucuyu tıklamaya mecbur hissettirmeli.
 Metin ritmik olmalı.
 
+Ayrıca haberin içeriğine göre şu kategorilerden en uygun olanını seçmelisin:
+- CYBERSECURITY (Renk: #ef4444)
+- ARTIFICIAL INTELLIGENCE (Renk: #8b5cf6)
+- QUANTUM (Renk: #818cf8)
+- HARDWARE (Renk: #f59e0b)
+- DEFENSE (Renk: #10b981)
+
 DÖNÜŞ FORMATI (Tamamen JSON olmalı, markdown kullanma):
 {
   "title": "Başlık",
   "summary": "1-2 cümlelik vurucu alt başlık",
   "content": "HTML formatında ana metin (<b>, <i>, <p>, <h2> etiketleri kullan, çok şık olsun)",
-  "slug": "url-dostu-baslik"
+  "slug": "url-dostu-baslik",
+  "category": "Kategori İsmi (Tamamı büyük harflerle)",
+  "categoryColor": "Kategori Renk Kodu"
 }
 `;
 

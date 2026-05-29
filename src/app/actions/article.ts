@@ -7,6 +7,9 @@ import { translateArticleText } from "@/lib/ai";
 // In-memory cache to store translated fields: key is `${articleId}_${targetLocale}`
 const translationCache = new Map<string, { title: string, summary: string, content: string }>();
 
+// In-memory cache to skip repeated requests for failed translations
+const failedTranslations = new Set<string>();
+
 function toPlainArticle(row: any) {
   if (!row) return null;
   return {
@@ -42,6 +45,12 @@ export async function createArticle(formData: FormData) {
 
   const slug = title
     .toLowerCase()
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
     
@@ -92,36 +101,92 @@ export async function getArticlesByLocale(locale: string) {
     // Fallback if no articles found at all
     if (articles.length === 0) return [];
 
-    // Translate articles whose locale doesn't match the target language
     const targetLang = locale.substring(0, 2).toLowerCase();
-    const translatedArticles = await Promise.all(
-      articles.map(async (art) => {
-        const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
-        
-        let finalArt = art;
-        if (artLocale !== targetLang) {
-          const cacheKey = `${art.id}_${targetLang}`;
-          if (translationCache.has(cacheKey)) {
-            const cached = translationCache.get(cacheKey)!;
-            finalArt = { ...art, title: cached.title, summary: cached.summary, content: cached.content };
-          } else {
-            const translated = await translateArticleText(
-              String(art.title || ''),
-              String(art.summary || ''),
-              String(art.content || ''),
-              targetLang
-            );
-            if (translated) {
-              translationCache.set(cacheKey, translated);
-              finalArt = { ...art, title: translated.title, summary: translated.summary, content: translated.content };
+
+    // 1. Identify which articles need translation
+    const articlesNeedingTranslation = articles.filter((art) => {
+      const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
+      return artLocale !== targetLang;
+    });
+
+    const translationsMap = new Map<string, { title: string; summary: string; content: string }>();
+
+    if (articlesNeedingTranslation.length > 0) {
+      // 2. Fetch existing translations from DB in ONE batch query to avoid N+1 queries
+      const ids = articlesNeedingTranslation.map(art => String(art.id));
+      const placeholders = ids.map(() => "?").join(",");
+      
+      const transResult = await db.execute({
+        sql: `SELECT * FROM ArticleTranslation WHERE locale = ? AND articleId IN (${placeholders})`,
+        args: [targetLang, ...ids]
+      });
+
+      // Populate translationsMap with database records
+      transResult.rows.forEach((row) => {
+        translationsMap.set(String(row.articleId), {
+          title: String(row.title || ''),
+          summary: String(row.summary || ''),
+          content: String(row.content || '')
+        });
+      });
+
+      // 3. For any missing translation, fetch from Gemini and insert into DB
+      for (const art of articlesNeedingTranslation) {
+        const artId = String(art.id);
+        const cacheKey = `${artId}_${targetLang}`;
+
+        if (!translationsMap.has(artId) && !failedTranslations.has(cacheKey)) {
+          console.log(`[TRANSLATE] Translating article ${artId} to ${targetLang} via Gemini...`);
+          const translated = await translateArticleText(
+            String(art.title || ''),
+            String(art.summary || ''),
+            String(art.content || ''),
+            targetLang
+          );
+          if (translated) {
+            // Save to DB so we never translate it again
+            try {
+              await db.execute({
+                sql: `INSERT INTO ArticleTranslation (articleId, locale, title, summary, content)
+                      VALUES (?, ?, ?, ?, ?)
+                      ON CONFLICT(articleId, locale) DO UPDATE SET
+                        title = excluded.title,
+                        summary = excluded.summary,
+                        content = excluded.content,
+                        updatedAt = datetime('now')`,
+                args: [artId, targetLang, translated.title, translated.summary, translated.content]
+              });
+              translationsMap.set(artId, translated);
+              console.log(`[TRANSLATE] Saved translation for ${artId} (${targetLang}) to database.`);
+            } catch (dbErr) {
+              console.error(`Failed to save translation for ${artId} (${targetLang}):`, dbErr);
             }
+          } else {
+            console.warn(`[TRANSLATE] Translation failed for ${artId} to ${targetLang}. Caching failure.`);
+            failedTranslations.add(cacheKey);
           }
         }
+      }
+    }
 
-        return toPlainArticle(finalArt);
-      })
-    );
-    
+    // 4. Map translations to original articles and format
+    const translatedArticles = articles.map((art) => {
+      const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
+      let finalArt = art;
+      if (artLocale !== targetLang) {
+        const trans = translationsMap.get(String(art.id));
+        if (trans) {
+          finalArt = {
+            ...art,
+            title: trans.title,
+            summary: trans.summary,
+            content: trans.content
+          };
+        }
+      }
+      return toPlainArticle(finalArt);
+    });
+
     return translatedArticles;
   } catch (error) {
     console.error("Failed to fetch articles:", error);
@@ -140,6 +205,12 @@ export async function deleteArticle(id: string) {
     if (getResult.rows.length === 0) return { success: false, error: "Article not found" };
     
     const article = getResult.rows[0];
+
+    // Clean translations first
+    await db.execute({
+      sql: `DELETE FROM ArticleTranslation WHERE articleId = ?`,
+      args: [id]
+    });
 
     await db.execute({
       sql: `DELETE FROM Article WHERE id = ?`,
@@ -165,10 +236,23 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
   let finalArt = article;
   if (artLocale !== targetLang) {
     const cacheKey = `${article.id}_${targetLang}`;
-    if (translationCache.has(cacheKey)) {
-      const cached = translationCache.get(cacheKey)!;
-      finalArt = { ...article, title: cached.title, summary: cached.summary, content: cached.content };
-    } else {
+    // Check DB first
+    const transResult = await db.execute({
+      sql: `SELECT * FROM ArticleTranslation WHERE articleId = ? AND locale = ?`,
+      args: [String(article.id), targetLang]
+    });
+
+    if (transResult.rows.length > 0) {
+      const trans = transResult.rows[0];
+      finalArt = {
+        ...article,
+        title: String(trans.title || ''),
+        summary: String(trans.summary || ''),
+        content: String(trans.content || '')
+      };
+    } else if (!failedTranslations.has(cacheKey)) {
+      // Not found, call Gemini and save
+      console.log(`[TRANSLATE] Single translation: ${article.id} to ${targetLang} via Gemini...`);
       const translated = await translateArticleText(
         String(article.title || ''),
         String(article.summary || ''),
@@ -176,8 +260,30 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
         targetLang
       );
       if (translated) {
-        translationCache.set(cacheKey, translated);
-        finalArt = { ...article, title: translated.title, summary: translated.summary, content: translated.content };
+        try {
+          await db.execute({
+            sql: `INSERT INTO ArticleTranslation (articleId, locale, title, summary, content)
+                  VALUES (?, ?, ?, ?, ?)
+                  ON CONFLICT(articleId, locale) DO UPDATE SET
+                    title = excluded.title,
+                    summary = excluded.summary,
+                    content = excluded.content,
+                    updatedAt = datetime('now')`,
+            args: [String(article.id), targetLang, translated.title, translated.summary, translated.content]
+          });
+          console.log(`[TRANSLATE] Saved single translation for ${article.id} (${targetLang}) to database.`);
+        } catch (dbErr) {
+          console.error(`Failed to save single translation for ${article.id} (${targetLang}):`, dbErr);
+        }
+        finalArt = {
+          ...article,
+          title: translated.title,
+          summary: translated.summary,
+          content: translated.content
+        };
+      } else {
+        console.warn(`[TRANSLATE] Single translation failed for ${article.id} to ${targetLang}. Caching failure.`);
+        failedTranslations.add(cacheKey);
       }
     }
   }
