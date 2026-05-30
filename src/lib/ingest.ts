@@ -111,28 +111,7 @@ export async function runIngestion() {
               args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', aiResult.content, aiResult.category, aiResult.categoryColor, imageUrl, link]
             });
 
-            // Pre-translate to 'tr' (Turkish) and store in DB immediately to eliminate homepage latency
-            console.log(`[INGEST-TRANSLATE] Waiting 5 seconds to avoid API quota before translating...`);
-            await new Promise(r => setTimeout(r, 5000));
-            console.log(`[INGEST-TRANSLATE] Pre-translating ${aiResult.title} to Turkish (tr)...`);
-            try {
-              const translated = await translateArticleText(
-                aiResult.title,
-                aiResult.summary || '',
-                aiResult.content,
-                'tr'
-              );
-              if (translated) {
-                await db.execute({
-                  sql: `INSERT INTO ArticleTranslation (articleId, locale, title, summary, content)
-                        VALUES (?, 'tr', ?, ?, ?)`,
-                  args: [id, translated.title, translated.summary, translated.content]
-                });
-                console.log(`[INGEST-TRANSLATE] Saved Turkish translation for ${aiResult.title}.`);
-              }
-            } catch (transErr) {
-              console.error(`[INGEST-TRANSLATE] Failed to pre-translate article ${id} to Turkish:`, transErr);
-            }
+            // No background translation needed anymore as we use client-side Google Translate.
           }
         }));
       } catch (e) {

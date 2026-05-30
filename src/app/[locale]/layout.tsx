@@ -45,6 +45,29 @@ export default async function RootLayout({
             `,
           }}
         />
+        {/* Google Translate Integration */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                new window.google.translate.TranslateElement({
+                  pageLanguage: 'en',
+                  autoDisplay: false
+                }, 'google_translate_element');
+              }
+              // Set the translation cookie based on the current locale
+              const targetLocale = "${locale}" === "en-US" || "${locale}" === "en-GB" || "${locale}" === "en-CA" ? "en" : "${locale}";
+              if (targetLocale !== "en") {
+                document.cookie = "googtrans=/en/" + targetLocale + "; path=/";
+                document.cookie = "googtrans=/en/" + targetLocale + "; domain=" + window.location.hostname + "; path=/";
+              } else {
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=" + window.location.hostname + "; path=/;";
+              }
+            `
+          }}
+        />
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -55,6 +78,7 @@ export default async function RootLayout({
         <link rel="preload" href="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg" as="image" />
       </head>
       <body className="min-h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-500" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+        <div id="google_translate_element" style={{ display: 'none' }}></div>
         <ThemeProvider attribute="class" defaultTheme="dark">
           <NextIntlClientProvider messages={messages}>
             <SiteHeader />
