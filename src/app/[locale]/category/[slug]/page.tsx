@@ -9,7 +9,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   const title = resolvedParams.slug.toUpperCase();
   const [dbArticles, setDbArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const t = useTranslations('News');
+  const t = useTranslations();
 
   useEffect(() => {
     fetch(`/api/articles?locale=${resolvedParams.locale}`)
