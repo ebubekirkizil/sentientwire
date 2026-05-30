@@ -178,9 +178,7 @@ export function SiteHeader() {
               { label: t('nav.ai'), href: `/${locale}/category/ai` },
               { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
               { label: t('nav.defense'), href: `/${locale}/category/defense` },
-              { label: t('nav.quantum'), href: `/${locale}/category/quantum` },
               { label: t('nav.hardware'), href: `/${locale}/category/hardware` },
-              { label: t('nav.space'), href: `/${locale}/category/space` },
             ].map((link, i) => (
               <Link
                 key={link.label}
@@ -331,9 +329,7 @@ export function SiteHeader() {
             { label: t('nav.ai'), href: `/${locale}/category/ai` },
             { label: t('nav.cybersecurity'), href: `/${locale}/category/cybersecurity` },
             { label: t('nav.defense'), href: `/${locale}/category/defense` },
-            { label: t('nav.quantum'), href: `/${locale}/category/quantum` },
             { label: t('nav.hardware'), href: `/${locale}/category/hardware` },
-            { label: t('nav.space'), href: `/${locale}/category/space` },
           ].map((link) => (
             <Link
               key={link.label}
