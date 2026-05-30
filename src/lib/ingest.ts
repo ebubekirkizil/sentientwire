@@ -106,8 +106,8 @@ export async function runIngestion() {
             const imageUrl = await getImageUrl(title, categoryStr);
 
             await db.execute({
-              sql: `INSERT INTO Article (id, title, slug, summary, content, locale, originalUrl, imageUrl, category, categoryColor) 
-                    VALUES (?, ?, ?, ?, ?, 'en', ?, ?, ?, ?)`,
+              sql: `INSERT INTO Article (id, title, slug, summary, content, locale, originalUrl, imageUrl, category, categoryColor, isPublished) 
+                    VALUES (?, ?, ?, ?, ?, 'en', ?, ?, ?, ?, 1)`,
               args: [
                 id,
                 aiResult.title,
