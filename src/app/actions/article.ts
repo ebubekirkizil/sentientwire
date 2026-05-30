@@ -90,7 +90,7 @@ export async function getArticlesByLocale(locale: string) {
   
   try {
     const result = await db.execute({
-      sql: `SELECT * FROM Article WHERE isPublished = 1 ORDER BY createdAt DESC`,
+      sql: `SELECT * FROM Article ORDER BY isPublished DESC, createdAt DESC`,
       args: []
     });
     
@@ -107,7 +107,7 @@ export async function getArticlesByLocale(locale: string) {
       });
       transResult.rows.forEach(r => transMap.set(String(r.articleId), r));
     } catch (transError) {
-      console.warn("Translation fetch failed, falling back to original content:", transError);
+      // If translations table is missing, we still continue with original content
     }
 
     return articles.map((art) => {

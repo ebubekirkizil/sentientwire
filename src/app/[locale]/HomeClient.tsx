@@ -612,7 +612,10 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
 }
 
 export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; locale: string }) {
-  console.log("[HomeClient] Articles received:", dbArticles.length);
+  if (typeof window !== "undefined") {
+    console.log("[HomeClient] Articles received:", dbArticles?.length, "Locale:", locale);
+  }
+  
   // 1. Featured Section: 1 main large card + 4 grid cards (needs exactly 5 articles)
   const featuredList = [...dbArticles.slice(0, 5)];
   const mainArticle = featuredList[0] || null;

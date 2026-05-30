@@ -16,11 +16,8 @@ async function checkLocal() {
     const tables = await db.execute("SELECT name FROM sqlite_master WHERE type='table'");
     console.log("Tables in database:", tables.rows.map(r => r.name));
 
-    const unpublished = await db.execute("SELECT COUNT(*) as count FROM Article WHERE isPublished = 0");
-    console.log("Unpublished count:", unpublished.rows[0].count);
-
-    const published = await db.execute("SELECT COUNT(*) as count FROM Article WHERE isPublished = 1");
-    console.log("Published count:", published.rows[0].count);
+    const all = await db.execute("SELECT isPublished, COUNT(*) as count FROM Article GROUP BY isPublished");
+    console.log("isPublished distribution:", all.rows);
   } catch (error: any) {
     console.error("Turso Error:", error);
   }
