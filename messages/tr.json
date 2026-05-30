@@ -73,7 +73,11 @@
     "timeout": "[ZAMAN AŞIMI]",
     "escalationTitle": "Siber-Kinetik Savaşın Tırmanışı",
     "escalationP1": "Veri sızıntısı ve kurumsal casusluğa odaklanan önceki saldırıların aksine, bu son saldırı vektörü fiziksel ve kinetik hasar verme niyetini açıkça ortaya koymaktadır. Saldırganlar hedef alınan alt istasyonların frekans kontrollerini manipüle ederek, haftalarca sürebilecek bölgesel elektrik kesintilerine yol açabilecek donanım arızalarını tetiklemeye çalıştılar.",
-    "escalationP2": "Küresel istihbarat kurumları, güvenlik açıklarını yamamak ve saldırının kaynağını izlemek için şu anda özel sektörle iş birliği içinde çalışmaktadır. Kapsamlı bir yama dağıtılana kadar şebeke operatörleri yüksek alarm durumunda kalmaya devam edecektir. Durumu yakından takip etmeye ve canlı akış üzerinden güncellemeler sunmaya devam edeceğiz."
+    "escalationP2": "Küresel istihbarat kurumları, güvenlik açıklarını yamamak ve saldırının kaynağını izlemek için şu anda özel sektörle iş birliği içinde çalışmaktadır. Kapsamlı bir yama dağıtılana kadar şebeke operatörleri yüksek alarm durumunda kalmaya devam edecektir. Durumu yakından takip etmeye ve canlı akış üzerinden güncellemeler sunmaya devam edeceğiz.",
+    "intelArchive": "İSTİHBARAT ARŞİV DİZİNİ",
+    "categoryDesc": "Bu sektörle ilgili en son tehdit istihbaratı, stratejik gelişmeler ve deşifre edilmiş raporlar.",
+    "techIntel": "TECHINTEL ANALİZİ",
+    "noRecords": "BU SEKTÖRDE KAYIT BULUNAMADI."
   },
   "About": {
     "title": "Hakkımızda",

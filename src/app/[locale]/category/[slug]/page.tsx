@@ -42,12 +42,12 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
         {/* Category Header */}
         <div className="mb-14 border-b border-[var(--border-subtle)] pb-10">
-           <div className="font-mono text-xs text-[var(--cyan-bright)] mb-2 tracking-[0.2em]">{t('intelArchive') || 'INTEL ARCHIVE DIRECTORY'}</div>
+           <div className="font-mono text-xs text-[var(--cyan-bright)] mb-2 tracking-[0.2em]">{t('News.intelArchive') || 'INTEL ARCHIVE DIRECTORY'}</div>
            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-             {title}
+             {t(`Header.nav.${resolvedParams.slug.toLowerCase()}`) || title}
            </h1>
            <p className="mt-4 text-[var(--text-secondary)] max-w-2xl text-lg">
-             {t('categoryDesc') || `Latest threat intelligence, strategic developments, and decrypted reports pertaining to the ${title} sector.`}
+             {t('News.categoryDesc') || `Latest threat intelligence, strategic developments, and decrypted reports pertaining to the ${title} sector.`}
            </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {loading ? (
              <div className="col-span-2 text-center py-20 font-mono text-[var(--cyan-bright)] animate-pulse">
-               {t('scanning') || 'SCANNING DATABANK...'}
+               {t('News.scanning') || 'SCANNING DATABANK...'}
              </div>
           ) : dbArticles.length > 0 ? dbArticles.map((article) => (
             <Link 
@@ -68,25 +68,25 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                  <div className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url(${article.imageUrl || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=600&h=350'})` }} />
                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-card)] to-transparent opacity-80" />
                  <div className="absolute top-4 left-4 font-mono text-xs font-bold text-[#020408] border border-[var(--border-glow)] px-2 py-1 rounded backdrop-blur-sm" style={{ backgroundColor: article.categoryColor || "var(--cyan-bright)" }}>
-                   {article.category}
+                   {t(`Header.nav.${article.category.toLowerCase()}`) || article.category}
                  </div>
               </div>
               <div className="p-6 flex-1 flex flex-col">
                  <h2 className="text-xl font-bold text-[var(--text-primary)] mb-3 group-hover:text-[var(--cyan-bright)] transition-colors" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                    {article.title}
                  </h2>
-                 <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-6 flex-1" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                   {article.summary}
+                 <p className="text-[var(--text-secondary)] mb-4 flex-1 text-sm leading-relaxed" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                   {(article.excerpt || article.summary || "").slice(0, 120)}...
                  </p>
                  <div className="font-mono text-xs text-[var(--text-muted)] flex items-center justify-between border-t border-[var(--border-subtle)] pt-4">
-                   <span>{article.originalUrl || "TECHINTEL ANALYSIS"}</span>
+                   <span>{article.originalUrl || t('News.techIntel') || "TECHINTEL ANALYSIS"}</span>
                    <span>{new Date(article.createdAt).toLocaleDateString()}</span>
                  </div>
               </div>
             </Link>
           )) : (
              <div className="col-span-2 text-center py-20 font-mono text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] rounded-xl">
-               NO RECORDS FOUND IN THIS SECTOR.
+               {t('News.noRecords') || 'NO RECORDS FOUND IN THIS SECTOR.'}
              </div>
           )}
         </div>

@@ -73,7 +73,11 @@
     "timeout": "[TIMEOUT]",
     "escalationTitle": "The Escalation of Cyber-Kinetic Warfare",
     "escalationP1": "Unlike previous attacks which focused primarily on data exfiltration and corporate espionage, this latest vector demonstrates a clear intent to cause physical, kinetic damage. By manipulating the frequency controls of the targeted substations, the attackers attempted to induce hardware failures that could have resulted in localized blackouts lasting weeks.",
-    "escalationP2": "Global intelligence agencies are currently working in tandem with the private sector to patch the vulnerabilities and trace the origin of the attack. Until a comprehensive patch is deployed, grid operators remain on high alert. We will continue to monitor the situation as it develops and provide updates on the live ticker."
+    "escalationP2": "Global intelligence agencies are currently working in tandem with the private sector to patch the vulnerabilities and trace the origin of the attack. Until a comprehensive patch is deployed, grid operators remain on high alert. We will continue to monitor the situation as it develops and provide updates on the live ticker.",
+    "intelArchive": "INTEL ARCHIVE DIRECTORY",
+    "categoryDesc": "Latest threat intelligence, strategic developments, and decrypted reports pertaining to this sector.",
+    "techIntel": "TECHINTEL ANALYSIS",
+    "noRecords": "NO RECORDS FOUND IN THIS SECTOR."
   },
   "About": {
     "title": "About Us",
