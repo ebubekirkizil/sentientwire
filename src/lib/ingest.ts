@@ -13,12 +13,9 @@ const FEEDS = [
 
 async function getImageUrl(title: string, category: string): Promise<string> {
   try {
-    let query = category.toLowerCase();
-    const keywords = ['cybersecurity', 'hacker', 'quantum', 'ai', 'robot', 'drone', 'wafer', 'chip', 'network', 'satellite'];
-    const matched = keywords.find(k => title.toLowerCase().includes(k));
-    if (matched) {
-      query = matched;
-    }
+    const styles = ['abstract architecture', 'dark minimalism', 'monochrome geometry', 'corporate modern', 'cyberpunk minimalist'];
+    const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+    const query = `${category.toLowerCase()} ${randomStyle}`;
     
     console.log(`[INGEST-IMAGE] Searching Unsplash for: ${query}`);
     const images = await searchUnsplashImages(query);
