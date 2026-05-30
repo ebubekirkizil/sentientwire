@@ -1,13 +1,8 @@
 "use server";
 
-import { createClient } from "@libsql/client";
+import { db } from "@/lib/db";
 import { getBotSettings, generateTweet, postToX } from "@/lib/botService";
 import { revalidatePath } from "next/cache";
-
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
 
 export async function triggerTweetManual(articleId: string) {
   try {

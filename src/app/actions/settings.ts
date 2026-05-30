@@ -1,11 +1,6 @@
 "use server";
 
-import { createClient } from "@libsql/client";
-
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
+import { db } from "@/lib/db";
 
 export async function getSettings() {
   try {

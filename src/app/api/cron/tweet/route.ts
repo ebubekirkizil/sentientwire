@@ -1,16 +1,11 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@libsql/client";
+import { db } from "@/lib/db";
 import { getBotSettings, generateTweet, postToX } from "@/lib/botService";
 
-// Prevent caching of this cron endpoint
 export const dynamic = "force-dynamic";
 
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
-
 export async function GET(request: Request) {
+
   try {
     // 1. Get settings
     const settings = await getBotSettings();

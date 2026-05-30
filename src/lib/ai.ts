@@ -43,8 +43,21 @@ export async function rewriteArticle(rawText: string, locale: string = 'en') {
     const text = response.text || (response as any).response?.text?.();
     if (!text) return null;
     return JSON.parse(text);
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Error:", error);
+    
+    // Fallback Mock for development when quota is exceeded
+    if (error.message?.includes("quota") || error.message?.includes("429")) {
+      console.warn("Gemini Quota Exceeded. Using Mock Fallback.");
+      return {
+        title: "MOCK: " + rawText.split('\n')[0].replace('Title: ', ''),
+        summary: "AI Quota exceeded. This is a mock summary.",
+        content: `<p>AI Quota exceeded. The original text was:</p><pre>${rawText}</pre>`,
+        slug: "mock-article-" + Date.now(),
+        category: "GENERAL",
+        categoryColor: "#06b6d4"
+      };
+    }
     return null;
   }
 }
@@ -103,8 +116,14 @@ Return the result as a JSON object matching this schema (do NOT include markdown
       summary: parsed.summary || summary,
       content: parsed.content || content,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("AI Translation Error:", error);
+    
+    // Fallback Mock for development when quota is exceeded
+    if (error.message?.includes("quota") || error.message?.includes("429")) {
+       console.warn("Gemini Quota Exceeded. Returning original text for translation.");
+       return { title, summary, content };
+    }
     return null;
   }
 }

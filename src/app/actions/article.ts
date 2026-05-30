@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@libsql/client";
+import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { translateArticleText } from "@/lib/ai";
 
@@ -30,11 +30,6 @@ function toPlainArticle(row: any) {
   };
 }
 
-// Initialize libSQL directly for robustness
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
 
 export async function createArticle(formData: FormData) {
   const title = formData.get("title") as string;
@@ -104,13 +99,16 @@ export async function getArticlesByLocale(locale: string) {
     const articles = result.rows;
     const ids = articles.map(a => String(a.id));
     
-    const transResult = await db.execute({
-      sql: `SELECT * FROM ArticleTranslation WHERE locale = ? AND articleId IN (${ids.map(() => "?").join(",")})`,
-      args: [targetLang, ...ids]
-    });
-
-    const transMap = new Map();
-    transResult.rows.forEach(r => transMap.set(String(r.articleId), r));
+    let transMap = new Map();
+    try {
+      const transResult = await db.execute({
+        sql: `SELECT * FROM ArticleTranslation WHERE locale = ? AND articleId IN (${ids.map(() => "?").join(",")})`,
+        args: [targetLang, ...ids]
+      });
+      transResult.rows.forEach(r => transMap.set(String(r.articleId), r));
+    } catch (transError) {
+      console.warn("Translation fetch failed, falling back to original content:", transError);
+    }
 
     return articles.map((art) => {
       const trans = transMap.get(String(art.id));

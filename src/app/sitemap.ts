@@ -1,10 +1,5 @@
 import { MetadataRoute } from 'next';
-import { createClient } from "@libsql/client";
-
-const db = createClient({
-  url: process.env.DATABASE_URL || "file:dev.db",
-  authToken: process.env.DATABASE_AUTH_TOKEN,
-});
+import { db } from "@/lib/db";
 
 const locales = ['en', 'tr', 'de', 'es', 'fr', 'it', 'nl', 'pl'];
 const categories = ['ai', 'cybersecurity', 'defense', 'quantum', 'hardware', 'space'];
@@ -36,24 +31,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // 3. Dynamic News Articles
-  try {
-    const result = await db.execute("SELECT slug, locale, updatedAt FROM Article WHERE isPublished = 1");
-    
-    result.rows.forEach((row) => {
-      const locale = String(row.locale || 'en');
-      const slug = String(row.slug);
-      const updatedAt = row.updatedAt ? new Date(String(row.updatedAt)) : new Date();
+  // 3. Dynamic News Articles (Skip during build phase to avoid auth errors)
+  if (process.env.NEXT_PHASE !== 'phase-production-build') {
+    try {
+      const result = await db.execute("SELECT slug, locale, updatedAt FROM Article WHERE isPublished = 1");
+      
+      result.rows.forEach((row) => {
+        const locale = String(row.locale || 'en');
+        const slug = String(row.slug);
+        const updatedAt = row.updatedAt ? new Date(String(row.updatedAt)) : new Date();
 
-      sitemapEntries.push({
-        url: `${baseUrl}/${locale}/news/${slug}`,
-        lastModified: updatedAt,
-        changeFrequency: 'monthly',
-        priority: 0.7,
+        sitemapEntries.push({
+          url: `${baseUrl}/${locale}/news/${slug}`,
+          lastModified: updatedAt,
+          changeFrequency: 'monthly',
+          priority: 0.7,
+        });
       });
-    });
-  } catch (error) {
-    console.error("Sitemap generation error:", error);
+    } catch (error) {
+      console.error("Sitemap dynamic generation skipped or failed:", error);
+    }
+  } else {
+    console.log("[SITEMAP] Skipping dynamic article fetch during build phase.");
   }
 
   return sitemapEntries;
