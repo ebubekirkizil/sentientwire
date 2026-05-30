@@ -658,9 +658,9 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "100px 24px", textAlign: "center" }}>
           <div style={{ display: "inline-block", padding: "40px", border: "1px dashed var(--border-subtle)", borderRadius: 12 }}>
             <div style={{ fontSize: 40, marginBottom: 20 }}>📡</div>
-            <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 24, color: "var(--text-primary)", marginBottom: 12 }}>{t('News.notFound') || "DATABASE SCAN COMPLETE: 0 RESULTS"}</h2>
+            <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 24, color: "var(--text-primary)", marginBottom: 12 }}>DATABASE SCAN COMPLETE: 0 RESULTS</h2>
             <p style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 12, color: "var(--text-muted)", maxWidth: 400, margin: "0 auto" }}>
-              {t('News.awaitingTelemetry') || "Our sensors are currently scanning for new intelligence. Please check back in a few moments."}
+              Our sensors are currently scanning for new intelligence. Please check back in a few moments.
             </p>
           </div>
         </div>
