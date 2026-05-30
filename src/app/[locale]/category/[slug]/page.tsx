@@ -2,12 +2,14 @@
 
 import React, { use, useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export default function CategoryPage({ params }: { params: Promise<{ slug: string, locale: string }> }) {
   const resolvedParams = use(params);
   const title = resolvedParams.slug.toUpperCase();
   const [dbArticles, setDbArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations('News');
 
   useEffect(() => {
     fetch(`/api/articles?locale=${resolvedParams.locale}`)
@@ -27,32 +29,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         console.error(e);
         setLoading(false);
       });
-  }, [resolvedParams.slug]);
-
-  // Mock articles for the category (fallback)
-  const articles = [
-    {
-      id: "c1",
-      title: `${title} Framework Updated`,
-      excerpt: `The new global standard for ${title.toLowerCase()} implementations has been published by the cyber intelligence alliance, enforcing strict zero-trust parameters.`,
-      ago: "3 hours ago",
-      image: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&q=80&w=600&h=350"
-    },
-    {
-      id: "c2",
-      title: `Critical Vulnerability in Core ${title} Nodes`,
-      excerpt: `Analysts have detected widespread probing of infrastructure associated with legacy ${title.toLowerCase()} systems. Immediate patching recommended.`,
-      ago: "7 hours ago",
-      image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=600&h=350"
-    },
-    {
-      id: "c3",
-      title: `${title} Sector Investment Surges 400%`,
-      excerpt: `Venture capital has flooded into early-stage startups focused on ${title.toLowerCase()} defense and monitoring tools this quarter.`,
-      ago: "1 day ago",
-      image: "https://images.unsplash.com/photo-1510915361894-faa8b2d88c4b?auto=format&fit=crop&q=80&w=600&h=350"
-    }
-  ];
+  }, [resolvedParams.locale, resolvedParams.slug]);
 
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] font-sans pb-20 relative overflow-hidden transition-colors duration-300">
@@ -65,12 +42,12 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
         {/* Category Header */}
         <div className="mb-14 border-b border-[var(--border-subtle)] pb-10">
-           <div className="font-mono text-xs text-[var(--cyan-bright)] mb-2 tracking-[0.2em]">INTEL ARCHIVE DIRECTORY</div>
+           <div className="font-mono text-xs text-[var(--cyan-bright)] mb-2 tracking-[0.2em]">{t('intelArchive') || 'INTEL ARCHIVE DIRECTORY'}</div>
            <h1 className="text-5xl font-extrabold text-[var(--text-primary)] tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
              {title}
            </h1>
            <p className="mt-4 text-[var(--text-secondary)] max-w-2xl text-lg">
-             Latest threat intelligence, strategic developments, and decrypted reports pertaining to the {title} sector.
+             {t('categoryDesc') || `Latest threat intelligence, strategic developments, and decrypted reports pertaining to the ${title} sector.`}
            </p>
         </div>
 
@@ -78,7 +55,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {loading ? (
              <div className="col-span-2 text-center py-20 font-mono text-[var(--cyan-bright)] animate-pulse">
-               SCANNING DATABANK...
+               {t('scanning') || 'SCANNING DATABANK...'}
              </div>
           ) : dbArticles.length > 0 ? dbArticles.map((article) => (
             <Link 
