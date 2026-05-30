@@ -27,7 +27,7 @@ export async function GET(request: Request) {
         sql: `SELECT a.id, a.title, a.summary, a.content 
               FROM Article a 
               LEFT JOIN ArticleTranslation t ON a.id = t.articleId AND t.locale = ? 
-              WHERE t.id IS NULL 
+              WHERE t.articleId IS NULL 
               ORDER BY a.createdAt DESC 
               LIMIT 1`,
         args: [locale]
