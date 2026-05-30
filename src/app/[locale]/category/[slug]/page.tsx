@@ -10,7 +10,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/articles")
+    fetch(`/api/articles?locale=${resolvedParams.locale}`)
       .then(res => res.json())
       .then(data => {
         if(Array.isArray(data)) {
