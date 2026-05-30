@@ -89,21 +89,14 @@ export async function getArticlesByLocale(locale: string) {
   const targetLang = locale.substring(0, 2).toLowerCase();
   
   try {
-    // KÖKTEN ÇÖZÜM: isPublished filtresini tamamen kaldırıyoruz. 
-    // Otonom sistemde her eklenen haber anında görünmeli.
     const result = await db.execute({
       sql: `SELECT * FROM Article ORDER BY createdAt DESC`,
       args: []
     });
     
-    if (!result.rows || result.rows.length === 0) {
-      console.log("[DB-DEBUG] Database returned 0 rows for articles.");
-      return [];
-    }
+    if (!result.rows || result.rows.length === 0) return [];
 
     const articles = result.rows;
-    console.log(`[DB-DEBUG] Found ${articles.length} articles.`);
-    
     const ids = articles.map(a => String(a.id));
     
     let transMap = new Map();
@@ -114,7 +107,7 @@ export async function getArticlesByLocale(locale: string) {
       });
       transResult.rows.forEach(r => transMap.set(String(r.articleId), r));
     } catch (transError) {
-      // Çeviri tablosu hatası olsa bile haberleri göster
+      // Continue without translations if table is missing
     }
 
     return articles.map((art) => {
@@ -126,7 +119,7 @@ export async function getArticlesByLocale(locale: string) {
     });
 
   } catch (error) {
-    console.error("FATAL: getArticlesByLocale database failure:", error);
+    console.error("Database Error:", error);
     return [];
   }
 }
