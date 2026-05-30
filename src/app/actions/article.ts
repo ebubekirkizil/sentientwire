@@ -100,7 +100,8 @@ export async function getArticleBySlug(slug: string) {
 }
 
 export async function getArticlesByLocale(locale: string) {
-  const targetLang = locale.substring(0, 2).toLowerCase();
+  // Normalize locale: zh-CN -> zh, tr -> tr, en-US -> en, etc.
+  const targetLang = locale === 'zh-CN' ? 'zh' : locale.substring(0, 2).toLowerCase();
   
   try {
     const result = await db.execute({
@@ -113,6 +114,9 @@ export async function getArticlesByLocale(locale: string) {
     const articles = result.rows;
     const ids = articles.map(a => String(a.id));
     
+    // ALWAYS look up ArticleTranslation for every locale.
+    // This is critical: even if article.locale === targetLang,
+    // the TranslationTable may have a better-quality translation.
     let transMap = new Map();
     try {
       const transResult = await db.execute({
@@ -121,7 +125,7 @@ export async function getArticlesByLocale(locale: string) {
       });
       transResult.rows.forEach(r => transMap.set(String(r.articleId), r));
     } catch (transError) {
-      // Continue without translations if table is missing
+      console.error('[getArticlesByLocale] Translation lookup failed:', transError);
     }
 
     return articles.map((art) => {
@@ -129,6 +133,7 @@ export async function getArticlesByLocale(locale: string) {
       if (trans) {
         return toPlainArticle({ ...art, title: trans.title, summary: trans.summary, content: trans.content });
       }
+      // Fallback to original article
       return toPlainArticle(art);
     });
 
@@ -174,12 +179,14 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
   const article = await getArticleBySlug(slugOrId);
   if (!article) return null;
 
-  const targetLang = locale.substring(0, 2).toLowerCase();
-  const artLocale = String(article.locale || 'en').substring(0, 2).toLowerCase();
+  // Normalize locale: zh-CN -> zh, en-US -> en, etc.
+  const targetLang = locale === 'zh-CN' ? 'zh' : locale.substring(0, 2).toLowerCase();
   
+  // ALWAYS check ArticleTranslation first, regardless of article.locale.
+  // Reason: articles may be stored with any locale value (e.g. 'tr') but
+  // still have better translations in ArticleTranslation for every language.
   let finalArt = article;
-  if (artLocale !== targetLang) {
-    // Check DB first
+  try {
     const transResult = await db.execute({
       sql: `SELECT * FROM ArticleTranslation WHERE articleId = ? AND locale = ?`,
       args: [String(article.id), targetLang]
@@ -189,13 +196,14 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
       const trans = transResult.rows[0];
       finalArt = {
         ...article,
-        title: String(trans.title || ''),
-        summary: String(trans.summary || ''),
-        content: String(trans.content || '')
+        title: String(trans.title || article.title || ''),
+        summary: String(trans.summary || article.summary || ''),
+        content: String(trans.content || article.content || '')
       };
     }
-    // If not found in DB, we DO NOT translate on the fly to avoid API rate limits and slow page loads.
-    // The article will just fallback to its original language until pre-translated.
+    // If no translation found, fall back to original article language
+  } catch (err) {
+    console.error('[getLocalizedArticle] Translation lookup failed:', err);
   }
 
   return toPlainArticle(finalArt);
