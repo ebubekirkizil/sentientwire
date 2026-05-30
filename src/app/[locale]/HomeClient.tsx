@@ -615,6 +615,10 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
   if (typeof window !== "undefined") {
     console.log("[HomeClient] Articles received:", dbArticles?.length, "Locale:", locale);
   }
+
+  useEffect(() => {
+    fetch('/api/cron/translate').catch(err => console.debug("Translation queue:", err.message));
+  }, []);
   
   // 1. Featured Section: 1 main large card + 4 grid cards (needs exactly 5 articles)
   const featuredList = [...dbArticles.slice(0, 5)];

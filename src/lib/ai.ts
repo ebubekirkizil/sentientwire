@@ -87,6 +87,10 @@ Do NOT change the HTML structure, tags, or CSS classes. Just translate the text 
 Translate technical terms accurately (e.g., zero-day remains zero-day, or use standard translations in target language).
 
 Target language: ${targetLocale}
+If the target language is en-GB, use British English spelling and idioms (e.g., colour, organise).
+If the target language is en-US, use American English spelling (e.g., color, organize).
+If the target language is en-CA, use Canadian English spelling.
+If the target language is zh, use Simplified Chinese unless specified otherwise.
 
 Translate the following article:
 Title: ${title}

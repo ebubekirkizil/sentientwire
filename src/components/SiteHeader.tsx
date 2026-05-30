@@ -243,8 +243,18 @@ export function SiteHeader() {
                   e.currentTarget.style.boxShadow = "none";
                 }}
               >
-                <option value="tr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>TR</option>
-                <option value="en" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>EN</option>
+                <option value="tr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>TR (Türkçe)</option>
+                <option value="en-US" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>EN-US (American)</option>
+                <option value="en-GB" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>EN-GB (British)</option>
+                <option value="en-CA" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>EN-CA (Canadian)</option>
+                <option value="zh" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>ZH (Çince)</option>
+                <option value="ru" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>RU (Rusça)</option>
+                <option value="de" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>DE (Almanca)</option>
+                <option value="es" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>ES (İspanyolca)</option>
+                <option value="fr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>FR (Fransızca)</option>
+                <option value="it" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>IT (İtalyanca)</option>
+                <option value="nl" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>NL (Felemenkçe)</option>
+                <option value="pl" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>PL (Lehçe)</option>
               </select>
             </div>
 
