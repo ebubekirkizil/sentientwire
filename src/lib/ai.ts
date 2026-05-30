@@ -119,10 +119,9 @@ Return the result as a JSON object matching this schema (do NOT include markdown
   } catch (error: any) {
     console.error("AI Translation Error:", error);
     
-    // Fallback Mock for development when quota is exceeded
+    // Always return null on error so the DB does not permanently cache the untranslated text.
     if (error.message?.includes("quota") || error.message?.includes("429")) {
-       console.warn("Gemini Quota Exceeded. Returning original text for translation.");
-       return { title, summary, content };
+       console.warn("Gemini Quota Exceeded. Returning null so caller doesn't cache failure.");
     }
     return null;
   }
