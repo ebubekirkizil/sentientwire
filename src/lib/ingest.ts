@@ -103,26 +103,17 @@ export async function runIngestion() {
             const categoryColorStr = String(aiResult.categoryColor || '#06b6d4');
 
             // Dynamic Unsplash image selection
-            const imageUrl = await getImageUrl(title, categoryStr);
-
+            const imageUrl = await getImageUrl(aiResult.title, aiResult.category || '');
+            
             await db.execute({
-              sql: `INSERT INTO Article (id, title, slug, summary, content, locale, originalUrl, imageUrl, category, categoryColor, isPublished) 
-                    VALUES (?, ?, ?, ?, ?, 'en', ?, ?, ?, ?, 1)`,
-              args: [
-                id,
-                aiResult.title,
-                aiResult.slug,
-                aiResult.summary || '',
-                aiResult.content,
-                link,
-                imageUrl,
-                categoryStr,
-                categoryColorStr
-              ]
+              sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, originalUrl, locale, isPublished) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
+              args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', aiResult.content, aiResult.category, aiResult.categoryColor, imageUrl, link]
             });
-            console.log(`Successfully ingested and saved: ${aiResult.title} [Category: ${categoryStr}]`);
 
             // Pre-translate to 'tr' (Turkish) and store in DB immediately to eliminate homepage latency
+            console.log(`[INGEST-TRANSLATE] Waiting 5 seconds to avoid API quota before translating...`);
+            await new Promise(r => setTimeout(r, 5000));
             console.log(`[INGEST-TRANSLATE] Pre-translating ${aiResult.title} to Turkish (tr)...`);
             try {
               const translated = await translateArticleText(

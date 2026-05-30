@@ -245,12 +245,6 @@ export function SiteHeader() {
               >
                 <option value="tr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>TR</option>
                 <option value="en" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>EN</option>
-                <option value="de" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>DE</option>
-                <option value="es" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>ES</option>
-                <option value="fr" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>FR</option>
-                <option value="it" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>IT</option>
-                <option value="nl" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>NL</option>
-                <option value="pl" style={{ background: "var(--bg-primary)", color: "var(--text-primary)" }}>PL</option>
               </select>
             </div>
 
