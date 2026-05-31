@@ -90,12 +90,15 @@ export default function HeroGlobe({ size = 500 }: { size?: number }) {
       }
     }, 1000);
     
-    // Dünyanın sürekli dönmesini garantiye almak için her saniye kontrol edelim
+    // Dünyanın sürekli dönmesini garantiye almak ve zoom'u kapalı tutmak için her saniye kontrol edelim
     const rotateInterval = setInterval(() => {
       if (globeEl.current && globeEl.current.controls()) {
-         globeEl.current.controls().autoRotate = true;
+         const controls = globeEl.current.controls();
+         controls.autoRotate = true;
+         controls.enableZoom = false;
+         controls.enablePan = false;
       }
-    }, 1000);
+    }, 500);
 
     return () => {
       clearTimeout(timer);

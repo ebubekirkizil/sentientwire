@@ -21,8 +21,12 @@ export async function POST(request: Request) {
     }
 
     console.log(`[EXTERNAL-API] Processing new request: ${text.substring(0, 50)}...`);
+    const startTime = Date.now();
     
     const result = await processArticle(text, manualImageUrl);
+
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log(`[EXTERNAL-API] Process finished in ${duration}s. Success: ${result.success}`);
 
     if (result.success) {
       return NextResponse.json({ 

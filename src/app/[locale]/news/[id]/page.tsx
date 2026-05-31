@@ -1,5 +1,5 @@
 import React from 'react';
-import { getLocalizedArticle } from '@/app/actions/article';
+import { getLocalizedArticle, getArticlesByLocale } from '@/app/actions/article';
 import NewsDetailClient from './NewsDetailClient';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -53,6 +53,10 @@ export default async function NewsDetailPage({ params }: PageProps) {
     notFound();
   }
   
+  // Fetch related articles (latest 3 excluding current)
+  const allArticles = await getArticlesByLocale(resolvedParams.locale);
+  const relatedArticles = allArticles.filter(a => a && a.id !== article.id).slice(0, 3);
+
   // JSON-LD NewsArticle structured data for Google News, Highlights, and Discover compatibility
   const jsonLd = {
     "@context": "https://schema.org",
@@ -86,7 +90,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <NewsDetailClient article={article} locale={resolvedParams.locale} />
+      <NewsDetailClient article={article} locale={resolvedParams.locale} relatedArticles={relatedArticles} />
     </>
   );
 }

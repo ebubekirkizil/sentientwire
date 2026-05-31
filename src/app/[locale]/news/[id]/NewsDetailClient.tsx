@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-export default function NewsDetailClient({ article, locale }: { article: any, locale: string }) {
+export default function NewsDetailClient({ article, locale, relatedArticles = [] }: { article: any, locale: string, relatedArticles?: any[] }) {
   const t = useTranslations('News');
   const [mounted, setMounted] = useState(false);
 
@@ -155,6 +155,40 @@ export default function NewsDetailClient({ article, locale }: { article: any, lo
              </button>
            </div>
         </motion.div>
+
+        {/* Related Reports */}
+        {relatedArticles && relatedArticles.length > 0 && (
+          <motion.div variants={itemVariants} className="mt-16 pt-10 border-t border-[var(--cyan-dim)]">
+            <h2 className="text-2xl font-bold font-mono text-[var(--cyan-bright)] mb-6 uppercase tracking-wider">
+              {locale === 'tr' ? 'İlgili İstihbarat Raporları' : 'Related Intelligence Reports'}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedArticles.map((rel: any) => (
+                <Link key={rel.id} href={`/${locale}/news/${rel.slug || rel.id}`} className="group block h-full">
+                  <div className="h-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--cyan-glow)] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_var(--cyan-dim)] flex flex-col">
+                    <div className="h-40 w-full relative overflow-hidden bg-black">
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
+                        style={{ backgroundImage: `url('${rel.imageUrl || 'https://images.unsplash.com/photo-1510915361894-faa8b2d88c4b?auto=format&fit=crop&q=80&w=600&h=400'}')` }}
+                      />
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="font-mono text-[10px] tracking-widest text-[var(--accent-red)] mb-3">
+                        {rel.category || 'GENERAL'} // {(rel.slug || rel.id).substring(0,8).toUpperCase()}
+                      </div>
+                      <h3 className="text-md font-bold text-[var(--text-primary)] mb-3 leading-snug group-hover:text-[var(--cyan-bright)] transition-colors">
+                        {rel.title}
+                      </h3>
+                      <p className="text-sm text-[var(--text-muted)] line-clamp-3 mt-auto">
+                        {rel.summary}
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
