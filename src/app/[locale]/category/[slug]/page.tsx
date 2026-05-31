@@ -80,7 +80,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                  </p>
                  <div className="font-mono text-xs text-[var(--text-muted)] flex items-center justify-between border-t border-[var(--border-subtle)] pt-4">
                    <span>{article.originalUrl || t('News.techIntel') || "TECHINTEL ANALYSIS"}</span>
-                   <span>{new Date(article.createdAt).toLocaleDateString()}</span>
+                   <span>{new Date(article.createdAt).toLocaleDateString(resolvedParams.locale, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                  </div>
               </div>
             </Link>

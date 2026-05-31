@@ -339,7 +339,7 @@ function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string
             <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, color: "#334155", display: "flex", gap: 6 }}>
               <span>{mainArticle.source || "SENTIENT WIRE"}</span>
               <span>·</span>
-              <span>{mainArticle.createdAt ? new Date(mainArticle.createdAt).toLocaleDateString() : mainArticle.ago}</span>
+              <span>{mainArticle.createdAt ? new Date(mainArticle.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) : mainArticle.ago}</span>
             </div>
           </div>
         </Link>
@@ -401,7 +401,7 @@ function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string
                 <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#334155", marginTop: 10, display: "flex", gap: 4 }}>
                   <span>{article.source || "SENTIENT WIRE"}</span>
                   <span>·</span>
-                  <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString() : article.ago}</span>
+                  <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) : article.ago}</span>
                 </div>
               </div>
             </Link>
@@ -602,7 +602,7 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
             <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "var(--text-muted)", display: "flex", gap: 4, paddingTop: 8, stroke: "1px solid var(--border-subtle)", marginTop: "auto" }}>
               <span>{article.source || "SENTIENT WIRE"}</span>
               <span>·</span>
-              <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString() : article.ago}</span>
+              <span>{article.createdAt ? new Date(article.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) : article.ago}</span>
             </div>
           </Link>
         ))}

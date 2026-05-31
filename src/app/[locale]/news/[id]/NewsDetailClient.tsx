@@ -36,7 +36,7 @@ export default function NewsDetailClient({ article, locale }: { article: any, lo
               {article.category || "GENERAL"}
             </span>
             <span className="font-mono text-xs text-[var(--text-muted)] tracking-wider">
-              {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : new Date().toLocaleDateString()}
+              {article.createdAt ? new Date(article.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })}
             </span>
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-[var(--text-primary)] mb-8 leading-tight tracking-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
@@ -106,7 +106,7 @@ export default function NewsDetailClient({ article, locale }: { article: any, lo
              {article.category || "GENERAL"} (ID: {article.slug ? article.slug.substring(0,8) : article.id.substring(0,8)})
            </span>
            <span className="font-mono text-xs text-[var(--text-muted)] tracking-wider">
-             {t('decrypted')}: {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : new Date().toLocaleDateString()}
+             {t('decrypted')}: {article.createdAt ? new Date(article.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })}
            </span>
         </motion.div>
 
