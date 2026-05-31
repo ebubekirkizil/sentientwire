@@ -18,12 +18,12 @@ export async function generateTweet(title: string, summary: string, persona: str
   try {
     const ai = new GoogleGenAI({ apiKey: geminiKey });
     
-    let systemPrompt = "You are a professional social media manager.";
-    if (persona === "provocative") systemPrompt = "You are a provocative, debate-starting tech commentator.";
-    if (persona === "analytical") systemPrompt = "You are a highly analytical, neutral intelligence operative.";
-    if (persona === "urgent") systemPrompt = "You are an urgent, alarmist breaking news reporter.";
+    let systemPrompt = "You are a professional social media manager named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
+    if (persona === "provocative") systemPrompt = "You are a provocative, debate-starting tech commentator named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
+    if (persona === "analytical") systemPrompt = "You are a highly analytical, neutral intelligence operative named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
+    if (persona === "urgent") systemPrompt = "You are an urgent, alarmist breaking news reporter named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
 
-    const prompt = `${systemPrompt}\n\nWrite a short (max 250 chars) tweet for this article.\nTitle: ${title}\nSummary: ${summary}\nInclude a hook at the end to encourage clicks. DO NOT use hashtags.`;
+    const prompt = `${systemPrompt}\n\nWrite a short (max 250 chars) tweet for this article in ENGLISH ONLY.\nTitle: ${title}\nSummary: ${summary}\nInclude a hook at the end to encourage clicks. DO NOT use hashtags.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
