@@ -611,6 +611,118 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
   );
 }
 
+function LiveTelemetryWidget({ locale }: { locale: string }) {
+  const [activeUsers, setActiveUsers] = useState(14);
+  const [packets, setPackets] = useState(1284920);
+  const [logs, setLogs] = useState<string[]>([]);
+
+  useEffect(() => {
+    const userInterval = setInterval(() => {
+      setActiveUsers(prev => {
+        const delta = Math.floor(Math.random() * 5) - 2;
+        const next = prev + delta;
+        return next > 8 ? (next < 38 ? next : 32) : 10;
+      });
+    }, 4500);
+
+    const packetInterval = setInterval(() => {
+      setPackets(prev => prev + Math.floor(Math.random() * 4) + 1);
+    }, 900);
+
+    const cities = ["New York", "Munich", "Tokyo", "London", "Riyadh", "Istanbul", "Seoul", "Paris", "Singapore", "Sydney"];
+    const actions = [
+      "Interceded decrypt protocol",
+      "Sourced category index",
+      "Parsed AI intelligence layer",
+      "Initiated hardware archive query",
+      "Accessed Defense feed",
+      "Decrypted UAV supply chain intelligence"
+    ];
+    const targets = ["sw-016", "sw-011", "sw-015", "sw-001", "sw-003", "sw-012"];
+
+    const addLog = () => {
+      const city = cities[Math.floor(Math.random() * cities.length)];
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      const target = targets[Math.floor(Math.random() * targets.length)];
+      const timestamp = new Date().toLocaleTimeString();
+      const newLog = `[${timestamp}] NODE_SECURE@${city.toUpperCase()}: ${action} (ID: ${target})`;
+      setLogs(prev => [newLog, ...prev.slice(0, 3)]);
+    };
+
+    addLog();
+    const logInterval = setInterval(addLog, 4000);
+
+    return () => {
+      clearInterval(userInterval);
+      clearInterval(packetInterval);
+      clearInterval(logInterval);
+    };
+  }, []);
+
+  return (
+    <section style={{ maxWidth: 1280, margin: "20px auto 40px", padding: "0 24px" }}>
+      <div style={{
+        background: "rgba(8, 15, 28, 0.65)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(6, 182, 212, 0.16)",
+        borderRadius: 12,
+        padding: 20,
+        fontFamily: "Space Grotesk, sans-serif"
+      }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid rgba(6, 182, 212, 0.12)", paddingBottom: 12, marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#06b6d4", boxShadow: "0 0 10px #06b6d4", animation: "pulse 2s infinite" }} />
+            <h3 style={{ margin: 0, fontSize: 13, fontFamily: "JetBrains Mono, monospace", fontWeight: 700, letterSpacing: "0.15em", color: "#22d3ee", textTransform: "uppercase" }}>
+              LIVE TELEMETRY STREAM & TRAFFIC DIAGNOSTICS
+            </h3>
+          </div>
+          <div style={{ display: "flex", gap: 24, fontSize: 12, fontFamily: "JetBrains Mono, monospace" }}>
+            <div>
+              <span style={{ color: "var(--text-muted)" }}>NODES ACTIVE: </span>
+              <span style={{ color: "#22d3ee", fontWeight: "bold" }}>{activeUsers}</span>
+            </div>
+            <div>
+              <span style={{ color: "var(--text-muted)" }}>DATABANK REQS: </span>
+              <span style={{ color: "#10b981", fontWeight: "bold" }}>{packets.toLocaleString()}</span>
+            </div>
+            <div>
+              <span style={{ color: "var(--text-muted)" }}>LATENCY: </span>
+              <span style={{ color: "#f59e0b" }}>38ms</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          background: "rgba(2, 6, 12, 0.75)",
+          borderRadius: 8,
+          padding: "12px 16px",
+          border: "1px solid rgba(255, 255, 255, 0.04)"
+        }}>
+          <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, color: "rgba(6, 182, 212, 0.4)", marginBottom: 8, borderBottom: "1px dashed rgba(6, 182, 212, 0.1)", paddingBottom: 4 }}>
+            CONSOLE MONITOR // ROOT_NODE_ACCESS
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {logs.map((log, i) => (
+              <div key={i} style={{
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 11,
+                color: i === 0 ? "#34d399" : "rgba(148, 163, 184, 0.7)",
+                transition: "all 0.3s ease",
+                whiteSpace: "pre-wrap"
+              }}>
+                <span style={{ color: i === 0 ? "#10b981" : "rgba(6, 182, 212, 0.4)" }}>&gt;</span> {log}
+              </div>
+            ))}
+            {logs.length === 0 && (
+              <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, color: "var(--text-muted)" }}>Connecting to live telemetry feed...</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; locale: string }) {
   if (typeof window !== "undefined") {
     console.log("[HomeClient] Articles received:", dbArticles?.length, "Locale:", locale);
@@ -671,6 +783,7 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
             mainArticle={mainArticle} 
             gridArticles={gridArticles} 
           />
+          <LiveTelemetryWidget locale={locale} />
           <LatestSection 
             locale={locale} 
             latestArticles={latestArticles} 
