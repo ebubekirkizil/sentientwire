@@ -8,6 +8,8 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { Footer } from '@/components/Footer';
 
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 const GA_ID = "G-1PSG6Q7S8L";
 
 export const metadata: Metadata = {
@@ -33,18 +35,6 @@ export default async function RootLayout({
   return (
     <html lang={locale} className="antialiased scroll-smooth">
       <head>
-        {/* Google Analytics - Manuel Kurulum */}
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_ID}', { 'debug_mode': true });
-            `,
-          }}
-        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -64,6 +54,7 @@ export default async function RootLayout({
             <Footer />
           </NextIntlClientProvider>
         </ThemeProvider>
+        <GoogleAnalytics gaId={GA_ID} />
       </body>
     </html>
   );

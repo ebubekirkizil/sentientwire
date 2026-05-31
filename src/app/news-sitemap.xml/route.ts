@@ -3,13 +3,10 @@ import { db } from "@/lib/db";
 export async function GET() {
   const baseUrl = 'https://sentientwire.com';
   
-  // Google News sitemap should only contain articles from the last 2 days
-  const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
-  
   try {
     const result = await db.execute({
-      sql: "SELECT title, slug, locale, updatedAt FROM Article WHERE isPublished = 1 AND updatedAt >= ? ORDER BY updatedAt DESC",
-      args: [twoDaysAgo]
+      sql: "SELECT title, slug, locale, updatedAt FROM Article WHERE isPublished = 1 AND updatedAt >= datetime('now', '-2 days') ORDER BY updatedAt DESC",
+      args: []
     });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
