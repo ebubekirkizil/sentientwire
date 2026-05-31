@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { logout } from "@/app/actions/auth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function AdminLayout({
   children,
@@ -95,12 +97,36 @@ export default function AdminLayout({
              </div>
            </div>
 
-           <Link 
-             href={`/${locale}/admin/new`}
-             className="bg-[var(--cyan-bright)] text-[#020408] font-bold font-mono text-xs tracking-widest px-6 py-2.5 rounded shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] hover:bg-white transition-all transform hover:-translate-y-0.5"
-           >
-             + INITIATE REPORT
-           </Link>
+           <div className="flex items-center gap-4">
+             {/* Language Selector */}
+             <div className="relative flex items-center">
+               <select
+                 value={locale}
+                 onChange={(e) => router.replace(pathname, { locale: e.target.value })}
+                 className="bg-cyan-900/10 border border-[var(--cyan-dim)] rounded-md px-3 py-1.5 text-xs font-mono text-[var(--cyan-bright)] outline-none cursor-pointer hover:bg-cyan-900/20 transition-all"
+               >
+                 <option value="tr" className="bg-[#020408] text-white">TR (Türkçe)</option>
+                 <option value="en" className="bg-[#020408] text-white">EN (English)</option>
+                 <option value="de" className="bg-[#020408] text-white">DE (Deutsch)</option>
+                 <option value="fr" className="bg-[#020408] text-white">FR (Français)</option>
+                 <option value="es" className="bg-[#020408] text-white">ES (Español)</option>
+                 <option value="it" className="bg-[#020408] text-white">IT (Italiano)</option>
+                 <option value="ru" className="bg-[#020408] text-white">RU (Pусский)</option>
+                 <option value="zh" className="bg-[#020408] text-white">ZH (中文)</option>
+                 <option value="ar" className="bg-[#020408] text-white">AR (العربية)</option>
+                 <option value="ja" className="bg-[#020408] text-white">JA (日本語)</option>
+               </select>
+             </div>
+
+             <ThemeToggle />
+
+             <Link 
+               href={`/${locale}/admin/new`}
+               className="bg-[var(--cyan-bright)] text-[#020408] font-bold font-mono text-xs tracking-widest px-6 py-2.5 rounded shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] hover:bg-white transition-all transform hover:-translate-y-0.5"
+             >
+               + INITIATE REPORT
+             </Link>
+           </div>
         </header>
 
         {/* Page Content */}

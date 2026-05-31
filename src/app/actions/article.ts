@@ -2,7 +2,109 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { translateArticleText } from "@/lib/ai";
+import { translateArticleText, rewriteArticle } from "@/lib/ai";
+import { searchUnsplashImages } from "./unsplash";
+
+// All supported locales for pre-translation
+const ALL_LOCALES = ['tr', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ar', 'ja'];
+
+async function getImageUrl(query: string, fallbackCategory: string): Promise<string> {
+  try {
+    console.log(`[PROCESS-IMAGE] Searching Unsplash for: ${query}`);
+    const images = await searchUnsplashImages(query);
+    
+    if (images && images.length > 0) {
+      // Pick a random image from the first 3 results to ensure quality
+      const idx = Math.floor(Math.random() * Math.min(3, images.length));
+      return images[idx].url;
+    }
+  } catch (error) {
+    console.error("Unsplash Search Error:", error);
+  }
+  return `https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200&h=628`;
+}
+
+export async function processArticle(rawText: string, manualImageUrl?: string) {
+  try {
+    console.log("[PROCESS] Starting automated article processing...");
+    
+    // 1. Rewrite with AI (Primary in English)
+    const aiResult = await rewriteArticle(rawText, 'en');
+    if (!aiResult) throw new Error("AI Rewrite failed");
+
+    // 2. Fetch Images
+    // Cover Image
+    let coverImage = manualImageUrl;
+    if (!coverImage) {
+      const coverQuery = aiResult.imagePrompt.replace('flat design, white background, corporate minimalist, ', '');
+      coverImage = await getImageUrl(coverQuery, aiResult.category);
+    }
+
+    // Contextual Middle Image
+    const midQuery = aiResult.imagePrompt2 || aiResult.category;
+    const midImage = await getImageUrl(midQuery, aiResult.category);
+
+    // 3. Inject second image into content (after the first H2 or roughly in the middle)
+    let content = aiResult.content;
+    const imgHtml = `
+      <div class="my-12 rounded-xl overflow-hidden border border-[var(--border-subtle)] shadow-lg">
+        <img src="${midImage}" alt="${aiResult.title}" class="w-full h-auto object-cover" />
+        <div class="bg-[var(--bg-secondary)] p-3 text-center font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest">
+          FIELD INTEL: VISUAL ASSET DEPLOYED
+        </div>
+      </div>
+    `;
+
+    // Try to insert after the first </h2>
+    if (content.includes("</h2>")) {
+      content = content.replace("</h2>", `</h2>${imgHtml}`);
+    } else {
+      content = content + imgHtml;
+    }
+
+    // 4. Save to Database
+    const id = crypto.randomUUID();
+    const categoryStr = String(aiResult.category || 'AI').toUpperCase();
+    const categoryColorStr = String(aiResult.categoryColor || '#8b5cf6');
+
+    await db.execute({
+      sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, locale, isPublished) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
+      args: [id, aiResult.title, aiResult.slug, aiResult.summary, content, categoryStr, categoryColorStr, coverImage]
+    });
+
+    console.log(`[PROCESS] Saved primary article: ${aiResult.title}`);
+
+    // 5. Pre-translate to ALL supported locales
+    for (const locale of ALL_LOCALES) {
+      console.log(`[PROCESS-TRANSLATE] Translating to ${locale}...`);
+      try {
+        const translated = await translateArticleText(
+          aiResult.title,
+          aiResult.summary,
+          content,
+          locale
+        );
+        if (translated) {
+          await db.execute({
+            sql: `INSERT OR REPLACE INTO ArticleTranslation (articleId, locale, title, summary, content)
+                  VALUES (?, ?, ?, ?, ?)`,
+            args: [id, locale, translated.title, translated.summary, translated.content]
+          });
+        }
+      } catch (transErr) {
+        console.error(`[PROCESS-TRANSLATE] Failed for ${locale}:`, transErr);
+      }
+    }
+
+    revalidatePath('/en');
+    revalidatePath('/tr');
+    return { success: true, id };
+  } catch (error) {
+    console.error("Process Article Error:", error);
+    return { success: false, error: String(error) };
+  }
+}
 
 // In-memory cache to store translated fields: key is `${articleId}_${targetLocale}`
 const translationCache = new Map<string, { title: string, summary: string, content: string }>();

@@ -58,6 +58,22 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-bold font-sans tracking-tight text-[var(--text-primary)]">Intelligence Databank</h2>
           <p className="font-mono text-xs text-[var(--text-muted)] mt-1">Manage decrypted reports and leaked files.</p>
         </div>
+        <div className="flex gap-4">
+          <Link 
+            href={`/${locale}/admin/new`} 
+            className="bg-[var(--bg-secondary)] border border-[var(--border-subtle)] text-[var(--text-primary)] font-mono text-xs font-bold px-4 py-2.5 rounded hover:border-[var(--cyan-dim)] transition-all flex items-center gap-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            LOG INTELLIGENCE
+          </Link>
+          <Link 
+            href={`/${locale}/admin/rapid-ingest`} 
+            className="bg-gradient-to-r from-[var(--cyan)] to-[var(--cyan-bright)] text-[#020408] font-mono text-xs font-black px-5 py-2.5 rounded hover:shadow-[0_0_15px_rgba(6,182,212,0.4)] transition-all flex items-center gap-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            RAPID INGEST (AI)
+          </Link>
+        </div>
       </div>
 
       <div className="bg-[var(--bg-primary)] border border-[var(--border-subtle)] rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.2)]">

@@ -345,3 +345,32 @@ article li {
   margin-bottom: 0.5rem;
 }
 
+.prose-custom {
+  max-width: none;
+  color: var(--text-secondary);
+}
+
+.prose-custom h2 {
+  color: var(--text-primary);
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.prose-custom p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
+article img {
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  margin: 2rem 0;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.3s ease;
+}
+
+article img:hover {
+  transform: scale(1.01);
+}
+
