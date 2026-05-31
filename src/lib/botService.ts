@@ -75,6 +75,39 @@ export async function postToX(tweetContent: string, articleSlug: string, apiKey:
   }
 }
 
+export async function postToTelegram(title: string, summary: string, slug: string, botToken?: string, chatId?: string) {
+  const message = `🚨 *${title}*\n\n${summary}\n\n🔗 [Read Intel Report](https://sentientwire.com/tr/news/${slug})`;
+  
+  if (!botToken || !chatId) {
+    console.log("\n=========================================");
+    console.log("[TELEGRAM-BOT SIMULATION] MESSAGE BROADCASTED:");
+    console.log(message);
+    console.log("=========================================\n");
+    return true;
+  }
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown'
+      })
+    });
+
+    if (!response.ok) {
+      console.error("Failed to post to Telegram:", await response.text());
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.error("Error posting to Telegram:", err);
+    return false;
+  }
+}
+
 export async function getBotSettings() {
   try {
     const rs = await db.execute("SELECT * FROM SiteSettings");

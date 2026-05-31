@@ -146,15 +146,21 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
              dangerouslySetInnerHTML={{ __html: article.content }} 
            />
 
-           <div className="pt-8 mt-12 border-t border-[var(--border-subtle)] flex items-center justify-between">
-             <div className="font-mono text-xs text-[var(--text-muted)]">
-               {t('reportId')}: {(article.slug || article.id).substring(0,8).toUpperCase()}-X99-2026
+             <div className="pt-8 mt-12 border-t border-[var(--border-subtle)] flex items-center justify-between">
+               <div className="font-mono text-xs text-[var(--text-muted)]">
+                 {t('reportId')}: {(article.slug || article.id).substring(0,8).toUpperCase()}-X99-2026
+               </div>
+               <button 
+                 onClick={() => {
+                   document.dispatchEvent(new CustomEvent('openNewsletterModal'));
+                   // Quick hack to open modal if they want to share/subscribe
+                 }}
+                 className="px-6 py-2 bg-[var(--cyan-dim)] border border-[var(--cyan-glow)] text-[var(--cyan-bright)] rounded text-sm font-bold tracking-widest hover:bg-[var(--cyan-bright)] hover:text-[#020408] transition-colors shadow-[0_0_15px_var(--cyan-dim)]"
+               >
+                 {t('shareIntel') || 'SUBSCRIBE FOR ALERTS'}
+               </button>
              </div>
-             <button className="px-6 py-2 bg-transparent border border-[var(--border-glow)] text-[var(--cyan-bright)] rounded text-sm font-bold tracking-widest hover:bg-[var(--cyan-dim)] transition-colors">
-               {t('shareIntel')}
-             </button>
-           </div>
-        </motion.div>
+          </motion.div>
 
         {/* Related Reports */}
         {relatedArticles && relatedArticles.length > 0 && (

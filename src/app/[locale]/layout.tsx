@@ -7,6 +7,7 @@ import {routing} from '@/i18n/routing';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { Footer } from '@/components/Footer';
+import { NewsletterModal } from '@/components/NewsletterModal';
 
 import { GoogleAnalytics } from '@next/third-parties/google';
 
@@ -51,6 +52,7 @@ export default async function RootLayout({
             <main className="flex-1 w-full">
               {children}
             </main>
+            <NewsletterModal locale={locale} />
             <Footer />
           </NextIntlClientProvider>
         </ThemeProvider>

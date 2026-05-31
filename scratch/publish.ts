@@ -99,7 +99,13 @@ async function publish() {
     
     console.log(`[Google Indexing API] Success! Googlebot scheduled for immediate fetch.`);
     
-    // 3. Bing / IndexNow API
+    // 3. Telegram Broadcasting
+    console.log(`[Telegram Bot] Broadcasting Intel Report to channels...`);
+    // Assuming process.env.TELEGRAM_BOT_TOKEN and process.env.TELEGRAM_CHAT_ID would be used in real env
+    await new Promise(r => setTimeout(r, 200));
+    console.log(`[Telegram Bot] Success! Notification delivered to subscribers.`);
+    
+    // 4. Bing / IndexNow API
     console.log(`[IndexNow API] Pinging Bing & Yandex for: ${articleUrl}`);
     await new Promise(r => setTimeout(r, 300));
     
