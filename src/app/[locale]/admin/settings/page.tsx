@@ -86,11 +86,44 @@ export default function SettingsDashboard() {
           
           <div className="flex flex-col gap-4 max-w-xl">
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X API KEY (BEARER TOKEN)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X CONSUMER KEY (API KEY)</label>
               <input 
                 name="x_api_key" 
                 type="password"
                 defaultValue={settings.x_api_key || ""}
+                placeholder="************************"
+                className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm" 
+              />
+            </div>
+            
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X CONSUMER SECRET (API KEY SECRET)</label>
+              <input 
+                name="x_api_secret" 
+                type="password"
+                defaultValue={settings.x_api_secret || ""}
+                placeholder="************************"
+                className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm" 
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X ACCESS TOKEN</label>
+              <input 
+                name="x_access_token" 
+                type="password"
+                defaultValue={settings.x_access_token || ""}
+                placeholder="************************"
+                className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm" 
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X ACCESS TOKEN SECRET</label>
+              <input 
+                name="x_access_secret" 
+                type="password"
+                defaultValue={settings.x_access_secret || ""}
                 placeholder="************************"
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm" 
               />

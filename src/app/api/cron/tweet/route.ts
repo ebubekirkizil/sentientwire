@@ -41,7 +41,14 @@ export async function GET(request: Request) {
     );
 
     // 4. Post to X
-    const success = await postToX(tweetText, articleToPost.slug as string, settings.xKey);
+    const success = await postToX(
+      tweetText, 
+      articleToPost.slug as string, 
+      settings.xKey,
+      settings.xSecret,
+      settings.xAccessToken,
+      settings.xAccessSecret
+    );
 
     if (success) {
       // 5. Update Database

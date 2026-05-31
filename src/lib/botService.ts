@@ -38,9 +38,14 @@ export async function generateTweet(title: string, summary: string, persona: str
   }
 }
 
-export async function postToX(tweetContent: string, articleSlug: string, apiKey: string) {
+import { TwitterApi } from 'twitter-api-v2';
+
+export async function postToX(tweetContent: string, articleSlug: string, apiKey: string, apiSecret?: string, accessToken?: string, accessSecret?: string) {
   const finalTweet = `${tweetContent}\n\n🔗 https://sentientwire.com/en/news/${articleSlug}`;
 
+  // If using Bearer token only (App-only, might not allow posting depending on tier, but we'll try)
+  // Best practice for posting is User Context (OAuth 1.0a or OAuth 2.0 user context)
+  
   if (!apiKey) {
     // Simulation
     console.log("\n=========================================");
@@ -50,23 +55,24 @@ export async function postToX(tweetContent: string, articleSlug: string, apiKey:
     return true;
   }
 
-  // Real X (Twitter) API v2 implementation
   try {
-    const response = await fetch("https://api.twitter.com/2/tweets", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        text: finalTweet
-      })
-    });
-
-    if (!response.ok) {
-      console.error("Failed to post to X:", await response.text());
-      return false;
+    let client;
+    
+    // Check if we have OAuth 1.0a credentials (4 parts) or just a Bearer Token (1 part)
+    if (apiKey && apiSecret && accessToken && accessSecret) {
+      client = new TwitterApi({
+        appKey: apiKey,
+        appSecret: apiSecret,
+        accessToken: accessToken,
+        accessSecret: accessSecret,
+      });
+    } else {
+      // Fallback to Bearer token (might throw 403 Forbidden for posting on Free tier depending on setup)
+      client = new TwitterApi(apiKey);
     }
+
+    const rwClient = client.readWrite;
+    await rwClient.v2.tweet(finalTweet);
     
     return true;
   } catch (error) {
@@ -121,6 +127,9 @@ export async function getBotSettings() {
     return {
       openaiKey: config.openai_api_key || "",
       xKey: config.x_api_key || "",
+      xSecret: config.x_api_secret || "",
+      xAccessToken: config.x_access_token || "",
+      xAccessSecret: config.x_access_secret || "",
       persona: config.bot_persona || "analytical",
       frequencyHours: parseInt(config.bot_frequency_hours || "1", 10)
     };
@@ -129,6 +138,9 @@ export async function getBotSettings() {
     return {
       openaiKey: "",
       xKey: "",
+      xSecret: "",
+      xAccessToken: "",
+      xAccessSecret: "",
       persona: "analytical",
       frequencyHours: 1
     };
