@@ -44,23 +44,40 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // If the user visits the root page '/', we can intercept and use Vercel's IP geolocation
-  if (request.nextUrl.pathname === '/') {
-    // Has the user manually overridden the language? next-intl stores this in a cookie (NEXT_LOCALE)
-    const hasLocaleCookie = request.cookies.has('NEXT_LOCALE');
+  // Intercept first-time visitors (no NEXT_LOCALE cookie) for geolocation routing
+  const hasLocaleCookie = request.cookies.has('NEXT_LOCALE');
+  
+  if (!hasLocaleCookie) {
+    const country = request.headers.get('x-vercel-ip-country') || '';
     
-    if (!hasLocaleCookie) {
-      const country = request.headers.get('x-vercel-ip-country') || '';
+    let mappedLocale = '';
+    if (country) {
+      mappedLocale = countryToLocale[country.toUpperCase()];
+      if (!mappedLocale || !routing.locales.includes(mappedLocale as any)) {
+        mappedLocale = 'en-US'; // Default for unknown/unsupported countries
+      }
+    }
+
+    if (mappedLocale) {
+      const pathname = request.nextUrl.pathname;
       
-      if (country) {
-        const mappedLocale = countryToLocale[country.toUpperCase()];
-        if (mappedLocale && routing.locales.includes(mappedLocale as any)) {
-          // Redirect them to the mapped locale directly
-          return NextResponse.redirect(new URL(`/${mappedLocale}`, request.url));
-        } else {
-          // If country not in map, default to global English (en-US)
-          return NextResponse.redirect(new URL(`/en-US`, request.url));
-        }
+      // Check if current URL already has a locale prefix
+      const pathLocale = routing.locales.find(
+        (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`)
+      );
+
+      if (pathname === '/') {
+        // Redirect root visits to mapped locale
+        const response = NextResponse.redirect(new URL(`/${mappedLocale}`, request.url));
+        return response;
+      } else if (pathLocale && pathLocale !== mappedLocale) {
+        // If they landed on a different language (e.g. /tr/...) but they are from US, redirect to /en-US/...
+        const newPathname = pathname.replace(`/${pathLocale}`, `/${mappedLocale}`);
+        const response = NextResponse.redirect(new URL(newPathname, request.url));
+        
+        // Set cookie explicitly so they aren't trapped if they intentionally switch back to TR later
+        response.cookies.set('NEXT_LOCALE', mappedLocale, { path: '/' });
+        return response;
       }
     }
   }
