@@ -28,6 +28,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     robots: "index, follow",
     alternates: {
       canonical: articleUrl,
+      languages: {
+        'x-default': `${PRODUCTION_DOMAIN}/en-US/news/${article.slug || article.id}`,
+        'en': `${PRODUCTION_DOMAIN}/en/news/${article.slug || article.id}`,
+        'en-US': `${PRODUCTION_DOMAIN}/en-US/news/${article.slug || article.id}`,
+        'en-GB': `${PRODUCTION_DOMAIN}/en-GB/news/${article.slug || article.id}`,
+        'tr': `${PRODUCTION_DOMAIN}/tr/news/${article.slug || article.id}`,
+        'de': `${PRODUCTION_DOMAIN}/de/news/${article.slug || article.id}`,
+        'es': `${PRODUCTION_DOMAIN}/es/news/${article.slug || article.id}`,
+        'fr': `${PRODUCTION_DOMAIN}/fr/news/${article.slug || article.id}`,
+        'it': `${PRODUCTION_DOMAIN}/it/news/${article.slug || article.id}`,
+        'ru': `${PRODUCTION_DOMAIN}/ru/news/${article.slug || article.id}`,
+        'zh': `${PRODUCTION_DOMAIN}/zh/news/${article.slug || article.id}`,
+        'pl': `${PRODUCTION_DOMAIN}/pl/news/${article.slug || article.id}`,
+        'nl': `${PRODUCTION_DOMAIN}/nl/news/${article.slug || article.id}`,
+      }
     },
     openGraph: {
       title: article.title,

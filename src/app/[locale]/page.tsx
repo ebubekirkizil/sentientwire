@@ -16,6 +16,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title: `${indexMessages.category || "Global Technology & AI Intelligence"} — SentientWire`,
     description: indexMessages.subtitle || "Beyond the mainstream media. Discover tomorrow's tech ecosystem.",
+    alternates: {
+      canonical: `https://sentientwire.com/${locale}`,
+      languages: {
+        'x-default': `https://sentientwire.com/en-US`,
+        'en': `https://sentientwire.com/en`,
+        'en-US': `https://sentientwire.com/en-US`,
+        'en-GB': `https://sentientwire.com/en-GB`,
+        'tr': `https://sentientwire.com/tr`,
+        'de': `https://sentientwire.com/de`,
+        'es': `https://sentientwire.com/es`,
+        'fr': `https://sentientwire.com/fr`,
+        'it': `https://sentientwire.com/it`,
+        'ru': `https://sentientwire.com/ru`,
+        'zh': `https://sentientwire.com/zh`,
+        'pl': `https://sentientwire.com/pl`,
+        'nl': `https://sentientwire.com/nl`,
+      }
+    },
     openGraph: {
       title: `${indexMessages.category || "Global Technology & AI Intelligence"} — SentientWire`,
       description: indexMessages.subtitle || "Beyond the mainstream media.",
