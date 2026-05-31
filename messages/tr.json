@@ -64,6 +64,7 @@
     "awaitingTelemetry": "Yeni telemetri verileri bekleniyor",
     "shareIntel": "İSTİHBARATI PAYLAŞ",
     "reportId": "RAPOR KODU",
+    "executiveSummary": "⚡ YÖNETİCİ ÖZETİ",
     "t1": "> TEHDİT ANALİZİ BAŞLATILIYOR...",
     "t2": "> VERİ BLOK İMZASI DEŞİFRE EDİLİYOR [0x9F42C]...",
     "t3": "[KRİTİK] SCADA PROTOKOLÜNDE SIFIR-GÜN ZAFİYETİ TESPİT EDİLDİ",

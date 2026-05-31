@@ -49,7 +49,11 @@ export default function NewsDetailClient({ article, locale }: { article: any, lo
             <p className="text-xl text-[var(--text-primary)] font-medium mb-8 leading-relaxed border-l-2 border-[var(--cyan-bright)] pl-5">
               {article.summary}
             </p>
-            <div className="mb-10 whitespace-pre-wrap text-[var(--text-secondary)] font-normal" dangerouslySetInnerHTML={{ __html: article.content }} />
+            <article 
+              className="mb-10 whitespace-pre-wrap text-[var(--text-secondary)] font-normal prose-custom" 
+              style={{ "--tldr-title": `"${t('executiveSummary')}"` } as React.CSSProperties}
+              dangerouslySetInnerHTML={{ __html: article.content }} 
+            />
           </div>
         </div>
       </div>
@@ -136,8 +140,9 @@ export default function NewsDetailClient({ article, locale }: { article: any, lo
              {article.summary}
            </p>
            
-           <div 
-             className="mb-10 whitespace-pre-wrap text-[var(--text-secondary)] font-normal" 
+           <article 
+             className="mb-10 whitespace-pre-wrap text-[var(--text-secondary)] font-normal prose-custom" 
+             style={{ "--tldr-title": `"${t('executiveSummary')}"` } as React.CSSProperties}
              dangerouslySetInnerHTML={{ __html: article.content }} 
            />
 

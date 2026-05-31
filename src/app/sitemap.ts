@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { db } from "@/lib/db";
 
-const locales = ['en', 'tr', 'de', 'es', 'fr', 'it', 'nl', 'pl'];
+const locales = ['en', 'tr', 'de', 'es', 'fr', 'it', 'ru', 'zh', 'ar', 'ja'];
 const categories = ['ai', 'cybersecurity', 'defense', 'quantum', 'hardware', 'space'];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     sitemapEntries.push({
       url: `${baseUrl}/${locale}`,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: 'hourly',
       priority: 1.0,
     });
   });
@@ -44,8 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         sitemapEntries.push({
           url: `${baseUrl}/${locale}/news/${slug}`,
           lastModified: updatedAt,
-          changeFrequency: 'monthly',
-          priority: 0.7,
+          changeFrequency: 'daily',
+          priority: 0.9,
         });
       });
     } catch (error) {

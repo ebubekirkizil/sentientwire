@@ -64,6 +64,7 @@
     "awaitingTelemetry": "Awaiting further telemetry",
     "shareIntel": "SHARE INTEL",
     "reportId": "REPORT ID",
+    "executiveSummary": "⚡ EXECUTIVE SUMMARY",
     "t1": "> INITIALIZING THREAT ANALYSIS...",
     "t2": "> DECRYPTING PAYLOAD SIGNATURE [0x9F42C]...",
     "t3": "[CRITICAL] ZERO-DAY DETECTED IN SCADA PROTOCOL",
