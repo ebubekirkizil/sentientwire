@@ -72,34 +72,42 @@ export async function processArticle(rawText: string, manualImageUrl?: string) {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
       args: [id, aiResult.title, aiResult.slug, aiResult.summary, content, categoryStr, categoryColorStr, coverImage]
     });
+console.log(`[PROCESS] Saved primary article: ${aiResult.title}`);
 
-    console.log(`[PROCESS] Saved primary article: ${aiResult.title}`);
-
-    // 5. Pre-translate to ALL supported locales
-    for (const locale of ALL_LOCALES) {
-      console.log(`[PROCESS-TRANSLATE] Translating to ${locale}...`);
-      try {
-        const translated = await translateArticleText(
-          aiResult.title,
-          aiResult.summary,
-          content,
-          locale
-        );
-        if (translated) {
-          await db.execute({
-            sql: `INSERT OR REPLACE INTO ArticleTranslation (articleId, locale, title, summary, content)
-                  VALUES (?, ?, ?, ?, ?)`,
-            args: [id, locale, translated.title, translated.summary, translated.content]
-          });
-        }
-      } catch (transErr) {
-        console.error(`[PROCESS-TRANSLATE] Failed for ${locale}:`, transErr);
-      }
+// 5. Pre-translate to ALL supported locales in PARALLEL for speed
+console.log(`[PROCESS-TRANSLATE] Starting parallel translations for 9 locales...`);
+await Promise.all(ALL_LOCALES.map(async (locale) => {
+  try {
+    const translated = await translateArticleText(
+      aiResult.title,
+      aiResult.summary,
+      content,
+      locale
+    );
+    if (translated) {
+      await db.execute({
+        sql: `INSERT OR REPLACE INTO ArticleTranslation (articleId, locale, title, summary, content)
+              VALUES (?, ?, ?, ?, ?)`,
+        args: [id, locale, translated.title, translated.summary, translated.content]
+      });
+      console.log(`[PROCESS-TRANSLATE] ✅ ${locale} finished.`);
     }
+  } catch (transErr) {
+    console.error(`[PROCESS-TRANSLATE] ❌ Failed for ${locale}:`, transErr);
+  }
+}));
 
-    revalidatePath('/en');
-    revalidatePath('/tr');
-    return { success: true, id };
+revalidatePath('/');
+// Revalidate home and category pages for ALL locales
+const localesToRefresh = ['en', ...ALL_LOCALES];
+localesToRefresh.forEach(loc => {
+  revalidatePath(`/${loc}`);
+  revalidatePath(`/${loc}/category/${categoryStr.toLowerCase()}`);
+});
+
+console.log(`[PROCESS] ✅ Global revalidation triggered for all locales.`);
+return { success: true, id };
+
   } catch (error) {
     console.error("Process Article Error:", error);
     return { success: false, error: String(error) };
