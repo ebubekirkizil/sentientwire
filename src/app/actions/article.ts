@@ -215,8 +215,8 @@ export async function getArticlesByLocale(locale: string) {
   
   try {
     const result = await db.execute({
-      sql: `SELECT * FROM Article ORDER BY createdAt DESC`,
-      args: []
+      sql: `SELECT * FROM Article WHERE createdAt <= ? ORDER BY createdAt DESC`,
+      args: [new Date().toISOString()]
     });
     
     if (!result.rows || result.rows.length === 0) return [];
