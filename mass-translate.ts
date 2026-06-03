@@ -1,7 +1,7 @@
 import { createClient } from '@libsql/client';
 import translate from 'google-translate-api-x';
 
-const locales = ['tr', 'es', 'fr', 'de', 'it', 'ru', 'zh-CN', 'ar', 'ja']; 
+const locales = ['tr', 'es', 'fr', 'de', 'it', 'ru', 'zh-CN', 'ar', 'ja', 'pl']; 
 
 const db = createClient({ 
   url: process.env.DATABASE_URL || '', 

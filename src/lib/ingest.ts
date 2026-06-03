@@ -18,7 +18,7 @@ const FEEDS = [
 ];
 
 // All supported locales for pre-translation
-const ALL_LOCALES = ['tr', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ar', 'ja'];
+const ALL_LOCALES = ['tr', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ar', 'ja', 'pl'];
 
 async function getImageUrl(title: string, category: string, imagePrompt?: string): Promise<string> {
   try {

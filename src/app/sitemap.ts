@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { db } from "@/lib/db";
 
-const locales = ['en', 'tr', 'de', 'es', 'fr', 'it', 'ru', 'zh', 'ar', 'ja'];
+const locales = ['en', 'tr', 'de', 'es', 'fr', 'it', 'ru', 'zh', 'ar', 'ja', 'pl'];
 const categories = ['ai', 'cybersecurity', 'defense', 'quantum', 'hardware', 'space'];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
