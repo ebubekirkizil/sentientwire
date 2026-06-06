@@ -33,7 +33,7 @@ const countryToLocale: Record<string, string> = {
   'NZ': 'en-GB',
 };
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   // Check if trying to access admin route
   if (request.nextUrl.pathname.match(/^\/[a-zA-Z-]+\/admin/)) {
     const authCookie = request.cookies.get('auth_token');
