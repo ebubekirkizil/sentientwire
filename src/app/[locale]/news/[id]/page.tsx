@@ -49,13 +49,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description: article.summary || "",
       url: articleUrl,
       type: "article",
-      images: article.imageUrl ? [{ url: article.imageUrl, alt: article.title }] : [],
+      images: article.imageUrl 
+        ? [{ url: article.imageUrl.startsWith('http') ? article.imageUrl : `${PRODUCTION_DOMAIN}${article.imageUrl}`, alt: article.title }] 
+        : [],
     },
     twitter: {
       card: "summary_large_image",
       title: article.title,
       description: article.summary || "",
-      images: article.imageUrl ? [article.imageUrl] : [],
+      images: article.imageUrl 
+        ? [article.imageUrl.startsWith('http') ? article.imageUrl : `${PRODUCTION_DOMAIN}${article.imageUrl}`] 
+        : [],
     }
   };
 }
