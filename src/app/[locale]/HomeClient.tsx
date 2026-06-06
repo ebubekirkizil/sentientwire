@@ -333,7 +333,7 @@ function FeaturedSection({ locale, mainArticle, gridArticles }: { locale: string
               {mainArticle.title}
             </h3>
             <p style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 14, color: "var(--text-muted)", lineHeight: 1.6, margin: "0 0 16px" }}>
-              {mainArticle.summary || mainArticle.excerpt || ""}{" "}
+              {(mainArticle.summary || mainArticle.excerpt || "").slice(0, 140)}…{" "}
               <span style={{ color: "#06b6d4", cursor: "pointer" }}>[{t('readMore')}]</span>
             </p>
             <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 11, color: "#334155", display: "flex", gap: 6 }}>
@@ -595,7 +595,7 @@ function LatestSection({ locale, latestArticles }: { locale: string; latestArtic
             </h4>
 
             <p style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.55, margin: 0 }}>
-              {article.summary || article.excerpt || ""}{" "}
+              {(article.summary || article.excerpt || "").slice(0, 80)}…{" "}
               <span style={{ color: "#06b6d4", cursor: "pointer", fontSize: 12 }}>[{t('readMore')}]</span>
             </p>
 
