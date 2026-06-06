@@ -48,5 +48,40 @@ export default async function HomePage({ params }: PageProps) {
   const locale = resolvedParams.locale || "tr";
   const dbArticles = await getArticlesByLocale(locale);
 
-  return <HomeClient dbArticles={dbArticles} locale={locale} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `https://sentientwire.com/#website`,
+        "url": `https://sentientwire.com/${locale}`,
+        "name": "SentientWire",
+        "description": "Global Technology & AI Intelligence",
+        "publisher": {
+          "@id": "https://sentientwire.com/#organization"
+        },
+        "inLanguage": locale
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://sentientwire.com/#organization",
+        "name": "SentientWire Intelligence",
+        "url": "https://sentientwire.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://sentientwire.com/icon.png"
+        }
+      }
+    ]
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <HomeClient dbArticles={dbArticles} locale={locale} />
+    </>
+  );
 }

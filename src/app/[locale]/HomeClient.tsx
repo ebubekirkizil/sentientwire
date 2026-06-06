@@ -20,7 +20,71 @@ type Article = {
 
 // Mock fallbacks removed to ensure full integration with real database articles
 
-function Hero() {
+function NewsletterPopup({ locale }: { locale: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [hasTriggered, setHasTriggered] = useState(false);
+
+  useEffect(() => {
+    if (hasTriggered) return;
+
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 0) {
+        setIsOpen(true);
+        setHasTriggered(true);
+      }
+    };
+
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (lastScrollY - currentScrollY > 100 && currentScrollY < 500) { // Fast scroll up near top
+        setIsOpen(true);
+        setHasTriggered(true);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    const handleCustomEvent = () => {
+      setIsOpen(true);
+    }
+
+    document.addEventListener("mouseleave", handleMouseLeave);
+    document.addEventListener("scroll", handleScroll);
+    document.addEventListener("openNewsletterModal", handleCustomEvent);
+
+    return () => {
+      document.removeEventListener("mouseleave", handleMouseLeave);
+      document.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("openNewsletterModal", handleCustomEvent);
+    };
+  }, [hasTriggered]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="relative w-full max-w-md p-8 bg-[var(--bg-secondary)] border border-[var(--cyan-glow)] rounded-xl shadow-[0_0_40px_var(--cyan-dim)]">
+        <button onClick={() => setIsOpen(false)} className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-white">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <h3 className="text-2xl font-bold font-mono text-[var(--cyan-bright)] mb-2 uppercase">
+          {locale === 'tr' ? "Küresel Krizleri Dünyadan Önce Öğrenin" : "Know Global Crises Before the World"}
+        </h3>
+        <p className="text-sm text-[var(--text-secondary)] mb-6">
+          {locale === 'tr' ? "Sadece elitlerin ulaştığı sansürsüz istihbarat analizlerini e-postanıza alın." : "Get uncensored intelligence analysis that only the elite can access, delivered to your inbox."}
+        </p>
+        <form onSubmit={(e) => { e.preventDefault(); setIsOpen(false); alert(locale === 'tr' ? 'Abonelik başarılı!' : 'Subscribed successfully!'); }} className="flex flex-col gap-4">
+          <input type="email" placeholder={locale === 'tr' ? "E-posta Adresiniz" : "Your Email Address"} className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-[var(--border-subtle)] focus:border-[var(--cyan-bright)] rounded outline-none text-white font-mono text-sm" required />
+          <button type="submit" className="w-full py-3 bg-[var(--cyan-dim)] text-[var(--cyan-bright)] text-sm font-bold tracking-widest uppercase rounded hover:bg-[var(--cyan-bright)] hover:text-black transition-colors shadow-[0_0_15px_var(--cyan-dim)]">
+            {locale === 'tr' ? "İstihbarat Ağına Katıl" : "Join the Intel Network"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function Hero({ mainArticle, locale }: { mainArticle: any, locale: string }) {
   const t = useTranslations('Index');
   const [globeSize, setGlobeSize] = useState(460);
 
@@ -70,14 +134,23 @@ function Hero() {
       {/* Background layers */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
+        background: mainArticle?.imageUrl 
+          ? `linear-gradient(rgba(8,15,28,0.7), rgba(8,15,28,0.9)), url(${mainArticle.imageUrl})` 
+          : "var(--bg-primary)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        zIndex: 0
+      }}/>
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1,
         background: [
-          "radial-gradient(ellipse 80% 90% at 30% 50%, rgba(6,182,212,0.07) 0%, transparent 60%)",
-          "radial-gradient(ellipse 50% 50% at 75% 50%, rgba(129,140,248,0.04) 0%, transparent 60%)",
+          "radial-gradient(ellipse 80% 90% at 30% 50%, rgba(6,182,212,0.15) 0%, transparent 60%)",
+          "radial-gradient(ellipse 50% 50% at 75% 50%, rgba(129,140,248,0.1) 0%, transparent 60%)",
         ].join(","),
       }}/>
       <div style={{
-        position: "absolute", inset: 0, pointerEvents: "none",
-        backgroundImage: "linear-gradient(rgba(6,182,212,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.04) 1px, transparent 1px)",
+        position: "absolute", inset: 0, pointerEvents: "none", zIndex: 2,
+        backgroundImage: "linear-gradient(rgba(6,182,212,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.06) 1px, transparent 1px)",
         backgroundSize: "65px 65px",
       }}/>
 
@@ -95,28 +168,8 @@ function Hero() {
         minHeight: "100vh",
       }}>
 
-        {/* LEFT: Globe */}
-        <div className="hero-globe-wrapper" style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          flex: "0 0 auto",
-          width: "clamp(320px, 42vw, 520px)",
-          position: "relative",
-        }}>
-          <div style={{
-            position: "absolute",
-            width: "80%", height: "80%",
-            borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)",
-            filter: "blur(30px)",
-            pointerEvents: "none",
-          }}/>
-          <HeroGlobe size={globeSize} />
-        </div>
-
-        {/* RIGHT: Text */}
-        <div className="hero-text-wrapper" style={{ flex: 1, paddingLeft: 48 }}>
+        {/* LEFT: Text */}
+        <div className="hero-text-wrapper" style={{ flex: 1, paddingRight: 48 }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: 8,
             marginBottom: 26,
@@ -124,6 +177,7 @@ function Hero() {
             border: "1px solid rgba(6,182,212,0.28)",
             borderRadius: 6,
             background: "rgba(6,182,212,0.05)",
+            backdropFilter: "blur(10px)",
           }}>
             <div style={{
               width: 6, height: 6, borderRadius: "50%",
@@ -134,92 +188,83 @@ function Hero() {
               fontFamily: "JetBrains Mono, monospace",
               fontSize: 10, letterSpacing: "0.2em",
               color: "#22d3ee", fontWeight: 600, textTransform: "uppercase",
-            }}>{t('category')}</span>
+            }}>{mainArticle ? (mainArticle.category || t('category')) : t('category')}</span>
           </div>
 
           <h1 style={{
             fontFamily: "Space Grotesk, sans-serif",
-            fontSize: "clamp(2.2rem, 3.5vw, 4rem)",
-            fontWeight: 800, lineHeight: 1.08,
+            fontSize: "clamp(2.5rem, 4vw, 5rem)",
+            fontWeight: 800, lineHeight: 1.1,
             letterSpacing: "-0.03em",
-            color: "var(--text-primary)", margin: "0 0 16px",
+            color: "#ffffff", margin: "0 0 24px",
+            textShadow: "0 0 30px rgba(0,0,0,0.8)",
           }}>
-            {t('title1')}<br/>
-            <span style={{
-              background: "linear-gradient(135deg, #22d3ee 0%, #06b6d4 55%, #818cf8 100%)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-            }}>{t('title2')}</span>
+            {mainArticle ? mainArticle.title : (
+              <>{t('title1')}<br/>
+              <span style={{
+                background: "linear-gradient(135deg, #22d3ee 0%, #06b6d4 55%, #818cf8 100%)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+              }}>{t('title2')}</span></>
+            )}
           </h1>
 
           <p style={{
-            color: "var(--text-secondary)", fontSize: 15.5, lineHeight: 1.7,
-            maxWidth: 400, margin: "0 0 32px",
+            color: "rgba(255,255,255,0.8)", fontSize: "clamp(1rem, 1.2vw, 1.1rem)", lineHeight: 1.7,
+            maxWidth: 600, margin: "0 0 40px",
             fontFamily: "Space Grotesk, sans-serif",
+            textShadow: "0 2px 10px rgba(0,0,0,0.8)",
+            borderLeft: "3px solid #22d3ee", paddingLeft: 16
           }}>
-            {t('subtitle')}
+            {mainArticle ? (mainArticle.summary || mainArticle.excerpt) : t('subtitle')}
           </p>
 
-          <div style={{ display: "flex", gap: 12, marginBottom: 44 }}>
-            <button
-              onClick={() => document.getElementById("featured")?.scrollIntoView({ behavior: "smooth" })}
+          <div style={{ display: "flex", gap: 16, marginBottom: 44 }}>
+            <Link
+              href={mainArticle ? `/${locale}/news/${mainArticle.slug || mainArticle.id}` : "#featured"}
               style={{
-                padding: "12px 26px", background: "#06b6d4", color: "#ffffff",
+                textDecoration: "none",
+                padding: "16px 32px", background: "#06b6d4", color: "#000",
                 border: "none", borderRadius: 8,
-                fontFamily: "Space Grotesk, sans-serif", fontWeight: 700, fontSize: 14,
-                cursor: "pointer", boxShadow: "0 0 24px rgba(6,182,212,0.42)",
+                fontFamily: "Space Grotesk, sans-serif", fontWeight: 800, fontSize: 15, textTransform: "uppercase", letterSpacing: "0.05em",
+                cursor: "pointer", boxShadow: "0 0 30px rgba(6,182,212,0.6)",
                 transition: "all 0.2s",
               }}
               onMouseEnter={e=>{
                 (e.currentTarget as HTMLElement).style.background="#22d3ee";
-                (e.currentTarget as HTMLElement).style.boxShadow="0 0 40px rgba(6,182,212,0.6)";
-                (e.currentTarget as HTMLElement).style.transform="translateY(-1px)";
+                (e.currentTarget as HTMLElement).style.boxShadow="0 0 50px rgba(6,182,212,0.8)";
+                (e.currentTarget as HTMLElement).style.transform="translateY(-2px)";
               }}
               onMouseLeave={e=>{
                 (e.currentTarget as HTMLElement).style.background="#06b6d4";
-                (e.currentTarget as HTMLElement).style.boxShadow="0 0 24px rgba(6,182,212,0.42)";
+                (e.currentTarget as HTMLElement).style.boxShadow="0 0 30px rgba(6,182,212,0.6)";
                 (e.currentTarget as HTMLElement).style.transform="translateY(0)";
               }}
-            >{t('ctaLatest')}</button>
-            <button
-              style={{
-                padding: "12px 26px", background: "transparent", color: "var(--text-secondary)",
-                border: "1px solid var(--border-glow)", borderRadius: 8,
-                fontFamily: "Space Grotesk, sans-serif", fontWeight: 600, fontSize: 14,
-                cursor: "pointer", transition: "all 0.2s",
-              }}
-              onMouseEnter={e=>{
-                (e.currentTarget as HTMLElement).style.borderColor="rgba(6,182,212,0.42)";
-                (e.currentTarget as HTMLElement).style.color="#f0f9ff";
-              }}
-              onMouseLeave={e=>{
-                (e.currentTarget as HTMLElement).style.borderColor="rgba(255,255,255,0.14)";
-                (e.currentTarget as HTMLElement).style.color="#94a3b8";
-              }}
-            >{t('ctaExplore')}</button>
+            >{locale === 'tr' ? 'RAPORU OKU' : 'READ INTEL REPORT'}</Link>
           </div>
+        </div>
 
-          <div className="hero-stats-wrapper" style={{
-            display: "flex", gap: 32,
-            paddingTop: 24, borderTop: "1px solid rgba(6,182,212,0.1)",
-          }}>
-            {[["340+",t('statReports')],["94",t('statNations')],["12K+",t('statSubscribers')]].map(([n,l])=>(
-              <div key={l}>
-                <div style={{ fontFamily:"JetBrains Mono,monospace", fontSize:22, fontWeight:700, color:"#22d3ee", lineHeight:1 }}>{n}</div>
-                <div style={{ fontFamily:"JetBrains Mono,monospace", fontSize:9, color:"#334155", letterSpacing:"0.14em", textTransform:"uppercase", marginTop:4 }}>{l}</div>
-              </div>
-            ))}
-          </div>
+        {/* RIGHT: Visual Element (Optional Globe overlay if needed, or empty to let bg shine) */}
+        <div className="hero-globe-wrapper" style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          flex: "0 0 auto",
+          width: "clamp(320px, 42vw, 520px)",
+          position: "relative",
+          opacity: 0.3,
+        }}>
+          <HeroGlobe size={globeSize} />
         </div>
       </div>
 
       <div style={{
-        position:"absolute", bottom:28, left:"50%", transform:"translateX(-50%)",
-        opacity:0.25, display:"flex", flexDirection:"column", alignItems:"center", gap:4,
+        position:"absolute", bottom:40, left:"50%", transform:"translateX(-50%)",
+        opacity:0.6, display:"flex", flexDirection:"column", alignItems:"center", gap:8,
         zIndex: 20
       }}>
-        <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 9, color: "#22d3ee", marginBottom: 4, letterSpacing: "0.2em", textTransform: "uppercase" }}>Scroll for Intel</div>
-        <svg width="18" height="28" viewBox="0 0 18 28" fill="none" style={{ animation: "bounce 2s infinite" }}>
-          <rect x="1" y="1" width="16" height="26" rx="8" stroke="#06b6d4" strokeWidth="1.5"/>
+        <div style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#22d3ee", marginBottom: 4, letterSpacing: "0.3em", textTransform: "uppercase", textShadow: "0 0 10px #000" }}>Scroll for Intel</div>
+        <svg width="20" height="32" viewBox="0 0 18 28" fill="none" style={{ animation: "bounce 2s infinite" }}>
+          <rect x="1" y="1" width="16" height="26" rx="8" stroke="#06b6d4" strokeWidth="2"/>
           <circle cx="9" cy="8" r="2" fill="#06b6d4"/>
         </svg>
       </div>
@@ -625,12 +670,14 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
   }, [locale]);
   
   // 1. Featured Section: 1 main large card + 4 grid cards (needs exactly 5 articles)
-  const featuredList = [...dbArticles.slice(0, 5)];
-  const mainArticle = featuredList[0] || null;
+  // Since Hero takes the absolute latest, FeaturedSection should take the next ones.
+  const mainHeroArticle = dbArticles[0] || null;
+  const featuredList = [...dbArticles.slice(1, 6)];
+  const mainFeaturedArticle = featuredList[0] || null;
   const gridArticles = featuredList.slice(1, 5);
 
   // 2. Latest Section: only real DB articles published in the last 3 days, padded by other available DB articles
-  const dbLatestRaw = dbArticles.slice(5);
+  const dbLatestRaw = dbArticles.slice(6);
   const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
   const nowTime = new Date().getTime();
 
@@ -650,11 +697,12 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
 
   return (
     <main style={{ minHeight: "100vh", background: "var(--bg-primary)", overflowX: "hidden", transition: "background-color 0.3s ease" }}>
+      <NewsletterPopup locale={locale} />
       <style>{`
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
         @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
       `}</style>
-      <Hero />
+      <Hero mainArticle={mainHeroArticle} locale={locale} />
       
       {dbArticles.length === 0 ? (
         <div style={{ maxWidth: 1280, margin: "0 auto", padding: "100px 24px", textAlign: "center" }}>
@@ -670,7 +718,7 @@ export default function HomeClient({ dbArticles, locale }: { dbArticles: any[]; 
         <>
           <FeaturedSection 
             locale={locale} 
-            mainArticle={mainArticle} 
+            mainArticle={mainFeaturedArticle} 
             gridArticles={gridArticles} 
           />
           <LatestSection 
