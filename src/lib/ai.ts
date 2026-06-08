@@ -92,16 +92,8 @@ export async function rewriteArticle(rawText: string, locale: string = 'en') {
     
     // Fallback Mock for development when quota is exceeded
     if (error.message?.includes("quota") || error.message?.includes("429")) {
-      console.warn("Gemini Quota Exceeded. Using Mock Fallback.");
-      return {
-        title: "MOCK: " + rawText.split('\n')[0].replace('Title: ', ''),
-        summary: "AI Quota exceeded. This is a mock summary.",
-        content: `<p>AI Quota exceeded. The original text was:</p><pre>${rawText}</pre>`,
-        slug: "mock-article-" + Date.now(),
-        category: "AI",
-        categoryColor: "#8b5cf6",
-        imagePrompt: "flat design, white background, corporate minimalist, artificial intelligence"
-      };
+      console.warn("Gemini Quota Exceeded. Returning null.");
+      return null;
     }
     return null;
   }

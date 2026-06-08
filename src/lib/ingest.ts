@@ -131,8 +131,8 @@ export async function runIngestion() {
           }
 
           await db.execute({
-            sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, originalUrl, locale, isPublished) 
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
+            sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, originalUrl, locale, isPublished, updatedAt) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'en', 1, CURRENT_TIMESTAMP)`,
             args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', finalContent, categoryStr, categoryColorStr, imageUrl, link]
           });
 
