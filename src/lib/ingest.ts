@@ -69,110 +69,110 @@ export async function runIngestion() {
     console.warn("Failed to load custom RSS feeds from SiteSettings, using defaults:", settingsErr);
   }
 
-  const tasks: Promise<void>[] = [];
+  // 2. Shuffle feeds to ensure variety and process sequentially
+  const shuffledFeeds = feedUrls.sort(() => 0.5 - Math.random());
+  let publishedCount = 0;
 
-  // 2. Queue concurrent tasks for each feed
-  for (const feedUrl of feedUrls) {
-    tasks.push((async () => {
-      try {
-        const feed = await parser.parseURL(feedUrl);
-        
-        // Take latest 5 items to find at least one new article we haven't published yet
-        const latestItems = feed.items.slice(0, 5);
-        
-        let processedForThisFeed = false;
+  for (const feedUrl of shuffledFeeds) {
+    if (publishedCount >= 1) {
+      console.log("Already published 1 article in this cycle. Stopping to maintain hourly drip.");
+      break;
+    }
 
-        for (const item of latestItems) {
-          if (processedForThisFeed) break; // Only process 1 new article per feed per run
+    try {
+      console.log(`Checking feed: ${feedUrl}`);
+      const feed = await parser.parseURL(feedUrl);
+      
+      // Take latest 5 items to find at least one new article we haven't published yet
+      const latestItems = feed.items.slice(0, 5);
+      
+      for (const item of latestItems) {
+        const title = item.title || '';
+        const link = item.link || '';
+        const contentSnippet = item.contentSnippet || item.content || '';
 
-          const title = item.title || '';
-          const link = item.link || '';
-          const contentSnippet = item.contentSnippet || item.content || '';
+        // Check if we already processed this URL
+        const existsResult = await db.execute({
+          sql: "SELECT id FROM Article WHERE originalUrl = ?",
+          args: [link]
+        });
 
-          // Check if we already processed this URL
-          const existsResult = await db.execute({
-            sql: "SELECT id FROM Article WHERE originalUrl = ?",
-            args: [link]
+        if (existsResult.rows.length > 0) {
+          console.log(`Skipping already processed: ${title}`);
+          continue;
+        }
+
+        console.log(`Processing New Article: ${title}`);
+        const rawText = `Title: ${title}\nContent: ${contentSnippet}\nLink: ${link}`;
+
+        // Rewrite article in English (primary language)
+        const aiResult = await rewriteArticle(rawText, 'en');
+
+        if (aiResult && aiResult.title && aiResult.slug && aiResult.content) {
+          const id = Math.random().toString(36).substring(2, 15);
+          
+          const categoryStr = String(aiResult.category || 'AI').toUpperCase();
+          const categoryColorStr = String(aiResult.categoryColor || '#8b5cf6');
+
+          // Use AI-generated imagePrompt for corporate minimalist visuals
+          const imageUrl = await getImageUrl(aiResult.title, categoryStr, aiResult.imagePrompt);
+          const imageUrl2 = await getImageUrl(aiResult.title, categoryStr, aiResult.imagePrompt2 || aiResult.imagePrompt + " secondary");
+          
+          let finalContent = aiResult.content;
+          // Inject second image after the second H2 tag (usually halfway through the article)
+          if (finalContent.includes('</h2>')) {
+              const parts = finalContent.split('</h2>');
+              if (parts.length > 2) {
+                  parts[1] = parts[1] + `</h2><figure class="article-inline-image" style="margin: 40px 0;"><img src="${imageUrl2}" alt="Article secondary illustration" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.2);" /></figure>`;
+                  finalContent = parts.join('</h2>');
+              } else {
+                  finalContent += `<figure class="article-inline-image" style="margin: 40px 0;"><img src="${imageUrl2}" alt="Article secondary illustration" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.2);" /></figure>`;
+              }
+          }
+
+          await db.execute({
+            sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, originalUrl, locale, isPublished) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
+            args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', finalContent, categoryStr, categoryColorStr, imageUrl, link]
           });
 
-          if (existsResult.rows.length > 0) {
-            console.log(`Skipping already processed: ${title}`);
-            continue;
-          }
+          console.log(`[INGEST] Saved article: ${aiResult.title}`);
 
-          console.log(`Processing New Article: ${title}`);
-          processedForThisFeed = true;
-          const rawText = `Title: ${title}\nContent: ${contentSnippet}\nLink: ${link}`;
-
-          // Rewrite article in English (primary language)
-          const aiResult = await rewriteArticle(rawText, 'en');
-
-          if (aiResult && aiResult.title && aiResult.slug && aiResult.content) {
-            const id = Math.random().toString(36).substring(2, 15);
-            
-            const categoryStr = String(aiResult.category || 'AI').toUpperCase();
-            const categoryColorStr = String(aiResult.categoryColor || '#8b5cf6');
-
-            // Use AI-generated imagePrompt for corporate minimalist visuals
-            const imageUrl = await getImageUrl(aiResult.title, categoryStr, aiResult.imagePrompt);
-            const imageUrl2 = await getImageUrl(aiResult.title, categoryStr, aiResult.imagePrompt2 || aiResult.imagePrompt + " secondary");
-            
-            let finalContent = aiResult.content;
-            // Inject second image after the second H2 tag (usually halfway through the article)
-            if (finalContent.includes('</h2>')) {
-                const parts = finalContent.split('</h2>');
-                if (parts.length > 2) {
-                    parts[1] = parts[1] + `</h2><figure class="article-inline-image" style="margin: 40px 0;"><img src="${imageUrl2}" alt="Article secondary illustration" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.2);" /></figure>`;
-                    finalContent = parts.join('</h2>');
-                } else {
-                    finalContent += `<figure class="article-inline-image" style="margin: 40px 0;"><img src="${imageUrl2}" alt="Article secondary illustration" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.2);" /></figure>`;
-                }
-            }
-
-            await db.execute({
-              sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, originalUrl, locale, isPublished) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
-              args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', finalContent, categoryStr, categoryColorStr, imageUrl, link]
-            });
-
-            console.log(`[INGEST] Saved article: ${aiResult.title}`);
-
-            // Pre-translate to ALL supported locales to prevent English fallback
-            for (const locale of ALL_LOCALES) {
-              console.log(`[INGEST-TRANSLATE] Translating to ${locale}...`);
-              await new Promise(r => setTimeout(r, 3000)); // Space out API calls
-              try {
-                const translated = await translateArticleText(
-                  aiResult.title,
-                  aiResult.summary || '',
-                  aiResult.content,
-                  locale
-                );
-                if (translated) {
-                  await db.execute({
-                    sql: `INSERT OR REPLACE INTO ArticleTranslation (articleId, locale, title, summary, content)
-                          VALUES (?, ?, ?, ?, ?)`,
-                    args: [id, locale, translated.title, translated.summary, translated.content]
-                  });
-                  console.log(`[INGEST-TRANSLATE] ✅ Saved ${locale} translation.`);
-                }
-              } catch (transErr) {
-                console.error(`[INGEST-TRANSLATE] ❌ Failed for ${locale}:`, transErr);
+          // Pre-translate to ALL supported locales to prevent English fallback
+          for (const locale of ALL_LOCALES) {
+            console.log(`[INGEST-TRANSLATE] Translating to ${locale}...`);
+            await new Promise(r => setTimeout(r, 3000)); // Space out API calls
+            try {
+              const translated = await translateArticleText(
+                aiResult.title,
+                aiResult.summary || '',
+                finalContent,
+                locale
+              );
+              if (translated) {
+                await db.execute({
+                  sql: `INSERT OR REPLACE INTO ArticleTranslation (articleId, locale, title, summary, content)
+                        VALUES (?, ?, ?, ?, ?)`,
+                  args: [id, locale, translated.title, translated.summary, translated.content]
+                });
+                console.log(`[INGEST-TRANSLATE] ✅ Saved ${locale} translation.`);
               }
+            } catch (transErr) {
+              console.error(`[INGEST-TRANSLATE] ❌ Failed for ${locale}:`, transErr);
             }
-            
-            console.log(`[INGEST] ✅ Article fully processed in all languages: ${aiResult.title}`);
           }
+          
+          console.log(`[INGEST] ✅ Article fully processed in all languages: ${aiResult.title}`);
+          publishedCount++;
+          break; // Stop looking for articles in THIS feed
         }
-      } catch (e) {
-        console.error(`Failed to ingest from ${feedUrl}`, e);
       }
-    })());
+    } catch (e) {
+      console.error(`Failed to ingest from ${feedUrl}`, e);
+    }
   }
 
-  // 3. Wait for all feeds to finish processing
-  await Promise.all(tasks);
-  console.log("Ingestion cycle finished successfully.");
-  return { success: true };
+  console.log(`Ingestion cycle finished successfully. Published: ${publishedCount} articles.`);
+  return { success: true, publishedCount };
 }
 
