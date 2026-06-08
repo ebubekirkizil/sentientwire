@@ -19,23 +19,24 @@ SEO VE GOOGLE NEWS KURALLARI (KRİTİK - HELPFUL CONTENT):
 - "Clickbait"ten kaçın, otoriter ve güvenilir bir tonla yaz (E-E-A-T prensibi).
 
 DİKKAT EDİLECEK KURALLAR:
-1. Kurumsal, net, somut veri odaklı ve son derece prestijli (Wall Street Journal / Bloomberg Terminal kalitesinde) bir dil kullan.
-2. BAŞLIK FORMATI: Başlık her zaman "Etki" perspektifinden yazılmalı. Eğer kullanıcı bir başlık vermişse onu bu formata uyarla. "X Oldu" değil, "X, Y Sektörünü Z Şekilde Etkiliyor" formatı kullan. (max 85 karakter)
-3. SUMMARY: Tek cümlelik, tıklamayı zorlayan bir "vurucu alt başlık". İçindeki en çarpıcı finansal veya stratejik bulguyu öne çek.
-4. İÇERİK YAPISI (HTML formatında):
+1. Kurumsal, net, somut veri odaklı ama UZUN ve SÜRÜKLEYİCİ (Wall Street Journal / Bloomberg Terminal kalitesinde) bir analiz dili kullan. Haberi en az 600-800 kelime aralığında, bol detaylı yaz.
+2. BAŞLIK FORMATI ("KANCA" TAKTİĞİ): Kullanıcının dikkatini hemen çekecek, tıklamadan edemeyeceği "Kanca" tarzında çok vurucu bir başlık yaz. Klasik başlıkları unut! (Örn: "Apple'ın Yeni Çipi Neden Bilgisayarınızı Çöpe Atmanıza Neden Olabilir?"). Soru veya şok edici bir zıtlık içersin. (max 95 karakter).
+3. SUMMARY: Tek cümlelik, tıklamayı kesinlikle zorlayan bir "vurucu alt başlık".
+4. İÇERİK YAPISI (HTML formatında ve ÇOK DETAYLI):
    - En üstte ZORUNLU: 3 maddelik TL;DR kutusu (hızlı tarama için):
      <div class="tldr-box">
        <ul>
-         <li>En kritik finansal/operasyonel etki</li>
-         <li>Sektörel risk veya fırsat</li>
-         <li>Stratejik eylem önerisi veya projeksiyon</li>
+         <li>En kritik etki</li>
+         <li>Şok edici detay</li>
+         <li>Gelecek beklentisi</li>
        </ul>
      </div>
-   - Ardından ZORUNLU 4 H2 bölümü (HEDEF DİLDE yazılacak):
-     [EXECUTIVE_SUMMARY_HEADING]: Olayın teknik ve stratejik çekirdek özeti (Hızlı Tarama).
-     [CRISIS_ORIGIN_HEADING]: Gelişmenin veya krizin tetikleyicisi/kaynağı. Arka plan.
-     [OPERATIONAL_IMPACT_HEADING]: Operasyonel Etki. Tedarik zinciri, maliyetler, güvenlik vs. nasıl etkilenecek?
-     [STRATEGIC_TAKEAWAY_HEADING]: Stratejik Çıkarım (So What?). Bu olayın anlamı ne, orta vadede ne beklemeliyiz?
+   - Ardından ZORUNLU 4 H2 bölümü (HEDEF DİLDE yazılacak) ve HER BÖLÜMÜN ALTINDA UZUN PARAGRAFLAR (en az 2-3 uzun paragraf):
+     [EXECUTIVE_SUMMARY_HEADING]: Olayın teknik ve strategik çekirdek özeti.
+     [CRISIS_ORIGIN_HEADING]: Gelişmenin perde arkası, bilinmeyen gerçekler, krizin veya olayın temeli. Detaylara gir.
+     [OPERATIONAL_IMPACT_HEADING]: Etkisi ne olacak? Sistemler, paralar, iş akışları nasıl değişecek? Analiz et.
+     [STRATEGIC_TAKEAWAY_HEADING]: Stratejik Çıkarım (So What?). Gelecek 5 yılda dünyayı ne bekliyor?
+     - Bütün makale baştan sona <p>, <strong>, <ul> gibi zengin HTML etiketleriyle biçimlendirilsin. Paragrafları uzun tut.
 
 5. Kategori SADECE şunlardan BİRİ OLABİLİR:
 - CYBERSECURITY (Renk: #ef4444)

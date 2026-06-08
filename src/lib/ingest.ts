@@ -110,11 +110,24 @@ export async function runIngestion() {
 
             // Use AI-generated imagePrompt for corporate minimalist visuals
             const imageUrl = await getImageUrl(aiResult.title, categoryStr, aiResult.imagePrompt);
+            const imageUrl2 = await getImageUrl(aiResult.title, categoryStr, aiResult.imagePrompt2 || aiResult.imagePrompt + " secondary");
             
+            let finalContent = aiResult.content;
+            // Inject second image after the second H2 tag (usually halfway through the article)
+            if (finalContent.includes('</h2>')) {
+                const parts = finalContent.split('</h2>');
+                if (parts.length > 2) {
+                    parts[1] = parts[1] + `</h2><figure class="article-inline-image" style="margin: 40px 0;"><img src="${imageUrl2}" alt="Article secondary illustration" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.2);" /></figure>`;
+                    finalContent = parts.join('</h2>');
+                } else {
+                    finalContent += `<figure class="article-inline-image" style="margin: 40px 0;"><img src="${imageUrl2}" alt="Article secondary illustration" style="width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.2);" /></figure>`;
+                }
+            }
+
             await db.execute({
               sql: `INSERT INTO Article (id, title, slug, summary, content, category, categoryColor, imageUrl, originalUrl, locale, isPublished) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'en', 1)`,
-              args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', aiResult.content, categoryStr, categoryColorStr, imageUrl, link]
+              args: [id, aiResult.title, aiResult.slug, aiResult.summary || '', finalContent, categoryStr, categoryColorStr, imageUrl, link]
             });
 
             console.log(`[INGEST] Saved article: ${aiResult.title}`);
