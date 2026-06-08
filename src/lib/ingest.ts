@@ -77,10 +77,14 @@ export async function runIngestion() {
       try {
         const feed = await parser.parseURL(feedUrl);
         
-        // Take latest 1 item from each feed to stay within rate limits
-        const latestItems = feed.items.slice(0, 1);
+        // Take latest 5 items to find at least one new article we haven't published yet
+        const latestItems = feed.items.slice(0, 5);
         
+        let processedForThisFeed = false;
+
         for (const item of latestItems) {
+          if (processedForThisFeed) break; // Only process 1 new article per feed per run
+
           const title = item.title || '';
           const link = item.link || '';
           const contentSnippet = item.contentSnippet || item.content || '';
@@ -97,6 +101,7 @@ export async function runIngestion() {
           }
 
           console.log(`Processing New Article: ${title}`);
+          processedForThisFeed = true;
           const rawText = `Title: ${title}\nContent: ${contentSnippet}\nLink: ${link}`;
 
           // Rewrite article in English (primary language)
