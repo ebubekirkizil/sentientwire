@@ -1,8 +1,11 @@
 import React from 'react';
 import { getLocalizedArticle, getArticlesByLocale } from '@/app/actions/article';
 import NewsDetailClient from './NewsDetailClient';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import { cookies } from 'next/headers';
+import { db } from '@/lib/db';
+
 
 // Force fresh data on every request — no CDN caching of article HTML
 export const dynamic = 'force-dynamic';
@@ -70,6 +73,28 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function NewsDetailPage({ params }: PageProps) {
   const resolvedParams = await params;
+
+  // Authenticated Admin check
+  const cookieStore = await cookies();
+  const authCookie = cookieStore.get('auth_token');
+  const isAdmin = authCookie && authCookie.value === 'admin_granted';
+
+  if (!isAdmin) {
+    let redirectUrl = 'https://x.com/sentientwire';
+    try {
+      const rs = await db.execute({
+        sql: "SELECT value FROM SiteSettings WHERE key = 'x_account_url'",
+        args: []
+      });
+      if (rs.rows.length > 0 && rs.rows[0].value) {
+        redirectUrl = String(rs.rows[0].value);
+      }
+    } catch (e) {
+      console.error("Failed to fetch x_account_url setting:", e);
+    }
+    redirect(redirectUrl);
+  }
+
   const article = await getLocalizedArticle(resolvedParams.id, resolvedParams.locale);
 
   if (!article) {

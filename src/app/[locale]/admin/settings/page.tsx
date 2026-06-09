@@ -55,6 +55,16 @@ export default function SettingsDashboard() {
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-sans text-sm" 
               />
             </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X (TWITTER) ACCOUNT REDIRECT URL (FOR NORMAL USERS)</label>
+              <input 
+                name="x_account_url" 
+                defaultValue={settings.x_account_url || "https://x.com/sentientwire"}
+                placeholder="https://x.com/sentientwire"
+                className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-sans text-sm" 
+              />
+            </div>
             
             <div className="flex flex-col gap-2">
               <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">MAINTENANCE MODE (TRUE/FALSE)</label>
