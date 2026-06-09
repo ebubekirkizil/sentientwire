@@ -108,14 +108,14 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
         />
       </div>
 
-      {/* Main Content Container with Sidebar Layout */}
+      {/* Main Content Container centered */}
       <motion.div 
-        className="max-w-6xl mx-auto px-6 pt-32 md:pt-40 relative z-10 flex flex-col lg:flex-row gap-12"
+        className="max-w-4xl mx-auto px-6 pt-32 md:pt-40 relative z-10"
         variants={containerVariants}
         initial="hidden"
         animate="show"
       >
-        <div className="flex-1 max-w-4xl">
+        <div className="w-full">
         
         {/* Metadata */}
         <motion.div variants={itemVariants} className="flex items-center mb-8 gap-4 flex-wrap">
@@ -177,100 +177,8 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
              </a>
            </div>
 
-             <div className="pt-8 mt-12 border-t border-[var(--border-subtle)] flex items-center justify-between">
-               <div className="font-mono text-xs text-[var(--text-muted)]">
-                 {t('reportId')}: {(article.slug || article.id).substring(0,8).toUpperCase()}-X99-2026
-               </div>
-               <button 
-                 onClick={() => {
-                   document.dispatchEvent(new CustomEvent('openNewsletterModal'));
-                   // Quick hack to open modal if they want to share/subscribe
-                 }}
-                 className="px-6 py-2 bg-[var(--cyan-dim)] border border-[var(--cyan-glow)] text-[var(--cyan-bright)] rounded text-sm font-bold tracking-widest hover:bg-[var(--cyan-bright)] hover:text-[#020408] transition-colors shadow-[0_0_15px_var(--cyan-dim)]"
-               >
-                 {t('shareIntel') || 'SUBSCRIBE FOR ALERTS'}
-               </button>
-             </div>
-          </motion.div>
-
-         {/* Related Reports */}
-         {relatedArticles && relatedArticles.length > 0 && (
-           <motion.div variants={itemVariants} className="mt-16 pt-10 border-t border-[var(--cyan-dim)]">
-             <h2 className="text-2xl font-bold font-mono text-[var(--cyan-bright)] mb-6 uppercase tracking-wider">
-               {locale === 'tr' ? 'Bunu da Okumak İsteyebilirsiniz' : 'You May Also Want to Read'}
-             </h2>
-             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-               {relatedArticles.map((rel: any) => (
-                 <Link key={rel.id} href={`/${locale}/news/${rel.slug || rel.id}`} className="group block h-full">
-                   <div className="h-full bg-[var(--bg-secondary)] border border-[var(--border-subtle)] hover:border-[var(--cyan-glow)] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_var(--cyan-dim)] flex flex-col">
-                     <div className="h-40 w-full relative overflow-hidden bg-black">
-                       <div 
-                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100"
-                         style={{ backgroundImage: `url('${rel.imageUrl || 'https://images.unsplash.com/photo-1510915361894-faa8b2d88c4b?auto=format&fit=crop&q=80&w=600&h=400'}')` }}
-                       />
-                     </div>
-                     <div className="p-5 flex-1 flex flex-col">
-                       <div className="font-mono text-[10px] tracking-widest text-[var(--accent-red)] mb-3">
-                         {rel.category || 'GENERAL'} // {(rel.slug || rel.id).substring(0,8).toUpperCase()}
-                       </div>
-                       <h3 className="text-md font-bold text-[var(--text-primary)] mb-3 leading-snug group-hover:text-[var(--cyan-bright)] transition-colors">
-                         {rel.title}
-                       </h3>
-                       <p className="text-sm text-[var(--text-muted)] line-clamp-3 mt-auto">
-                         {rel.summary}
-                       </p>
-                     </div>
-                   </div>
-                 </Link>
-               ))}
-             </div>
-           </motion.div>
-         )}
          </div>
-
-        {/* Sticky Trending Sidebar */}
-        <motion.aside variants={itemVariants} className="w-full lg:w-[320px] hidden lg:block shrink-0">
-          <div className="sticky top-32">
-            <h3 className="text-xl font-mono font-bold text-[var(--cyan-bright)] mb-6 flex items-center gap-2 uppercase tracking-widest">
-              <span className="w-2 h-2 rounded-full bg-[var(--accent-red)] animate-pulse" />
-              {locale === 'tr' ? 'Trend Haberler' : 'Trending Intel'}
-            </h3>
-            <div className="flex flex-col gap-6">
-              {relatedArticles?.map((rel: any, idx: number) => (
-                <Link key={`sidebar-${rel.id}`} href={`/${locale}/news/${rel.slug || rel.id}`} className="group flex gap-4 items-start">
-                  <div className="w-8 font-mono text-[var(--text-muted)] group-hover:text-[var(--cyan-bright)] text-xl font-bold opacity-50">
-                    0{idx + 1}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--cyan-bright)] transition-colors leading-tight mb-2">
-                      {rel.title}
-                    </h4>
-                    <p className="text-xs font-mono text-[var(--text-muted)] uppercase tracking-wider">
-                      {rel.category}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            
-            <div className="mt-10 p-5 bg-[var(--bg-secondary)] border border-[var(--cyan-dim)] rounded-xl relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--cyan-glow)] to-transparent opacity-10 group-hover:opacity-20 transition-opacity" />
-              <h4 className="text-sm font-bold text-[var(--text-primary)] mb-2 uppercase tracking-wider">
-                {locale === 'tr' ? 'Özel İstihbarat Bülteni' : 'Exclusive Intel Briefing'}
-              </h4>
-              <p className="text-xs text-[var(--text-secondary)] mb-4">
-                {locale === 'tr' ? 'Haftalık sansürsüz teknoloji analizlerini doğrudan e-postanıza alın.' : 'Get weekly uncensored tech analysis straight to your inbox.'}
-              </p>
-              <button 
-                 onClick={() => document.dispatchEvent(new CustomEvent('openNewsletterModal'))}
-                 className="w-full py-2 bg-[var(--cyan-dim)] text-[var(--cyan-bright)] text-xs font-bold tracking-widest uppercase rounded hover:bg-[var(--cyan-bright)] hover:text-black transition-colors"
-              >
-                {locale === 'tr' ? 'Abone Ol' : 'Subscribe'}
-              </button>
-            </div>
-          </div>
-        </motion.aside>
-
+        </div>
       </motion.div>
     </div>
   );
