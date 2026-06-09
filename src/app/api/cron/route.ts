@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { runIngestion } from '@/lib/ingest';
 
+export const maxDuration = 60; // Allow maximum execution time on Vercel Hobby
+
 // This API route will be called by a cron job (e.g. Vercel Cron or GitHub Actions)
 export async function GET(request: Request) {
   try {

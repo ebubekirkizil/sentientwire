@@ -138,10 +138,11 @@ export async function runIngestion() {
 
           console.log(`[INGEST] Saved article: ${aiResult.title}`);
 
-          // Pre-translate to ALL supported locales to prevent English fallback
-          for (const locale of ALL_LOCALES) {
-            console.log(`[INGEST-TRANSLATE] Translating to ${locale}...`);
-            await new Promise(r => setTimeout(r, 3000)); // Space out API calls
+          // Pre-translate to ALL supported locales in PARALLEL to beat the 60s serverless timeout
+          // Since we only publish 1 article per hour, 10 parallel translation requests = 11 total requests,
+          // which is safely under the Gemini Free Tier limit of 15 RPM.
+          console.log(`[INGEST-TRANSLATE] Starting parallel translations for ${ALL_LOCALES.length} locales...`);
+          await Promise.all(ALL_LOCALES.map(async (locale) => {
             try {
               const translated = await translateArticleText(
                 aiResult.title,
@@ -160,7 +161,7 @@ export async function runIngestion() {
             } catch (transErr) {
               console.error(`[INGEST-TRANSLATE] ❌ Failed for ${locale}:`, transErr);
             }
-          }
+          }));
           
           console.log(`[INGEST] ✅ Article fully processed in all languages: ${aiResult.title}`);
           publishedCount++;
