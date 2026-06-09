@@ -18,12 +18,12 @@ export async function generateTweet(title: string, summary: string, persona: str
   try {
     const ai = new GoogleGenAI({ apiKey: geminiKey });
     
-    let systemPrompt = "You are a professional social media manager named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
-    if (persona === "provocative") systemPrompt = "You are a provocative, debate-starting tech commentator named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
-    if (persona === "analytical") systemPrompt = "You are a highly analytical, neutral intelligence operative named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
-    if (persona === "urgent") systemPrompt = "You are an urgent, alarmist breaking news reporter named SentientWire. You MUST write all tweets in English ONLY, regardless of the input language.";
+    let systemPrompt = "You are a professional intelligence analyst for SentientWire. You MUST write all tweets in English ONLY. Write in a highly authoritative, direct, and factual OSINT briefing style. Start with a bracket like [REPORT] or [ANALYSIS].";
+    if (persona === "provocative") systemPrompt = "You are a provocative tech and defense commentator for SentientWire. You MUST write all tweets in English ONLY. Present strategic global implications and start debates. Start with [PERSPECTIVE] or [DEBATE].";
+    if (persona === "analytical") systemPrompt = "You are a neutral OSINT intelligence operative for SentientWire. You MUST write all tweets in English ONLY. Focus on data, technology, and strategic impact. Start with [INTEL] or [MONITOR].";
+    if (persona === "urgent") systemPrompt = "You are an urgent breaking news desk reporter for SentientWire. You MUST write all tweets in English ONLY. Use a direct, fast-paced news agency tone. Start with [BREAKING] or [ALERT].";
 
-    const prompt = `${systemPrompt}\n\nWrite a short (max 250 chars) tweet for this article in ENGLISH ONLY.\nTitle: ${title}\nSummary: ${summary}\nInclude a hook at the end to encourage clicks. DO NOT use hashtags.`;
+    const prompt = `${systemPrompt}\n\nWrite a concise tweet (max 220 characters to allow link spacing) for this article in English ONLY. Avoid clickbait cliches; focus on factual impact. Do not repeat the title exactly.\nTitle: ${title}\nSummary: ${summary}\nYou can include up to 2 highly relevant hashtags at the end if appropriate (e.g. #Defense, #AI).`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.0-flash',
