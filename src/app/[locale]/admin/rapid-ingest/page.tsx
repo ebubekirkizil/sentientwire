@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { processArticle } from "@/app/actions/article";
+import { useTranslations } from "next-intl";
 
 export default function RapidIngest() {
+  const t = useTranslations("Admin");
   const params = useParams();
   const locale = (params?.locale as string) || "en";
   const router = useRouter();
@@ -18,17 +20,17 @@ export default function RapidIngest() {
   const handleProcess = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rawText.trim()) {
-      alert("Please enter news text or a topic.");
+      alert(t('enterNewsText'));
       return;
     }
 
     setLoading(true);
-    setStatus("AI is analyzing and researching assets...");
+    setStatus(t('analyzingResearching'));
     
     try {
       const res = await processArticle(rawText, manualImageUrl || undefined);
       if (res.success) {
-        setStatus("✅ SUCCESS: Article published and translated to 9 languages.");
+        setStatus(t('ingestSuccess'));
         setTimeout(() => {
           router.push(`/${locale}/admin`);
         }, 2000);
@@ -53,8 +55,8 @@ export default function RapidIngest() {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-tight">AI Rapid Ingest</h1>
-          <p className="font-mono text-xs text-[var(--text-muted)] mt-1 uppercase tracking-widest">Automation Mode: Full Autonomous Rewriting & Visual Research</p>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)] tracking-tight">{t('rapidIngestTitle')}</h1>
+          <p className="font-mono text-xs text-[var(--text-muted)] mt-1 uppercase tracking-widest">{t('automationModeTitle')}</p>
         </div>
       </div>
 
@@ -66,7 +68,7 @@ export default function RapidIngest() {
 
         <form onSubmit={handleProcess} className="flex flex-col gap-8 relative z-10">
           <div className="flex flex-col gap-3">
-            <label className="font-mono text-[11px] text-[var(--cyan-bright)] tracking-[0.2em] uppercase font-bold">Raw Intelligence / Topic Source</label>
+            <label className="font-mono text-[11px] text-[var(--cyan-bright)] tracking-[0.2em] uppercase font-bold">{t('rawIntelSource')}</label>
             <textarea
               required
               rows={12}
@@ -74,19 +76,19 @@ export default function RapidIngest() {
               onChange={(e) => setRawText(e.target.value)}
               disabled={loading}
               className="w-full bg-[#020408] border border-[var(--border-subtle)] rounded-xl p-5 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--cyan-bright)] focus:ring-1 focus:ring-[var(--cyan-dim)] transition-all resize-none shadow-inner leading-relaxed"
-              placeholder="Paste a news article link, a paragraph from a newsletter, or just a topic like 'Microsoft and OpenAI partnership on Stargate supercomputer'..."
+              placeholder={t('rawIntelPlaceholder')}
             />
           </div>
 
           <div className="flex flex-col gap-3">
-            <label className="font-mono text-[11px] text-[var(--text-muted)] tracking-[0.2em] uppercase">Manual Hero Image (Optional)</label>
+            <label className="font-mono text-[11px] text-[var(--text-muted)] tracking-[0.2em] uppercase">{t('manualHeroImageOptional')}</label>
             <input
               type="url"
               value={manualImageUrl}
               onChange={(e) => setManualImageUrl(e.target.value)}
               disabled={loading}
               className="w-full bg-[#020408] border border-[var(--border-subtle)] rounded-xl p-4 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] transition-all"
-              placeholder="https://images.unsplash.com/... (If empty, AI will research 2 high-quality photos)"
+              placeholder={t('manualHeroPlaceholder')}
             />
           </div>
 
@@ -99,12 +101,12 @@ export default function RapidIngest() {
               {loading ? (
                 <>
                   <div className="w-5 h-5 rounded-full border-2 border-[#020408]/20 border-t-[#020408] animate-spin" />
-                  PROCESSING...
+                  {t('processing')}
                 </>
               ) : (
                 <>
                   <svg className="group-hover:scale-110 transition-transform" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  EXECUTE AUTO-PILOT
+                  {t('executeAutopilot')}
                 </>
               )}
             </button>
@@ -122,22 +124,22 @@ export default function RapidIngest() {
             <div className="text-[var(--cyan-bright)] mb-2">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </div>
-            <h4 className="text-[10px] font-bold font-mono text-white tracking-widest uppercase mb-1">Deep Research</h4>
-            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">AI analyzes the topic and performs visual research on Unsplash to find 2 thematic images.</p>
+            <h4 className="text-[10px] font-bold font-mono text-white tracking-widest uppercase mb-1">{t('deepResearchTitle')}</h4>
+            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">{t('deepResearchDesc')}</p>
           </div>
           <div className="bg-[#020408]/50 p-4 rounded-xl border border-[var(--border-subtle)]">
             <div className="text-[var(--cyan-bright)] mb-2">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a4 4 0 0 0-4-4H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a4 4 0 0 1 4-4h6z"/></svg>
             </div>
-            <h4 className="text-[10px] font-bold font-mono text-white tracking-widest uppercase mb-1">9-Locale Translation</h4>
-            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">The final report is automatically translated into Turkish, Spanish, Chinese, Arabic, and more.</p>
+            <h4 className="text-[10px] font-bold font-mono text-white tracking-widest uppercase mb-1">{t('multiLocaleTitle')}</h4>
+            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">{t('multiLocaleDesc')}</p>
           </div>
           <div className="bg-[#020408]/50 p-4 rounded-xl border border-[var(--border-subtle)]">
             <div className="text-[var(--cyan-bright)] mb-2">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
             </div>
-            <h4 className="text-[10px] font-bold font-mono text-white tracking-widest uppercase mb-1">Premium Assets</h4>
-            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">Injects a hero image and a contextual middle-content image for maximum Google News retention.</p>
+            <h4 className="text-[10px] font-bold font-mono text-white tracking-widest uppercase mb-1">{t('premiumAssetsTitle')}</h4>
+            <p className="text-[10px] text-[var(--text-muted)] leading-relaxed">{t('premiumAssetsDesc')}</p>
           </div>
         </div>
       </div>

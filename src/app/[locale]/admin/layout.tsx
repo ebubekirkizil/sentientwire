@@ -5,19 +5,21 @@ import { useParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/routing";
 import { logout } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useTranslations } from "next-intl";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const t = useTranslations("Admin");
   const params = useParams();
   const locale = (params?.locale as string) || "en";
   const pathname = usePathname();
   const router = useRouter();
 
   const navItems = [
-    { name: "DATABANK", path: `/${locale}/admin`, icon: "M4 6h16M4 12h16M4 18h7" }
+    { name: t('databank'), path: `/${locale}/admin`, icon: "M4 6h16M4 12h16M4 18h7" }
   ];
 
   const handleLogout = async () => {
@@ -36,7 +38,7 @@ export default function AdminLayout({
               TECH<span className="text-[var(--text-primary)]">INTEL</span>
             </h1>
             <p className="font-mono text-[10px] text-[var(--text-muted)] mt-1 tracking-widest uppercase">
-              Command Center
+              {t('commandCenter')}
             </p>
           </Link>
         </div>
@@ -71,7 +73,7 @@ export default function AdminLayout({
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
-            DISCONNECT
+            {t('disconnect')}
           </button>
         </div>
       </aside>
@@ -88,11 +90,11 @@ export default function AdminLayout({
                 <div className="w-2 h-2 rounded-full bg-[var(--cyan-bright)] animate-pulse shadow-[0_0_8px_var(--cyan-bright)]" />
              </div>
              <div>
-               <h2 className="font-mono text-sm text-[var(--text-primary)] tracking-widest">NEXUS UPLINK ESTABLISHED</h2>
+               <h2 className="font-mono text-sm text-[var(--text-primary)] tracking-widest">{t('nexusUplinkEstablished')}</h2>
                <div className="font-mono text-[10px] text-[var(--text-muted)] flex items-center gap-2">
-                 <span>ENCRYPTION: AES-256</span>
+                 <span>{t('encryption')}: AES-256</span>
                  <span>|</span>
-                 <span>LATENCY: 12ms</span>
+                 <span>{t('latency')}: 12ms</span>
                </div>
              </div>
            </div>
@@ -106,15 +108,17 @@ export default function AdminLayout({
                  className="bg-cyan-900/10 border border-[var(--cyan-dim)] rounded-md px-3 py-1.5 text-xs font-mono text-[var(--cyan-bright)] outline-none cursor-pointer hover:bg-cyan-900/20 transition-all"
                >
                  <option value="tr" className="bg-[#020408] text-white">TR (Türkçe)</option>
-                 <option value="en" className="bg-[#020408] text-white">EN (English)</option>
+                 <option value="en-US" className="bg-[#020408] text-white">EN-US (American)</option>
+                 <option value="en-GB" className="bg-[#020408] text-white">EN-GB (British)</option>
+                 <option value="en-CA" className="bg-[#020408] text-white">EN-CA (Canadian)</option>
                  <option value="de" className="bg-[#020408] text-white">DE (Deutsch)</option>
                  <option value="fr" className="bg-[#020408] text-white">FR (Français)</option>
                  <option value="es" className="bg-[#020408] text-white">ES (Español)</option>
                  <option value="it" className="bg-[#020408] text-white">IT (Italiano)</option>
                  <option value="ru" className="bg-[#020408] text-white">RU (Pусский)</option>
                  <option value="zh" className="bg-[#020408] text-white">ZH (中文)</option>
-                 <option value="ar" className="bg-[#020408] text-white">AR (العربية)</option>
-                 <option value="ja" className="bg-[#020408] text-white">JA (日本語)</option>
+                 <option value="nl" className="bg-[#020408] text-white">NL (Nederlands)</option>
+                 <option value="pl" className="bg-[#020408] text-white">PL (Polski)</option>
                </select>
              </div>
 
@@ -124,7 +128,7 @@ export default function AdminLayout({
                href={`/${locale}/admin/new`}
                className="bg-[var(--cyan-bright)] text-[#020408] font-bold font-mono text-xs tracking-widest px-6 py-2.5 rounded shadow-[0_0_15px_rgba(6,182,212,0.4)] hover:shadow-[0_0_25px_rgba(6,182,212,0.6)] hover:bg-white transition-all transform hover:-translate-y-0.5"
              >
-               + INITIATE REPORT
+               + {t('initiateReport')}
              </Link>
            </div>
         </header>

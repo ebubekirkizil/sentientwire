@@ -6,8 +6,10 @@ import { useParams, useRouter } from "next/navigation";
 import { createArticle } from "@/app/actions/article";
 import { analyzeArticle, chatWithAssistant, AssistantMessage, AnalysisResult } from "@/app/actions/assistant";
 import { searchUnsplashImages, UnsplashImage } from "@/app/actions/unsplash";
+import { useTranslations } from "next-intl";
 
 export default function NewArticle() {
+  const t = useTranslations("Admin");
   const params = useParams();
   const locale = (params?.locale as string) || "en";
   const router = useRouter();
@@ -77,14 +79,14 @@ export default function NewArticle() {
     if (res.success) {
       router.push(`/${locale}/admin`);
     } else {
-      alert("Failed to create intelligence report. Check console logs.");
+      alert(t('failCreateReport'));
     }
   };
 
   // Trigger AI SEO & Retention Analysis
   const handleAnalyze = async () => {
     if (!title && !content) {
-      alert("Please enter a headline and content before analyzing.");
+      alert(t('pleaseEnterHeadline'));
       return;
     }
 
@@ -103,7 +105,7 @@ export default function NewArticle() {
         triggerUnsplashSearch(primaryKeyword);
       }
     } else {
-      alert("AI Analysis failed. Make sure GEMINI_API_KEY is configured in .env");
+      alert(t('aiAnalysisFailed'));
     }
   };
 
@@ -150,8 +152,8 @@ export default function NewArticle() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </Link>
         <div>
-          <h2 className="text-2xl font-bold font-sans tracking-tight text-[var(--text-primary)]">Log New Intelligence</h2>
-          <p className="font-mono text-xs text-[var(--text-muted)] mt-1">Write manual intel reports accompanied by the AI Co-Editor.</p>
+          <h2 className="text-2xl font-bold font-sans tracking-tight text-[var(--text-primary)]">{t('logNewIntelligence')}</h2>
+          <p className="font-mono text-xs text-[var(--text-muted)] mt-1">{t('writeManualIntelReports')}</p>
         </div>
       </div>
 
@@ -165,7 +167,7 @@ export default function NewArticle() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
-                  <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">CLASSIFICATION (Sector)</label>
+                  <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('classificationSector')}</label>
                   <div className="flex gap-4">
                     <select 
                       name="category" 
@@ -191,20 +193,20 @@ export default function NewArticle() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">Hero Image URL</label>
+                  <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('heroImageUrl')}</label>
                   <input 
                     name="imageUrl" 
                     type="url" 
                     value={imageUrl}
                     onChange={(e) => setImageUrl(e.target.value)}
                     className="bg-[#020408] border border-[var(--border-subtle)] rounded-lg p-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] transition-colors" 
-                    placeholder="Click an AI recommended photo or insert URL..." 
+                    placeholder={t('heroImagePlaceholder')} 
                   />
                 </div>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">Headline</label>
+                <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('headline')}</label>
                 <input 
                   required 
                   name="title" 
@@ -212,12 +214,12 @@ export default function NewArticle() {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="bg-[#020408] border border-[var(--border-subtle)] rounded-lg p-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] transition-colors" 
-                  placeholder="e.g. Operation Aurora 2.0 Detected" 
+                  placeholder={t('headlinePlaceholder')} 
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">Brief Summary</label>
+                <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('briefSummary')}</label>
                 <textarea 
                   required 
                   name="summary" 
@@ -225,14 +227,14 @@ export default function NewArticle() {
                   value={summary}
                   onChange={(e) => setSummary(e.target.value)}
                   className="bg-[#020408] border border-[var(--border-subtle)] rounded-lg p-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] resize-y transition-colors" 
-                  placeholder="Short description containing curiosity gaps for card previews..." 
+                  placeholder={t('summaryPlaceholder')} 
                 />
               </div>
 
               <div className="flex flex-col gap-2">
                 <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase flex items-center justify-between">
-                  <span>Full Content (HTML/Markdown)</span>
-                  <span className="text-[var(--cyan-dim)]">Dynamic Grid Elements Supported</span>
+                  <span>{t('fullContent')}</span>
+                  <span className="text-[var(--cyan-dim)]">{t('dynamicGridSupported')}</span>
                 </label>
                 <textarea 
                   required 
@@ -241,7 +243,7 @@ export default function NewArticle() {
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   className="bg-[#020408] border border-[var(--border-subtle)] rounded-lg p-4 text-[var(--cyan-bright)] outline-none focus:border-[var(--cyan-dim)] resize-y font-mono text-sm shadow-inner transition-colors" 
-                  placeholder="<h2>Subheading</h2><p>Write content paragraphs here...</p>" 
+                  placeholder={t('contentPlaceholder')} 
                 />
               </div>
 
@@ -256,12 +258,12 @@ export default function NewArticle() {
                   {analyzing ? (
                     <>
                       <div className="w-4 h-4 rounded-full border-2 border-[var(--cyan-bright)]/20 border-t-[var(--cyan-bright)] animate-spin" />
-                      SCANNING...
+                      {t('scanningPrompt')}
                     </>
                   ) : (
                     <>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                      ANALYZE SEO & RETENTION
+                      {t('analyzeSeoRetention')}
                     </>
                   )}
                 </button>
@@ -274,12 +276,12 @@ export default function NewArticle() {
                   {loading ? (
                     <>
                       <div className="w-4 h-4 rounded-full border-2 border-[#020408]/20 border-t-[#020408] animate-spin" />
-                      PUBLISHING...
+                      {t('publishing')}
                     </>
                   ) : (
                     <>
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                      PUBLISH REPORT
+                      {t('publishReport')}
                     </>
                   )}
                 </button>
@@ -296,19 +298,19 @@ export default function NewArticle() {
               onClick={() => setActiveTab("analysis")}
               className={`flex-1 py-3 text-center border-r border-[var(--border-subtle)] tracking-wider font-semibold transition-colors ${activeTab === "analysis" ? "text-[var(--cyan-bright)] bg-[var(--bg-card)] border-b-2 border-b-[var(--cyan-bright)]" : "text-[var(--text-muted)] hover:text-white"}`}
             >
-              SEO & ANALYSIS
+              {t('seoAnalysisTab')}
             </button>
             <button
               onClick={() => setActiveTab("images")}
               className={`flex-1 py-3 text-center border-r border-[var(--border-subtle)] tracking-wider font-semibold transition-colors ${activeTab === "images" ? "text-[var(--cyan-bright)] bg-[var(--bg-card)] border-b-2 border-b-[var(--cyan-bright)]" : "text-[var(--text-muted)] hover:text-white"}`}
             >
-              IMAGE FINDER
+              {t('imageFinderTab')}
             </button>
             <button
               onClick={() => setActiveTab("chat")}
               className={`flex-1 py-3 text-center tracking-wider font-semibold transition-colors ${activeTab === "chat" ? "text-[var(--cyan-bright)] bg-[var(--bg-card)] border-b-2 border-b-[var(--cyan-bright)]" : "text-[var(--text-muted)] hover:text-white"}`}
             >
-              CO-EDITOR CHAT
+              {t('coEditorChatTab')}
             </button>
           </div>
 
@@ -321,12 +323,12 @@ export default function NewArticle() {
                 {!analysis && !analyzing ? (
                   <div className="flex flex-col items-center justify-center text-center py-24 gap-4">
                     <div className="w-12 h-12 rounded-full border border-dashed border-[var(--cyan-dim)] flex items-center justify-center text-[var(--cyan-bright)] text-xl font-mono animate-pulse">AI</div>
-                    <p className="font-mono text-xs text-[var(--text-muted)] max-w-xs">Write your article draft on the left and click "Analyze SEO & Retention" to get instant audit reports.</p>
+                    <p className="font-mono text-xs text-[var(--text-muted)] max-w-xs">{t('aiAnalysisIntro')}</p>
                   </div>
                 ) : analyzing ? (
                   <div className="flex flex-col items-center justify-center text-center py-24 gap-4 animate-pulse">
                     <div className="w-10 h-10 rounded-full border-2 border-[var(--cyan-bright)] border-t-transparent animate-spin" />
-                    <p className="font-mono text-xs text-[var(--cyan-bright)]">DECRYPTING WRITING SIGNATURES & COMPUTING SEO SCORE...</p>
+                    <p className="font-mono text-xs text-[var(--cyan-bright)]">{t('aiDecryptingSignature')}</p>
                   </div>
                 ) : (
                   analysis && (
@@ -334,14 +336,14 @@ export default function NewArticle() {
                       {/* Scores Card */}
                       <div className="grid grid-cols-2 gap-4">
                         <div className="bg-[#020408] border border-[var(--border-subtle)] p-4 rounded-lg text-center">
-                          <div className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider uppercase mb-1">SEO OPTIMIZATION</div>
+                          <div className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider uppercase mb-1">{t('seoOptimization')}</div>
                           <div className="text-3xl font-bold text-[var(--cyan-bright)] font-mono">{analysis.seoScore}/100</div>
                           <div className="w-full bg-gray-800 h-1.5 rounded-full mt-2 overflow-hidden">
                             <div className="bg-[var(--cyan-bright)] h-full" style={{ width: `${analysis.seoScore}%` }} />
                           </div>
                         </div>
                         <div className="bg-[#020408] border border-[var(--border-subtle)] p-4 rounded-lg text-center">
-                          <div className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider uppercase mb-1">READER RETENTION</div>
+                          <div className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider uppercase mb-1">{t('readerRetention')}</div>
                           <div className="text-3xl font-bold text-purple-400 font-mono">{analysis.retentionScore}/100</div>
                           <div className="w-full bg-gray-800 h-1.5 rounded-full mt-2 overflow-hidden">
                             <div className="bg-purple-500 h-full" style={{ width: `${analysis.retentionScore}%` }} />
@@ -353,7 +355,7 @@ export default function NewArticle() {
                       <div className="bg-[#020408]/30 border border-[var(--border-subtle)] p-4 rounded-lg">
                         <h4 className="font-mono text-xs text-[var(--cyan-bright)] tracking-wider mb-2 flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-[var(--cyan-bright)]" />
-                          GOOGLE SEO & META AUDIT
+                          {t('googleSeoMetaAudit')}
                         </h4>
                         <div className="text-xs text-[var(--text-secondary)] leading-relaxed prose prose-invert max-w-none">
                           {analysis.seoFeedback}
@@ -364,7 +366,7 @@ export default function NewArticle() {
                       <div className="bg-[#020408]/30 border border-[var(--border-subtle)] p-4 rounded-lg">
                         <h4 className="font-mono text-xs text-purple-400 tracking-wider mb-2 flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-                          ENGAGEMENT & RETENTION AUDIT
+                          {t('engagementRetentionAudit')}
                         </h4>
                         <div className="text-xs text-[var(--text-secondary)] leading-relaxed prose prose-invert max-w-none">
                           {analysis.retentionFeedback}
@@ -374,17 +376,17 @@ export default function NewArticle() {
                       {/* Alternative headlines */}
                       {analysis.suggestedTitles && analysis.suggestedTitles.length > 0 && (
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">AI HEADLINE RECOMMENDATIONS</label>
+                          <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('aiHeadlineRecs')}</label>
                           <div className="flex flex-col gap-2">
-                            {analysis.suggestedTitles.map((t, idx) => (
+                            {analysis.suggestedTitles.map((tVal, idx) => (
                               <button
                                 key={idx}
                                 type="button"
-                                onClick={() => setTitle(t)}
+                                onClick={() => setTitle(tVal)}
                                 className="text-left text-xs bg-[#020408] border border-[var(--border-subtle)] hover:border-[var(--cyan-dim)] hover:bg-[var(--bg-secondary)] p-3 rounded-lg text-[var(--text-primary)] transition-all flex items-center justify-between group"
                               >
-                                <span className="line-clamp-1 pr-2">{t}</span>
-                                <span className="text-[var(--cyan-bright)] font-mono text-[9px] opacity-0 group-hover:opacity-100 transition-opacity">APPLY</span>
+                                <span className="line-clamp-1 pr-2">{tVal}</span>
+                                <span className="text-[var(--cyan-bright)] font-mono text-[9px] opacity-0 group-hover:opacity-100 transition-opacity">{t('apply')}</span>
                               </button>
                             ))}
                           </div>
@@ -394,7 +396,7 @@ export default function NewArticle() {
                       {/* Alternative summary */}
                       {analysis.suggestedSummary && (
                         <div className="flex flex-col gap-2">
-                          <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">AI CARD PREVIEW SUMMARY</label>
+                          <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('aiCardPreviewSummary')}</label>
                           <div className="text-xs bg-[#020408] border border-[var(--border-subtle)] p-4 rounded-lg text-[var(--text-secondary)] flex flex-col gap-3">
                             <p className="italic">"{analysis.suggestedSummary}"</p>
                             <button
@@ -402,7 +404,7 @@ export default function NewArticle() {
                               onClick={() => setSummary(analysis.suggestedSummary)}
                               className="self-end text-[var(--cyan-bright)] font-mono text-[10px] hover:underline"
                             >
-                              APPLY TO SUMMARY FIELD
+                              {t('applyToSummary')}
                             </button>
                           </div>
                         </div>
@@ -422,7 +424,7 @@ export default function NewArticle() {
                     type="text"
                     value={unsplashQuery}
                     onChange={(e) => setUnsplashQuery(e.target.value)}
-                    placeholder="Search Unsplash (e.g. quantum server)..."
+                    placeholder={t('searchUnsplashPlaceholder')}
                     className="flex-1 bg-[#020408] border border-[var(--border-subtle)] rounded-lg p-2.5 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] transition-colors font-mono"
                   />
                   <button
@@ -430,14 +432,14 @@ export default function NewArticle() {
                     disabled={unsplashLoading}
                     className="bg-[var(--cyan-bright)] text-[#020408] hover:bg-[var(--cyan)] font-mono font-bold text-xs px-4 py-2.5 rounded-lg transition-colors disabled:opacity-50"
                   >
-                    SEARCH
+                    {t('search')}
                   </button>
                 </form>
 
                 {/* AI keywords recommendations */}
                 {analysis?.suggestedKeywords && analysis.suggestedKeywords.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 items-center mb-1">
-                    <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-wider mr-1">AI KEYWORDS:</span>
+                    <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-wider mr-1">{t('aiKeywords')}</span>
                     {analysis.suggestedKeywords.map((keyword, idx) => (
                       <button
                         key={idx}
@@ -458,11 +460,11 @@ export default function NewArticle() {
                 {unsplashLoading ? (
                   <div className="flex flex-col items-center justify-center text-center py-20 gap-3">
                     <div className="w-8 h-8 rounded-full border-2 border-[var(--cyan-bright)] border-t-transparent animate-spin" />
-                    <p className="font-mono text-xs text-[var(--text-muted)] animate-pulse">SEARCHING CREATIVE INTEL LIBRARY...</p>
+                    <p className="font-mono text-xs text-[var(--text-muted)] animate-pulse">{t('searchingLibrary')}</p>
                   </div>
                 ) : unsplashImages.length === 0 ? (
                   <div className="text-center py-20 font-mono text-xs text-[var(--text-muted)] border border-dashed border-[var(--border-subtle)] rounded-lg">
-                    NO IMAGES FOUND. TYPE A QUERY AND SEARCH.
+                    {t('noImagesFound')}
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-3">
@@ -472,7 +474,7 @@ export default function NewArticle() {
                         className="group relative border border-[var(--border-subtle)] hover:border-[var(--cyan-bright)] rounded-lg overflow-hidden bg-[#020408] flex flex-col h-40 transition-all cursor-pointer"
                         onClick={() => {
                           setImageUrl(img.url);
-                          alert(`Hero image URL updated to photo by: ${img.author}`);
+                          alert(t('imageUpdatedTo') + img.author);
                         }}
                       >
                         <div 
@@ -480,9 +482,9 @@ export default function NewArticle() {
                           style={{ backgroundImage: `url('${img.thumb}')` }}
                         />
                         <div className="flex-1 p-2 flex flex-col justify-between">
-                          <p className="font-mono text-[9px] text-[var(--text-muted)] truncate">By {img.author}</p>
+                          <p className="font-mono text-[9px] text-[var(--text-muted)] truncate">{t('by')} {img.author}</p>
                           <span className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs font-mono font-bold text-[var(--cyan-bright)] tracking-wider transition-opacity">
-                            USE PHOTO
+                            {t('usePhoto')}
                           </span>
                         </div>
                       </div>
@@ -500,7 +502,7 @@ export default function NewArticle() {
                   {chatHistory.length === 0 ? (
                     <div className="flex flex-col items-center justify-center text-center py-20 gap-3">
                       <div className="w-12 h-12 rounded-full border border-[var(--cyan-dim)] flex items-center justify-center text-lg">🤖</div>
-                      <p className="font-mono text-xs text-[var(--text-muted)] max-w-xs">I am your editorial co-pilot. Ask me to draft paragraphs, refine hooks, summarize complex information, or suggest SEO keywords.</p>
+                      <p className="font-mono text-xs text-[var(--text-muted)] max-w-xs">{t('coEditorIntro')}</p>
                     </div>
                   ) : (
                     chatHistory.map((msg, idx) => (
@@ -509,7 +511,7 @@ export default function NewArticle() {
                         className={`flex flex-col max-w-[85%] rounded-lg p-3.5 text-xs leading-relaxed ${msg.role === "user" ? "self-end bg-[var(--cyan-dim)]/20 border border-[var(--cyan-dim)]/40 text-white" : "self-start bg-[#020408] border border-[var(--border-subtle)] text-[var(--text-secondary)]"}`}
                       >
                         <span className="font-mono text-[8px] text-[var(--text-muted)] uppercase tracking-wider mb-1 block">
-                          {msg.role === "user" ? "Editor" : "AI CO-EDITOR"}
+                          {msg.role === "user" ? (locale === "tr" ? "Editör" : "Editor") : (locale === "tr" ? "YZ YARDIMCI EDİTÖRÜ" : "AI CO-EDITOR")}
                         </span>
                         <div className="whitespace-pre-wrap prose prose-invert max-w-none">{msg.text}</div>
                       </div>
@@ -531,7 +533,7 @@ export default function NewArticle() {
                     type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask AI (e.g. Write an introduction paragraph)..."
+                    placeholder={t('askAiPlaceholder')}
                     className="flex-1 bg-[#020408] border border-[var(--border-subtle)] rounded-lg p-3 text-xs text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] transition-colors"
                   />
                   <button
@@ -539,7 +541,7 @@ export default function NewArticle() {
                     disabled={chatLoading || !chatInput.trim()}
                     className="bg-[var(--cyan-bright)] text-[#020408] hover:bg-[var(--cyan)] font-mono font-bold text-xs px-4 py-3 rounded-lg transition-colors disabled:opacity-50"
                   >
-                    SEND
+                    {t('send')}
                   </button>
                 </form>
               </div>

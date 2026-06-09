@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { getSettings, updateSettings } from "@/app/actions/settings";
+import { useTranslations } from "next-intl";
 
 export default function SettingsDashboard() {
+  const t = useTranslations("Admin");
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -24,14 +26,14 @@ export default function SettingsDashboard() {
     
     setSaving(false);
     if (res.success) {
-      alert("SETTINGS UPDATED SUCCESSFULLY");
+      alert(t('successSettings'));
     } else {
-      alert("FAILED TO UPDATE SETTINGS");
+      alert(t('failSettings'));
     }
   };
 
   if (loading) {
-    return <div className="text-center font-mono text-[var(--cyan-bright)] animate-pulse py-20">INITIALIZING CONFIGURATION MODULE...</div>;
+    return <div className="text-center font-mono text-[var(--cyan-bright)] animate-pulse py-20">{t('initializingConfig')}</div>;
   }
 
   return (
@@ -43,12 +45,12 @@ export default function SettingsDashboard() {
         <div className="bg-[var(--bg-primary)] border border-[var(--border-subtle)] p-6 rounded-lg">
           <h3 className="font-mono text-xs text-[var(--cyan-bright)] tracking-widest mb-6 border-b border-[var(--border-subtle)] pb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-[var(--cyan-bright)] rounded-full"></span>
-            GLOBAL PLATFORM SETTINGS
+            {t('globalSettings')}
           </h3>
           
           <div className="flex flex-col gap-4 max-w-xl">
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">SITE TITLE</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('siteTitle')}</label>
               <input 
                 name="site_title" 
                 defaultValue={settings.site_title || "TechIntel - Global Intelligence"}
@@ -57,7 +59,7 @@ export default function SettingsDashboard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X (TWITTER) ACCOUNT REDIRECT URL (FOR NORMAL USERS)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('xRedirectUrl')}</label>
               <input 
                 name="x_account_url" 
                 defaultValue={settings.x_account_url || "https://x.com/SentientWireHQ"}
@@ -67,7 +69,7 @@ export default function SettingsDashboard() {
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">MAINTENANCE MODE (TRUE/FALSE)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('maintenanceMode')}</label>
               <input 
                 name="maintenance_mode" 
                 defaultValue={settings.maintenance_mode || "false"}
@@ -76,7 +78,7 @@ export default function SettingsDashboard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">DYNAMIC RSS FEED SOURCES (COMMA-SEPARATED URLS)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('rssFeeds')}</label>
               <textarea 
                 name="rss_feeds" 
                 rows={3}
@@ -91,12 +93,12 @@ export default function SettingsDashboard() {
         <div className="bg-[var(--bg-primary)] border border-[var(--border-subtle)] p-6 rounded-lg">
           <h3 className="font-mono text-xs text-[var(--cyan-bright)] tracking-widest mb-6 border-b border-[var(--border-subtle)] pb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
-            AI X-BOT AUTOMATION SETTINGS
+            {t('xBotSettings')}
           </h3>
           
           <div className="flex flex-col gap-4 max-w-xl">
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X CONSUMER KEY (API KEY)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('xApiKey')}</label>
               <input 
                 name="x_api_key" 
                 type="password"
@@ -107,7 +109,7 @@ export default function SettingsDashboard() {
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X CONSUMER SECRET (API KEY SECRET)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('xApiSecret')}</label>
               <input 
                 name="x_api_secret" 
                 type="password"
@@ -118,7 +120,7 @@ export default function SettingsDashboard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X ACCESS TOKEN</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('xAccessToken')}</label>
               <input 
                 name="x_access_token" 
                 type="password"
@@ -129,7 +131,7 @@ export default function SettingsDashboard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X ACCESS TOKEN SECRET</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('xAccessSecret')}</label>
               <input 
                 name="x_access_secret" 
                 type="password"
@@ -140,7 +142,7 @@ export default function SettingsDashboard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">OPENAI API KEY (FOR TWEET GENERATION)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('openaiKey')}</label>
               <input 
                 name="openai_api_key" 
                 type="password"
@@ -151,31 +153,31 @@ export default function SettingsDashboard() {
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">BOT POST FREQUENCY (HOURS)</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('botFrequency')}</label>
               <select 
                 name="bot_frequency_hours" 
                 defaultValue={settings.bot_frequency_hours || "1"}
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm"
               >
-                <option value="1">EVERY 1 HOUR</option>
-                <option value="3">EVERY 3 HOURS</option>
-                <option value="6">EVERY 6 HOURS</option>
-                <option value="12">EVERY 12 HOURS</option>
-                <option value="24">EVERY 24 HOURS (DAILY SUMMARY)</option>
+                <option value="1">{t('every1Hour')}</option>
+                <option value="3">{t('every3Hours')}</option>
+                <option value="6">{t('every6Hours')}</option>
+                <option value="12">{t('every12Hours')}</option>
+                <option value="24">{t('every24Hours')}</option>
               </select>
             </div>
             
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">BOT TONE / PERSONA</label>
+              <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">{t('botPersona')}</label>
               <select 
                 name="bot_persona" 
                 defaultValue={settings.bot_persona || "analytical"}
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-mono text-sm"
               >
-                <option value="analytical">ANALYTICAL & NEUTRAL</option>
-                <option value="provocative">PROVOCATIVE / DEBATE STARTER (HIGH ENGAGEMENT)</option>
-                <option value="urgent">URGENT / ALARMIST (BREAKING NEWS)</option>
-                <option value="academic">ACADEMIC / DEEP DIVE</option>
+                <option value="analytical">{t('analytical')}</option>
+                <option value="provocative">{t('provocative')}</option>
+                <option value="urgent">{t('urgent')}</option>
+                <option value="academic">{t('academic')}</option>
               </select>
             </div>
           </div>
@@ -187,7 +189,7 @@ export default function SettingsDashboard() {
             disabled={saving}
             className="bg-[var(--cyan-bright)] text-[#020408] font-bold font-mono px-8 py-3 rounded tracking-widest hover:bg-[var(--cyan)] transition-colors disabled:opacity-50"
           >
-            {saving ? "ENCRYPTING CONFIG..." : "SAVE CONFIGURATION"}
+            {saving ? t('encrypting') : t('saveConfig')}
           </button>
         </div>
       </form>
