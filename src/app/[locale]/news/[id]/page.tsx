@@ -80,7 +80,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
   const isAdmin = authCookie && authCookie.value === 'admin_granted';
 
   if (!isAdmin) {
-    let redirectUrl = 'https://x.com/sentientwire';
+    let redirectUrl = 'https://x.com';
     try {
       const rs = await db.execute({
         sql: "SELECT value FROM SiteSettings WHERE key = 'x_account_url'",
