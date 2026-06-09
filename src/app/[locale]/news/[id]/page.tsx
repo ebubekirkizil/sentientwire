@@ -3,7 +3,7 @@ import { getLocalizedArticle, getArticlesByLocale } from '@/app/actions/article'
 import NewsDetailClient from './NewsDetailClient';
 import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { db } from '@/lib/db';
 
 
@@ -79,7 +79,20 @@ export default async function NewsDetailPage({ params }: PageProps) {
   const authCookie = cookieStore.get('auth_token');
   const isAdmin = authCookie && authCookie.value === 'admin_granted';
 
-  if (!isAdmin) {
+  // Allow crawlers/social-bots to fetch metadata to display rich preview cards
+  const headerStore = await headers();
+  const userAgent = headerStore.get('user-agent')?.toLowerCase() || '';
+  const isBot = userAgent.includes('twitterbot') || 
+                userAgent.includes('googlebot') || 
+                userAgent.includes('bingbot') ||
+                userAgent.includes('facebookexternalhit') || 
+                userAgent.includes('linkedinbot') ||
+                userAgent.includes('slackbot') || 
+                userAgent.includes('telegrambot') ||
+                userAgent.includes('whatsapp') ||
+                userAgent.includes('discordbot');
+
+  if (!isAdmin && !isBot) {
     let redirectUrl = 'https://x.com/SentientWireHQ';
     try {
       const rs = await db.execute({

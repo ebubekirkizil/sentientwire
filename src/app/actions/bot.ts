@@ -32,7 +32,7 @@ export async function triggerTweetManual(articleId: string) {
     // Instead of posting to X automatically via API (which fails/is not working),
     // we will generate the final tweet text, update the DB to mark it as posted,
     // and return the text so the client can open Twitter's Web Intent!
-    const finalTweet = `${tweetText}\n\n👇 Click the link for full news details:\n🔗 https://sentientwire.com/${article.locale}/news/${article.slug}`;
+    const finalTweet = `${tweetText}\n\n👇 Click the link for full news details:\n🔗 https://sentientwire.com/${article.locale}/news/${article.id}`;
 
     // Update DB
     await db.execute({

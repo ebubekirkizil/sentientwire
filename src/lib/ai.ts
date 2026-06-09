@@ -17,6 +17,7 @@ SEO VE GOOGLE NEWS KURALLARI (KRİTİK - HELPFUL CONTENT):
 - Kullanıcıya "Ne oldu?" sorusunun yanında asıl "Bunun Anlamı Ne? Ne Değişecek?" sorularının cevabını ver.
 - Başlıkta ve ilk paragrafta anahtar kelimeleri (şirket isimleri, teknoloji terimleri) doğal ama vurgulu kullan.
 - "Clickbait"ten kaçın, otoriter ve güvenilir bir tonla yaz (E-E-A-T prensibi).
+- "slug" değeri her zaman ve tamamen İNGİLİZCE (küçük harflerden, rakamlardan ve tire (-) işaretinden oluşan, Türkçe karakter içermeyen) olarak üretilmelidir. Target language / hedef dil ne olursa olsun slug kısmı her zaman İngilizce olmalıdır. (Örn: "fcas-cancelled-next-gen-fighter")
 
 DİKKAT EDİLECEK KURALLAR:
 1. Kurumsal, net, somut veri odaklı ama UZUN ve SÜRÜKLEYİCİ (Wall Street Journal / Bloomberg Terminal kalitesinde) bir analiz dili kullan. Haberi en az 600-800 kelime aralığında, bol detaylı yaz.
@@ -64,7 +65,7 @@ DÖNÜŞ FORMATI (Tamamen JSON olmalı, markdown backtick veya benzeri şeyler K
   "title": "Etki odaklı, analitik, kurumsal başlık (max 85 karakter)",
   "summary": "En çarpıcı finansal/stratejik bulguyu içeren 1-2 cümle",
   "content": "HTML formatında tldr-box + 3 H2 başlıklı premium analiz",
-  "slug": "url-dostu-baslik",
+  "slug": "url-friendly-english-only-slug-based-on-the-rewritten-title-using-lowercase-a-z-0-9-and-hyphens-only",
   "category": "KATEGORİ_ADI",
   "categoryColor": "#renkkodu",
   "imagePrompt": "flat design, white background, corporate minimalist, [spesifik konu]",
