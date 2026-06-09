@@ -74,7 +74,7 @@ export async function postToX(
   accessSecret?: string,
   imagePathOrUrl?: string
 ) {
-  const finalTweet = `${tweetContent}\n\n🔗 https://sentientwire.com/en/news/${articleSlug}`;
+  const finalTweet = `${tweetContent}\n\n👇 Click the link for full news details:\n🔗 https://sentientwire.com/en/news/${articleSlug}`;
 
   if (!apiKey) {
     // Simulation
