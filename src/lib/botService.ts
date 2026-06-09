@@ -39,18 +39,51 @@ export async function generateTweet(title: string, summary: string, persona: str
 }
 
 import { TwitterApi } from 'twitter-api-v2';
+import fs from 'fs';
+import path from 'path';
 
-export async function postToX(tweetContent: string, articleSlug: string, apiKey: string, apiSecret?: string, accessToken?: string, accessSecret?: string) {
+async function getImageBuffer(imagePathOrUrl: string): Promise<Buffer | null> {
+  try {
+    if (imagePathOrUrl.startsWith('http')) {
+      const res = await fetch(imagePathOrUrl);
+      if (!res.ok) return null;
+      const arrayBuffer = await res.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    } else {
+      // Local path (like /images/fcas_cancelled_cover_new.png)
+      // Normalize path (strip query parameters like ?v=...)
+      const cleanPath = imagePathOrUrl.split('?')[0];
+      // Resolve against the public directory
+      const absolutePath = path.join(process.cwd(), 'public', cleanPath.replace(/^\//, ''));
+      if (fs.existsSync(absolutePath)) {
+        return fs.readFileSync(absolutePath);
+      }
+    }
+  } catch (err) {
+    console.error("Error reading image buffer:", err);
+  }
+  return null;
+}
+
+export async function postToX(
+  tweetContent: string, 
+  articleSlug: string, 
+  apiKey: string, 
+  apiSecret?: string, 
+  accessToken?: string, 
+  accessSecret?: string,
+  imagePathOrUrl?: string
+) {
   const finalTweet = `${tweetContent}\n\n🔗 https://sentientwire.com/en/news/${articleSlug}`;
 
-  // If using Bearer token only (App-only, might not allow posting depending on tier, but we'll try)
-  // Best practice for posting is User Context (OAuth 1.0a or OAuth 2.0 user context)
-  
   if (!apiKey) {
     // Simulation
     console.log("\n=========================================");
     console.log("[X-BOT SIMULATION] TWEET PUBLISHED:");
     console.log(finalTweet);
+    if (imagePathOrUrl) {
+      console.log(`[X-BOT SIMULATION] ATTACHED IMAGE: ${imagePathOrUrl}`);
+    }
     console.log("=========================================\n");
     return true;
   }
@@ -67,12 +100,29 @@ export async function postToX(tweetContent: string, articleSlug: string, apiKey:
         accessSecret: accessSecret,
       });
     } else {
-      // Fallback to Bearer token (might throw 403 Forbidden for posting on Free tier depending on setup)
+      // Fallback to Bearer token
       client = new TwitterApi(apiKey);
     }
 
+    let mediaId: string | undefined;
+    if (imagePathOrUrl && apiKey && apiSecret && accessToken && accessSecret) {
+      const buffer = await getImageBuffer(imagePathOrUrl);
+      if (buffer) {
+        console.log(`[X-BOT] Uploading media to X (size: ${buffer.length} bytes)...`);
+        mediaId = await client.v1.uploadMedia(buffer, { mimeType: 'image/png' });
+        console.log(`[X-BOT] Media uploaded successfully. ID: ${mediaId}`);
+      }
+    }
+
     const rwClient = client.readWrite;
-    await rwClient.v2.tweet(finalTweet);
+    if (mediaId) {
+      await rwClient.v2.tweet({
+        text: finalTweet,
+        media: { media_ids: [mediaId] }
+      });
+    } else {
+      await rwClient.v2.tweet(finalTweet);
+    }
     
     return true;
   } catch (error) {
@@ -80,6 +130,7 @@ export async function postToX(tweetContent: string, articleSlug: string, apiKey:
     return false;
   }
 }
+
 
 export async function postToTelegram(title: string, summary: string, slug: string, botToken?: string, chatId?: string) {
   const message = `🚨 *${title}*\n\n${summary}\n\n🔗 [Read Intel Report](https://sentientwire.com/tr/news/${slug})`;

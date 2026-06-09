@@ -30,7 +30,15 @@ export async function triggerTweetManual(articleId: string) {
     );
 
     // 4. Post to X
-    const success = await postToX(tweetText, article.slug as string, settings.xKey);
+    const success = await postToX(
+      tweetText,
+      article.slug as string,
+      settings.xKey,
+      settings.xSecret,
+      settings.xAccessToken,
+      settings.xAccessSecret,
+      article.imageUrl ? String(article.imageUrl) : undefined
+    );
 
     if (success) {
       // 5. Update DB

@@ -47,7 +47,8 @@ export async function GET(request: Request) {
       settings.xKey,
       settings.xSecret,
       settings.xAccessToken,
-      settings.xAccessSecret
+      settings.xAccessSecret,
+      articleToPost.imageUrl ? String(articleToPost.imageUrl) : undefined
     );
 
     if (success) {

@@ -61,22 +61,9 @@ export function proxy(request: NextRequest) {
     if (mappedLocale) {
       const pathname = request.nextUrl.pathname;
       
-      // Check if current URL already has a locale prefix
-      const pathLocale = routing.locales.find(
-        (l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`)
-      );
-
       if (pathname === '/') {
         // Redirect root visits to mapped locale
         const response = NextResponse.redirect(new URL(`/${mappedLocale}`, request.url));
-        return response;
-      } else if (pathLocale && pathLocale !== mappedLocale) {
-        // If they landed on a different language (e.g. /tr/...) but they are from US, redirect to /en-US/...
-        const newPathname = pathname.replace(`/${pathLocale}`, `/${mappedLocale}`);
-        const response = NextResponse.redirect(new URL(newPathname, request.url));
-        
-        // Set cookie explicitly so they aren't trapped if they intentionally switch back to TR later
-        response.cookies.set('NEXT_LOCALE', mappedLocale, { path: '/' });
         return response;
       }
     }
