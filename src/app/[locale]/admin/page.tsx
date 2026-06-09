@@ -45,7 +45,7 @@ export default function AdminDashboard() {
     const res = await triggerTweetManual(id);
     setTweetingId(null);
     
-    if (res.success) {
+    if (res.success && res.tweet) {
       window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(res.tweet)}`, '_blank');
       fetchArticles();
     } else {
