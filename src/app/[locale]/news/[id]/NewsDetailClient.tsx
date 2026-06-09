@@ -8,17 +8,9 @@ import { useTranslations } from 'next-intl';
 export default function NewsDetailClient({ article, locale, relatedArticles = [] }: { article: any, locale: string, relatedArticles?: any[] }) {
   const t = useTranslations('News');
   const [mounted, setMounted] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     setMounted(true);
-    const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
-      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      setScrollProgress(totalScroll / windowHeight);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const containerVariants: any = {
@@ -97,14 +89,6 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
             background: `radial-gradient(ellipse, ${article?.categoryColor || 'var(--cyan-glow)'}40 0%, transparent 60%)`,
             animation: "pulseGlow 6s ease-in-out infinite",
           }} 
-        />
-      </div>
-
-      {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 z-[100] bg-[var(--bg-primary)]">
-        <div 
-          className="h-full bg-[var(--cyan-bright)] shadow-[0_0_15px_var(--cyan-bright)] transition-all duration-150 ease-out" 
-          style={{ width: `${scrollProgress * 100}%` }}
         />
       </div>
 
