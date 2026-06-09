@@ -46,7 +46,7 @@ export default function AdminDashboard() {
     setTweetingId(null);
     
     if (res.success) {
-      alert(t('successTweet') + "\n\nTweet: " + res.tweet);
+      window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(res.tweet)}`, '_blank');
       fetchArticles();
     } else {
       alert(t('failTweet') + ": " + res.error);

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getBotSettings, generateTweet, postToX } from "@/lib/botService";
+import { getBotSettings, generateTweet } from "@/lib/botService";
 import { revalidatePath } from "next/cache";
 
 export async function triggerTweetManual(articleId: string) {
@@ -29,29 +29,19 @@ export async function triggerTweetManual(articleId: string) {
       settings.openaiKey
     );
 
-    // 4. Post to X
-    const success = await postToX(
-      tweetText,
-      article.slug as string,
-      settings.xKey,
-      settings.xSecret,
-      settings.xAccessToken,
-      settings.xAccessSecret,
-      article.imageUrl ? String(article.imageUrl) : undefined
-    );
+    // Instead of posting to X automatically via API (which fails/is not working),
+    // we will generate the final tweet text, update the DB to mark it as posted,
+    // and return the text so the client can open Twitter's Web Intent!
+    const finalTweet = `${tweetText}\n\n👇 Click the link for full news details:\n🔗 https://sentientwire.com/en/news/${article.slug}`;
 
-    if (success) {
-      // 5. Update DB
-      await db.execute({
-        sql: "UPDATE Article SET xPosted = 1 WHERE id = ?",
-        args: [articleId]
-      });
+    // Update DB
+    await db.execute({
+      sql: "UPDATE Article SET xPosted = 1 WHERE id = ?",
+      args: [articleId]
+    });
 
-      revalidatePath(`/${article.locale}/admin`);
-      return { success: true, tweet: tweetText };
-    } else {
-      return { success: false, error: "Failed to post to X. Check logs." };
-    }
+    revalidatePath(`/${article.locale}/admin`);
+    return { success: true, tweet: finalTweet };
   } catch (error: any) {
     console.error("Manual Tweet Error:", error);
     return { success: false, error: error.message };
