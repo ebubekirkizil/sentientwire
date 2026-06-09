@@ -4,6 +4,10 @@ import NewsDetailClient from './NewsDetailClient';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
+// Force fresh data on every request — no CDN caching of article HTML
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface PageProps {
   params: Promise<{ id: string; locale: string }>;
 }
