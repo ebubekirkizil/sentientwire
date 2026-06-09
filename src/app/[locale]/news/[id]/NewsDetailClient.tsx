@@ -63,34 +63,20 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
   return (
     <div className="min-h-screen bg-[var(--bg-primary)] font-sans pb-20 relative overflow-hidden text-[var(--text-primary)] transition-colors duration-300">
       
-      {/* Cyberpunk Matrix Rain Background */}
-      <style>{`
-        @keyframes scanline {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(100vh); }
-        }
-        @keyframes pulseGlow {
-          0%, 100% { opacity: 0.15; transform: scale(1); }
-          50% { opacity: 0.25; transform: scale(1.05); }
-        }
-      `}</style>
+      {/* Cyberpunk Grid Background - Pure CSS for maximum performance */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-        <MatrixRainCanvas theme={article?.categoryColor || '#06b6d4'} />
-        {/* CRT Scanline */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] [background-size:100%_2px,3px_100%] pointer-events-none z-10" />
+        {/* Premium Tech Dot Grid */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(6,182,212,0.07)_1px,transparent_1px)] [background-size:32px_32px] opacity-70" />
+        
+        {/* Subtle Ambient Radial Glow */}
         <div 
-          className="absolute inset-0 h-[150px] bg-gradient-to-b from-transparent via-[var(--cyan-glow)] to-transparent opacity-10 pointer-events-none z-20"
-          style={{ animation: 'scanline 8s linear infinite' }}
-        />
-        {/* Pulsing Glow Center */}
-        <div 
-          className="absolute top-0 left-[20%] w-[60%] h-[100%] rounded-full blur-[120px] pointer-events-none z-0"
+          className="absolute top-0 left-1/4 w-1/2 h-[600px] rounded-full blur-[120px] opacity-20"
           style={{
-            background: `radial-gradient(ellipse, ${article?.categoryColor || 'var(--cyan-glow)'}40 0%, transparent 60%)`,
-            animation: "pulseGlow 6s ease-in-out infinite",
+            background: `radial-gradient(circle, ${article?.categoryColor || '#06b6d4'} 0%, transparent 70%)`
           }} 
         />
       </div>
+
 
       {/* Main Content Container centered */}
       <motion.div 
@@ -161,89 +147,9 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
              </a>
            </div>
 
-         </div>
+         </motion.div>
         </div>
       </motion.div>
     </div>
-  );
-}
-
-function MatrixRainCanvas({ theme = "#06b6d4" }: { theme?: string }) {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=~[]{}|;:,.<>?/ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ";
-    const charsArray = characters.split("");
-
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops: number[] = [];
-
-    for (let x = 0; x < columns; x++) {
-      drops[x] = Math.random() * -100;
-    }
-
-    let animationFrameId: number;
-    let lastDrawTime = 0;
-    const FPS = 30;
-    const frameInterval = 1000 / FPS;
-
-    const draw = (currentTime: number) => {
-      animationFrameId = requestAnimationFrame(draw);
-
-      if (currentTime - lastDrawTime < frameInterval) return;
-      lastDrawTime = currentTime;
-
-      ctx.fillStyle = "rgba(4, 8, 16, 0.08)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.font = `${fontSize}px monospace`;
-
-      for (let i = 0; i < drops.length; i++) {
-        const text = charsArray[Math.floor(Math.random() * charsArray.length)];
-
-        if (Math.random() > 0.9) {
-          ctx.fillStyle = "#ffffff";
-        } else {
-          ctx.fillStyle = theme;
-        }
-
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-
-        drops[i]++;
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(draw);
-
-    return () => {
-      window.removeEventListener('resize', resizeCanvas);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [theme]);
-
-  return (
-    <canvas 
-      ref={canvasRef} 
-      className="absolute inset-0 w-full h-full opacity-25"
-      style={{ filter: "blur(0.5px)" }}
-    />
   );
 }
