@@ -60,8 +60,8 @@ export default function SettingsDashboard() {
               <label className="font-mono text-[10px] text-[var(--text-muted)] tracking-widest uppercase">X (TWITTER) ACCOUNT REDIRECT URL (FOR NORMAL USERS)</label>
               <input 
                 name="x_account_url" 
-                defaultValue={settings.x_account_url || "https://x.com"}
-                placeholder="https://x.com/yourusername"
+                defaultValue={settings.x_account_url || "https://x.com/SentientWireHQ"}
+                placeholder="https://x.com/SentientWireHQ"
                 className="bg-[var(--bg-card)] border border-[var(--border-subtle)] rounded p-3 text-[var(--text-primary)] outline-none focus:border-[var(--cyan-dim)] font-sans text-sm" 
               />
             </div>
