@@ -41,15 +41,23 @@ export default function AdminDashboard() {
   };
 
   const handleTweet = async (id: string) => {
+    // Open a blank window synchronously under the click gesture to bypass popup blockers
+    const popup = window.open("about:blank", "_blank");
+    
     setTweetingId(id);
     const res = await triggerTweetManual(id);
     setTweetingId(null);
     
     if (res.success && res.tweet) {
-      window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(res.tweet)}`, '_blank');
+      if (popup) {
+        popup.location.href = `https://x.com/intent/tweet?text=${encodeURIComponent(res.tweet)}`;
+      } else {
+        window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(res.tweet)}`, '_blank');
+      }
       fetchArticles();
     } else {
-      alert(t('failTweet') + ": " + res.error);
+      if (popup) popup.close();
+      alert(t('failTweet') + (res.error ? ": " + res.error : ""));
     }
   };
 
@@ -130,15 +138,21 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {!article.xPosted && (
-                          <button 
-                            onClick={() => handleTweet(article.id)} 
-                            disabled={tweetingId === article.id}
-                            className="font-mono text-[10px] text-blue-400 hover:text-white transition-colors border border-blue-500/20 hover:bg-blue-500/20 px-2 py-1 rounded disabled:opacity-50"
-                          >
-                            {tweetingId === article.id ? t('posting') : t('tweet')}
-                          </button>
-                        )}
+                        <button 
+                          onClick={() => handleTweet(article.id)} 
+                          disabled={tweetingId === article.id}
+                          className={`font-mono text-[10px] transition-colors border px-2 py-1 rounded disabled:opacity-50 ${
+                            article.xPosted 
+                              ? "text-gray-400 hover:text-white border-gray-500/10 hover:bg-gray-500/10" 
+                              : "text-blue-400 hover:text-white border-blue-500/20 hover:bg-blue-500/20"
+                          }`}
+                        >
+                          {tweetingId === article.id 
+                            ? t('posting') 
+                            : article.xPosted 
+                              ? t('retweet') 
+                              : t('tweet')}
+                        </button>
                         <Link href={`/${locale}/news/${article.slug}`} target="_blank" className="font-mono text-[10px] text-[var(--cyan-bright)] hover:text-white transition-colors border border-[var(--cyan-dim)] px-2 py-1 rounded">
                           {t('view')}
                         </Link>

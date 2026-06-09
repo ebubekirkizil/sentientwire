@@ -32,7 +32,7 @@ export async function triggerTweetManual(articleId: string) {
     // Instead of posting to X automatically via API (which fails/is not working),
     // we will generate the final tweet text, update the DB to mark it as posted,
     // and return the text so the client can open Twitter's Web Intent!
-    const finalTweet = `${tweetText}\n\n👇 Click the link for full news details:\n🔗 https://sentientwire.com/en/news/${article.slug}`;
+    const finalTweet = `${tweetText}\n\n👇 Click the link for full news details:\n🔗 https://sentientwire.com/${article.locale}/news/${article.slug}`;
 
     // Update DB
     await db.execute({
@@ -40,7 +40,11 @@ export async function triggerTweetManual(articleId: string) {
       args: [articleId]
     });
 
-    revalidatePath(`/${article.locale}/admin`);
+    try {
+      revalidatePath(`/${article.locale}/admin`);
+    } catch (e) {
+      console.warn("revalidatePath warning ignored inside server action:", e);
+    }
     return { success: true, tweet: finalTweet };
   } catch (error: any) {
     console.error("Manual Tweet Error:", error);
