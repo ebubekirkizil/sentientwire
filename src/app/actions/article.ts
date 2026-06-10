@@ -114,15 +114,37 @@ return { success: true, id };
   }
 }
 
+// Helper to generate SEO-friendly slug
+export function generateSlug(title: string) {
+  if (!title) return "article";
+  return title
+    .toLowerCase()
+    .replace(/ğ/g, "g")
+    .replace(/ü/g, "u")
+    .replace(/ş/g, "s")
+    .replace(/ı/g, "i")
+    .replace(/ö/g, "o")
+    .replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+}
+
 // In-memory cache to store translated fields: key is `${articleId}_${targetLocale}`
 const translationCache = new Map<string, { title: string, summary: string, content: string }>();
 
 function toPlainArticle(row: any) {
   if (!row) return null;
+  const id = String(row.id || '');
+  const title = String(row.title || 'Untitled');
+  
+  // Combine localized title and unique UUID for dynamic language-aware SEO slugs
+  const seoSlug = `${generateSlug(title)}-${id}`;
+  
   return {
-    id: String(row.id || ''),
-    title: String(row.title || 'Untitled'),
-    slug: String(row.slug || ''),
+    id,
+    title,
+    slug: seoSlug, // Dynamic SEO localized slug replaces DB slug
+    originalSlug: String(row.slug || ''),
     summary: String(row.summary || row.excerpt || ''),
     content: String(row.content || ''),
     category: String(row.category || 'GENERAL'),
@@ -147,18 +169,7 @@ export async function createArticle(formData: FormData) {
   const imageUrl = formData.get("imageUrl") as string | null;
   const locale = formData.get("locale") as string || "en";
 
-  const slug = title
-    .toLowerCase()
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)+/g, "");
-    
-  const finalSlug = `${slug}-${Date.now()}`;
+  const finalSlug = `${generateSlug(title)}-${Date.now()}`;
   const id = crypto.randomUUID();
 
   try {
@@ -196,6 +207,19 @@ export async function createArticle(formData: FormData) {
 
 export async function getArticleBySlug(slug: string) {
   try {
+    // If slug ends with a UUID, we can extract it to look up by exact ID directly.
+    const maybeId = slug.length >= 36 ? slug.slice(-36) : '';
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(maybeId);
+    
+    if (isUuid) {
+      const result = await db.execute({
+        sql: `SELECT * FROM Article WHERE id = ?`,
+        args: [maybeId]
+      });
+      if (result.rows.length > 0) return result.rows[0];
+    }
+    
+    // Fallback to legacy slugs or direct ID match
     const result = await db.execute({
       sql: `SELECT * FROM Article WHERE slug = ? OR id = ?`,
       args: [slug, slug]

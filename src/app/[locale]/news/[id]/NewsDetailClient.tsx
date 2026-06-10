@@ -99,7 +99,7 @@ export default function NewsDetailClient({ article, locale, relatedArticles = []
         {/* Metadata */}
         <motion.div variants={itemVariants} className="flex items-center mb-8 gap-4 flex-wrap">
            <span className="bg-red-500/10 text-[var(--accent-red)] border border-red-500/20 px-3 py-1 rounded text-xs font-mono font-bold tracking-widest uppercase">
-             {article.category || "GENERAL"} (ID: {article.slug ? article.slug.substring(0,8) : article.id.substring(0,8)})
+             {article.category || "GENERAL"} (ID: {article.id ? article.id.substring(0,8) : "UNKNOWN"})
            </span>
            <span className="font-mono text-xs text-[var(--text-muted)] tracking-wider">
              {t('decrypted')}: {article.createdAt ? new Date(article.createdAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) : new Date().toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })}
