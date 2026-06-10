@@ -5,8 +5,9 @@ import { revalidatePath } from "next/cache";
 import { translateArticleText, rewriteArticle } from "@/lib/ai";
 import { searchUnsplashImages } from "./unsplash";
 
-// All supported locales for pre-translation
+// All supported locales for pre-translation (always include 'en' so Turkish-origin articles get English too)
 const ALL_LOCALES = ['tr', 'es', 'fr', 'de', 'it', 'nl', 'ru', 'zh', 'pl'];
+// Includes 'en' only when article was originally stored in a non-English locale (handled below)
 
 async function getImageUrl(query: string, fallbackCategory: string): Promise<string> {
   try {
@@ -137,14 +138,18 @@ function toPlainArticle(row: any) {
   const id = String(row.id || '');
   const title = String(row.title || 'Untitled');
   
-  // Combine localized title and unique UUID for dynamic language-aware SEO slugs
-  const seoSlug = `${generateSlug(title)}-${id}`;
+  // Always use the canonical English DB slug for URLs.
+  // This keeps URLs consistent across all locales (e.g. /en-US/news/ceasefire-ends-... and /tr/news/ceasefire-ends-...)
+  // The locale prefix (/tr/, /en-US/) already communicates language — slug should stay English.
+  const dbSlug = String(row.slug || '');
+  // If the DB slug looks like a raw UUID (legacy direct inserts), generate a slug from the stored title.
+  // Otherwise, use the existing DB slug as-is (it was generated from the English AI title).
+  const canonicalSlug = dbSlug && dbSlug.length > 8 ? dbSlug : `${generateSlug(title)}-${id}`;
   
   return {
     id,
     title,
-    slug: seoSlug, // Dynamic SEO localized slug replaces DB slug
-    originalSlug: String(row.slug || ''),
+    slug: canonicalSlug,
     summary: String(row.summary || row.excerpt || ''),
     content: String(row.content || ''),
     category: String(row.category || 'GENERAL'),
@@ -234,7 +239,7 @@ export async function getArticleBySlug(slug: string) {
 }
 
 export async function getArticlesByLocale(locale: string) {
-  // Normalize locale: zh-CN -> zh, tr -> tr, en-US -> en, etc.
+  // Normalize locale: zh-CN -> zh, tr -> tr, en-US -> en, en-GB -> en, etc.
   const targetLang = locale === 'zh-CN' ? 'zh' : locale.substring(0, 2).toLowerCase();
   
   try {
@@ -247,10 +252,10 @@ export async function getArticlesByLocale(locale: string) {
 
     const articles = result.rows;
     const ids = articles.map(a => String(a.id));
-    
-    // ALWAYS look up ArticleTranslation for every locale.
-    // This is critical: even if article.locale === targetLang,
-    // the TranslationTable may have a better-quality translation.
+
+    // For English locales: articles stored as locale='en' need no translation lookup.
+    // But articles stored as locale='tr' (direct DB inserts) DO need an 'en' translation.
+    // We always query ArticleTranslation for targetLang to cover both cases.
     let transMap = new Map();
     try {
       const transResult = await db.execute({
@@ -263,11 +268,18 @@ export async function getArticlesByLocale(locale: string) {
     }
 
     return articles.map((art) => {
+      const artLocale = String(art.locale || 'en').substring(0, 2).toLowerCase();
       const trans = transMap.get(String(art.id));
+      
       if (trans) {
+        // Use translated content (title, summary, content) but keep original article metadata (slug, imageUrl, etc.)
         return toPlainArticle({ ...art, title: trans.title, summary: trans.summary, content: trans.content });
       }
-      // Fallback to original article
+      
+      // No translation found — if the article's native locale matches what we want, use it directly.
+      // e.g. article.locale='en' and targetLang='en' → correct, show as-is.
+      // e.g. article.locale='tr' and targetLang='en' → wrong language, but no translation available yet.
+      // We still show it (better than empty) but the cron will fix it.
       return toPlainArticle(art);
     });
 
@@ -313,12 +325,17 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
   const article = await getArticleBySlug(slugOrId);
   if (!article) return null;
 
-  // Normalize locale: zh-CN -> zh, en-US -> en, etc.
+  // Normalize locale: zh-CN -> zh, en-US -> en, en-GB -> en, etc.
   const targetLang = locale === 'zh-CN' ? 'zh' : locale.substring(0, 2).toLowerCase();
+  const artLang = String(article.locale || 'en').substring(0, 2).toLowerCase();
   
-  // ALWAYS check ArticleTranslation first, regardless of article.locale.
-  // Reason: articles may be stored with any locale value (e.g. 'tr') but
-  // still have better translations in ArticleTranslation for every language.
+  // If the article is already in the target language, return it directly (no DB translation lookup needed).
+  // e.g. article.locale='en', targetLang='en' → use as-is.
+  if (artLang === targetLang) {
+    return toPlainArticle(article);
+  }
+
+  // Otherwise, look up translation in ArticleTranslation table.
   let finalArt = article;
   try {
     const transResult = await db.execute({
@@ -335,7 +352,7 @@ export async function getLocalizedArticle(slugOrId: string, locale: string) {
         content: String(trans.content || article.content || '')
       };
     }
-    // If no translation found, fall back to original article language
+    // If no translation found yet (cron will handle it), fall back gracefully to original.
   } catch (err) {
     console.error('[getLocalizedArticle] Translation lookup failed:', err);
   }
