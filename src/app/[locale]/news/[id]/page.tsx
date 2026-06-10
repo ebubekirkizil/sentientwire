@@ -1,10 +1,9 @@
 import React from 'react';
 import { getLocalizedArticle, getArticlesByLocale } from '@/app/actions/article';
 import NewsDetailClient from './NewsDetailClient';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { cookies, headers } from 'next/headers';
-import { db } from '@/lib/db';
+import { cookies } from 'next/headers';
 
 
 // Force fresh data on every request — no CDN caching of article HTML
@@ -74,46 +73,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function NewsDetailPage({ params }: PageProps) {
   const resolvedParams = await params;
 
-  // Authenticated Admin check
+  // Authenticated Admin check (used for future admin-only UI elements)
   const cookieStore = await cookies();
   const authCookie = cookieStore.get('auth_token');
   const isAdmin = authCookie && authCookie.value === 'admin_granted';
-
-  // Allow crawlers/social-bots to fetch metadata to display rich preview cards
-  const headerStore = await headers();
-  const userAgent = headerStore.get('user-agent')?.toLowerCase() || '';
-  const isBot = userAgent.includes('twitterbot') || 
-                userAgent.includes('googlebot') || 
-                userAgent.includes('bingbot') ||
-                userAgent.includes('facebookexternalhit') || 
-                userAgent.includes('linkedinbot') ||
-                userAgent.includes('slackbot') || 
-                userAgent.includes('telegrambot') ||
-                userAgent.includes('whatsapp') ||
-                userAgent.includes('discordbot');
-
-  if (!isAdmin && !isBot) {
-    let redirectUrl = 'https://x.com/SentientWireHQ';
-    try {
-      const rs = await db.execute({
-        sql: "SELECT value FROM SiteSettings WHERE key = 'x_account_url'",
-        args: []
-      });
-      if (rs.rows.length > 0 && rs.rows[0].value) {
-        redirectUrl = String(rs.rows[0].value);
-      }
-    } catch (e) {
-      console.error("Failed to fetch x_account_url setting:", e);
-    }
-    redirect(redirectUrl);
-  }
 
   const article = await getLocalizedArticle(resolvedParams.id, resolvedParams.locale);
 
   if (!article) {
     notFound();
   }
-  
+
   // Fetch related articles (latest 3 excluding current)
   const allArticles = await getArticlesByLocale(resolvedParams.locale);
   const relatedArticles = allArticles.filter(a => a && a.id !== article.id).slice(0, 3);

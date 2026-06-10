@@ -6,7 +6,7 @@ import { translateArticleText, rewriteArticle } from "@/lib/ai";
 import { searchUnsplashImages } from "./unsplash";
 
 // All supported locales for pre-translation
-const ALL_LOCALES = ['tr', 'es', 'fr', 'de', 'it', 'ru', 'zh', 'ar', 'ja', 'pl'];
+const ALL_LOCALES = ['tr', 'es', 'fr', 'de', 'it', 'nl', 'ru', 'zh', 'pl'];
 
 async function getImageUrl(query: string, fallbackCategory: string): Promise<string> {
   try {
